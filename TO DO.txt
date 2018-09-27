@@ -1,0 +1,12 @@
+TO DO:
+
+Pour chacun des 3 dégrés de liberté (routing et scheduling au moins) définir:
+- Les paramètres/données
+- Les variables du problème (ce que tu peux modifier dans la solution)
+- L'objectif à min/maximiser du problème
+- Les contraintes sur la solution
+
+Tu peux les définir d'abord verbalement, puis il faudra les mettre sous forme de programme linaire.
+Tu me présenteras le tout au brouillon pour validation avant de rédiger au propre en Latex.
+
+N'hésite pas à venir me voir directement si tu as des questions ou des difficultés (en autre pour comprendre le programme lin)
