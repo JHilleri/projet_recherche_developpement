@@ -1,0 +1,43 @@
+Ici, rapide résumé du contenu des papiers présents dans le fichier:
+
+//********
+//Rappel
+//********
+
+Les trois degrés de liberté présents dans le problème complet,
+en fonction des variantes du problème adapté, ces degré de liberté sont fixés ou non:
+
+1 - Séquence de production des jobs sur les machines
+2 - Regroupement des jobs en batch
+3 - Livraison des jobs 
+
+//********
+//********
+
+-	Papier_introductif.pdf
+Présentation du problème général avec une approche multiagent.
+Producteur et distributeur.
+Les techniques de résolution présentés s'applique au problème du
+producteur. Degré 1 et 2 libres, degré 3 fixer avec l'hypothèse que les 
+clients sont livrés par date de livraison croissante.
+
+-	Premier_papier.pdf
+Prolonge le papier introductif.
+Résouds le même problème en proposant un algo GRASP, Tabou et algo Génétique
+	Pour le début du PDR, Le détail des algo ne sont pas à lire, idem pour les résultats,
+ce qui fait que ce papier est une redite du premier.
+
+-	Second_papier.pdf (en cours de redaction)
+=> !!! C'est notre base de travail
+Ce papier prend le contrepied des deux papiers précedent.
+Les dégrés de liberté 1 et 2 (séquence et batch) sont fixés.
+La livraison est libres. (et aucune hypothèse n'es faites sur les coûts d'inventaires,
+ce qui était le cas avant).
+	Pour le début du PRD, lis jusqu'à la section 3. 
+
+-	Moons_2016 
+C'est un survey (revue bibliographique) que répertorie toute la
+doc récente sur les problèmes intégré production livraison
+
+-	Geinar_2008
+Un bon papier
