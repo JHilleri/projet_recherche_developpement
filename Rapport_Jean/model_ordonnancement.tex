@@ -1,0 +1,116 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{scrextend}
+\usepackage{mathtools}
+
+\begin{document}
+    \title{modélisation du problème d'ordonnancement}
+    
+    \author{jean hilleriteau}
+    
+    
+    \section*{Paramètres}
+        \begin{labeling}{paramètres}
+        
+            \item [$m$] Nombre de machines
+            
+            \item [$n$] Nombre de jobs. 
+            Il est possible de faire des lots ne contenant qu’un seul job, 
+            n désigne donc également le nombre maximal de lot.
+            
+            \item [$h_{i,j}^{WIP}$] Coût d’inventaire unitaire pour le job $j$ entre la machine $i$ et la machine $i+1$
+            
+            \item [$h_j^{FIN}$] Coût d’inventaire unitaire pour le job $j$ après la fin de la production
+            
+            \item [$p_{i,j}$] Durée du travail pour le job j sur la machine i
+            
+            \item [$C^V$] Coût par véhicule (aussi le coût par lot), représente le coût de la mobilisation d’un véhicule.
+            
+        \end{labeling}
+    
+    
+    \section*{Variables}
+    
+        Pour représenter l’ordre des jobs lors de la production, on utilise une matrice qui indique pour chaque job s’il doit être réaliser avant un autre.
+        
+        Par exemple, pour la matrice suivante.
+
+        $$
+            y=
+            \begin{pmatrix}
+                0&1&1\\
+                0&0&1\\
+                0&0&0
+            \end{pmatrix}
+        $$
+        Dans le lot 1, le job 1 est précède des jobs 2 et 3, il est donc le dernier à être effectué. Les jobs seront effectués dans l’ordre $\left\{3,2,1\right\}$.
+        
+        \begin{labeling}{variables}
+            \item [$y_{j1,j2}$] Matrices des précédences en production pour chaque lot $k$, vaut 1 si le job $j1$ est effectué avant le job $j2$. 
+            \item [$PC^{local}\left(d,k\right)$] Fonction qui pour un lot $k$ calcule les pénalités de retards si la livraison débute à la date $d$. Cette fonction n’est pas encore définie.
+            \item [$z_k$] Vaut 1 si le véhicule k est utilisé.
+            \item [$Z_{j,k}$] Vaut 1 si le job $j$ fait partie du lot $k$
+            \item [$C_{i,j}$] Date de fin de la tache $j$ pour la machine $i$
+            \item [$F_k$] Date de départ du lot/véhicule $k$.
+            \item [$f_j$] Date de départ du job $j$.
+            \item [$IC^{WIP}$] Somme des coûts d’inventaire sur les jobs en cours
+            $$IC^{WIP}=\sum_{j=1}^{n}\sum_{i=1}^{m-1}{\left(C_{i+1,j}-C_{i,j}-p_{i,j}\right)h_j^{WIP}}$$
+            
+            \item [$IC^{FIN}$] Somme des coûts d’inventaire sur les jobs terminé.
+            $${IC}^{FIN}=\sum_{j=1}^{n}{\left(f_j-c_{m,j}\right)h_j^{FIN}}$$
+            \item [$PC$] Somme des coûts des retards.
+            $$PC=\sum_{k=1}^{n}{PC_k^{local}\left(F_k\right)}$$
+            \item[$VC$] Coût des véhicules.
+            $$VC=c^V\sum_{k=1}^{n}z_k$$
+            
+        \end{labeling}
+    
+    
+    \section*{Objectif}
+        Somme des coûts à minimiser 
+        $$IC=IC^{WIP}+IC^{FIN}+PC+VC$$
+        
+    
+    \section*{Contraintes}
+    
+        \begin{enumerate}
+            \item 
+                Chaque job est soit le successeur soit le prédécesseur de chacun des autres jobs.
+                $$y_{j1,j2}+y_{j2,j1}=1$$
+                $$\forall j1,j2\in\left\{1,\dotsc,n\right\},j1<\ j2$$
+        
+            \item 
+                Les jobs ne peuvent pas être leurs propres successeurs.
+                $$y_{j,j}=0$$
+                $$\forall j\in{1,\cdots,\ n}$$
+            \item
+        	    Contrainte de gamme, les machines ne peuvent pas travailler sur plusieurs jobs simultanément.
+                $$C_{i,j2}\ \geq C_{i,j1}+p_{i,j2}-My_{j1,j2}$$
+                $$\forall i\in\left\{1,\dotsc,m\right\},\forall\left(j1,j2\right)\in\left\{1,\cdots,n\right\}^2$$
+            \item
+            	Contrainte de précédence, une machine ne peut pas travailler sur un job tant que la machine précédente n’a pas terminé de travailler dessus.
+                $$C_{i,j}\geq C_{i-1,j}+p_{i,j}$$
+                $$\forall j\in\left\{1,\cdots,n\right\},\forall i\in\left\{2,\dotsc,m\right\}$$
+            \item
+            	Chaque job ne peut appartenir qu’à un seul lot.
+                $$\sum_{k=1}^{n}Z_{j,k}=1$$
+                $$\forall j\ \in\left\{1,\dotsc,V\right\}$$
+            \item
+            	Un lot ne peut être livré que si tous ces jobs sont terminés.
+                $$F_k\ \geq C_{m,j}\ -\ M\left(1-Z_{j,k}\right)$$
+                $$\forall m\in\left\{1,\dotsc,V\right\},\forall j\in\left\{1,\dotsc,n\right\},\forall k\in\left\{1,\dotsc,V\right\}$$
+            \item
+            	Un lot doit exister à partir du moment où il a un job.
+                $$MZ_k\geq\sum_{j=1}^{n}Z_{j,k}$$
+                $$\forall k\ \in\left\{1,\dotsc,V\right\}$$
+            \item
+        	Un job est envoyé en livraison en même temps que le reste du lot auquel il appartient.
+                $$f_j\geq F_k+M\left(1-Z_{j,k}\right)$$
+                $$F_k \geq f_j+M\left(1-Z_{j,k}\right)$$
+                $$\forall j\ \in\left\{1,\dotsc,n\right\},\ \forall k\ \in\left\{1,\dotsc,n\right\}$$
+            
+        \end{enumerate}
+    	
+    
+
+\end{document}
