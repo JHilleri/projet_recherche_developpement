@@ -150,9 +150,9 @@ $$IC=IC^{WIP}+IC^{FIN}+PC+VC+RC$$
 	\item
 	      Un lot ne peut être livré que si tous ces jobs sont terminés.
 	      \begin{align}
-		      F_k \geq C_{i,j} - M\left(1-Z_{j,k}\right) &  & \forall i \in\left\{1,\dotsc, m \right\}, \notag \\
-		                                                 &  & \forall j \in\left\{1,\dotsc, n \right\}, \notag \\
-		                                                 &  & \forall k \in\left\{1,\dotsc, n \right\}
+		      F_k \geq C_{i,j} - M\left(1-Z_{j,k}\right) &  & \forall i \in & \left\{1,\dotsc, m \right\}, \notag \\
+		                                                 &  & \forall j \in & \left\{1,\dotsc, n \right\}, \notag \\
+		                                                 &  & \forall k \in & \left\{1,\dotsc, n \right\}
 	      \end{align}
 	\item
 	      Un lot doit exister à partir du moment où il a un job.
@@ -165,8 +165,8 @@ $$IC=IC^{WIP}+IC^{FIN}+PC+VC+RC$$
 	\item
 	      Un job est envoyé en livraison en même temps que le reste du lot auquel il appartient.
 	      \begin{align}
-		      f_j \geq F_k + M \left(1 - Z_{j,k} \right) &  & \forall j \in \left\{ 1,\dotsc,n \right\},\notag \\
-		                                                 &  & \forall k \in \left\{ 1,\dotsc,n\right\}
+		      f_j \geq F_k + M \left(1 - Z_{j,k} \right) &  & \forall j \in & \left\{ 1,\dotsc,n \right\},\notag \\
+		                                                 &  & \forall k \in & \left\{ 1,\dotsc,n\right\}
 	      \end{align}
 	      % correcte mais inutile, f_j sera minimisé par le solveur, 
 	      % on aura f_j = F_k pour les jobs j du lot k
