@@ -4,6 +4,7 @@
 \usepackage{mathtools}
 
 \begin{document}
+
 \title{modélisation du problème complet}
 
 \author{jean hilleriteau}
@@ -84,7 +85,7 @@ Ce qui signifie dans le lot 1, $j1$ est livré avant $j2$ et dans le lot 2, $j3$
 	\item [$F_k$] Date de départ du lot/véhicule $k$.
 	\item [$f_j$] Date de départ du job $j$.
 	\item [$IC^{WIP}$] Somme des coûts d’inventaire sur les jobs en cours
-	$$IC^{WIP}=\sum_{j=1}^{n}\sum_{i=1}^{m-1}{\left(C_{i+1,j}-C_{i,j}-p_{i,j}\right)h_j^{WIP}}$$
+	$$IC^{WIP}=\sum_{j=1}^{n}\sum_{i=1}^{m-1}{\left(C_{i+1,j}-C_{i,j}-p_{i+1,j}\right)h_j^{WIP}}$$
 
 	\item [$IC^{FIN}$] Somme des coûts d’inventaire sur les jobs terminé.
 	$${IC}^{FIN}=\sum_{j=1}^{n}{\left(f_j-C_{m,j}\right)h_j^{FIN}}$$
@@ -203,8 +204,6 @@ $$IC=IC^{WIP}+IC^{FIN}+PC+VC+RC$$
 		      D_j \geq f_j &  & \forall j \in\{1, \ldots, n\}
 	      \end{align}
 \end{itemize}
-
-
 
 
 \end{document}
