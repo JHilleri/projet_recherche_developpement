@@ -97,12 +97,11 @@ Ce qui signifie dans le lot 1, $j1$ est livré avant $j2$ et dans le lot 2, $j3$
 	\item [$x_{j1,j2,k}$] Variable de précédence pour la livraison, vaut 1 si $j1$ est livré juste avant $j2$ et que $j1$ et $j2$ font partie du lot k.
 	\item [$D_j$] Date de livraison réalisé pour le job j
 	\item [$T_j$] Retard de la livraison du job j
-	$$T_j\geq D_j-d_j$$
+	% $$T_j\geq D_j-d_j$$
 	\item [$RC$] Cout des trajets de la livraison, sans compter le retour au dépôt après la tournée
 	$$RC=\sum_{k=1}^{n}{\sum_{j_1=0}^{n}\sum_{j_2=1}^{n+1}x_{j_1,j_2,k}c_{j_1,j_2}}$$
-	\item [${PC}_j^{local}$] Pénalité de retard pour le job j
 	\item [$PC$]	Cout total des pénalités de retard
-	$$PC=\sum_{j=1}^{n}{PC}_j^{local}$$
+	$$PC=\sum_{j=1}^{n} T_j$$
 
 
 \end{labeling}
@@ -192,10 +191,11 @@ $$IC=IC^{WIP}+IC^{FIN}+PC+VC+RC$$
 		      D_{j2}\geq D_{j1} + t_{j1,j2} - M \left(1-x_{j1,j2,k} \right)
 	      \end{align}
 	\item
-	      Les pénalités de retard ne peuvent pas être négative, les livraisons en avances n’ont pas d’impacts.
+	      Les retards de livraisons ne peuvent pas être négatifs,
+	       les livraisons en avances n’ont pas d’impacts.
 	      \begin{align}
-		      {PC}_j^{local} & \geq 0         &  & \forall j \in\{1, \ldots, n\} \\
-		      {PC}_j^{local} & \geq T_j \pi_j &  & \forall j \in\{1, \ldots, n\}
+		      T_j & \geq 0         &  & \forall j \in\{1, \ldots, n\} \\
+		      T_j & \geq T_j \pi_j &  & \forall j \in\{1, \ldots, n\}
 	      \end{align}
 	\item
 	      Un job ne peut pas être livré avant son départ en livraison.
