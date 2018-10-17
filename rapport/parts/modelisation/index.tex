@@ -178,6 +178,8 @@ $$IC=IC^{WIP}+IC^{FIN}+PC+VC+RC$$
 	      Si un job est livré avant un autre, il arrive plus tôt chez le client.
 	      \begin{align}
 		      D_{j2}\geq D_{j1} + t_{j1,j2} - M \left(1-x_{j1,j2,k} \right)
+			& &
+			\forall (j1, j2) \in \{ 1, \ldots, n \}^2
 	      \end{align}
 	\item
 	      Les retards de livraisons ne peuvent pas être négatifs,
@@ -188,7 +190,8 @@ $$IC=IC^{WIP}+IC^{FIN}+PC+VC+RC$$
 	      \end{align}
 	\item
 	      Un job ne peut pas être livré avant son départ en livraison.
+		% Le trajet directe d'un lieux a vers un lieux b est forcément plus court que le trajet a vers b en passant par c.
 	      \begin{align}
-		      D_j \geq f_j &  & \forall j \in\{1, \ldots, n\}
+		      D_j \geq f_j + D_{0, j} &  & \forall j \in\{1, \ldots, n\}
 	      \end{align}
 \end{itemize}
