@@ -11,7 +11,9 @@ jobs:
           name: build_rapport
           command: |
             cd ./rapport
-            latexmk -halt-on-error ./rapport.tex
+            latexmk -halt-on-error -pdf -synctex=1 ./rapport.tex
             cd ..
       - store_artifacts:
           path: ./rapport/rapport.pdf
+      - store_artifacts:
+          path: ./rapport/rapport.log
