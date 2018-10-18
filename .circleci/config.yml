@@ -9,6 +9,9 @@ jobs:
           at: /tmp/workspace
       - run:
           name: build_rapport
-          command: /bin/sh -c "latexmk -halt-on-error ./rapport/rapport.tex"
+          command: |
+            cd ./rapport
+            latexmk -halt-on-error ./rapport.tex
+            cd ..
       - store_artifacts:
           path: ./rapport/rapport.pdf
