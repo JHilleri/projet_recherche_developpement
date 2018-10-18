@@ -1,0 +1,14 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: dxjoke/tectonic-docker
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: build_rapport
+          command: /bin/sh -c "tectonic ./rapport/rapport.tex"
+      - store_artifacts:
+          path: ./rapport/rapport.pdf
