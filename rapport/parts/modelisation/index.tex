@@ -133,16 +133,20 @@ $$IC=IC^{WIP}+IC^{FIN}+PC+VC+RC$$
 		      \forall j\in\left\{1,\cdots,n\right\},\forall i\in\left\{2,\dotsc,m\right\}
 	      \end{align}
 	\item
-	      Chaque job ne peut appartenir qu’à un seul lot.
+	      Chaque job appartient à exactement un lot.
 	      \begin{align}
 		      \sum_{k=1}^{n}Z_{j,k}=1 &  &
 		      \forall j \in\left\{1,\dotsc,n \right\}
-	      \end{align}
+		\end{align}
+	\item 
+		Un job est terminé quand toutes ces taches sont terminés.
+		\begin{align}
+			f_j \geq C_{m, j} & & \forall j \in \left\{0,\dotsc,n\right\}
+		\end{align}
 	\item
 	      Un lot ne peut être livré que si tous ces jobs sont terminés.
 	      \begin{align}
-		      F_k \geq C_{i,j} - M\left(1-Z_{j,k}\right) &  & \forall i \in & \left\{1,\dotsc, m \right\}, \notag \\
-		                                                 &  & \forall j \in & \left\{1,\dotsc, n \right\}, \notag \\
+		      F_k \geq f_{j} - M\left(1-Z_{j,k}\right) &  & \forall j \in & \left\{1,\dotsc, n \right\}, \notag \\
 		                                                 &  & \forall k \in & \left\{1,\dotsc, n \right\}
 	      \end{align}
 	\item
@@ -153,15 +157,6 @@ $$IC=IC^{WIP}+IC^{FIN}+PC+VC+RC$$
 		      n z_k\geq\sum_{j=1}^{n}Z_{j,k} &  &
 		      \forall k \in\left\{1,\dotsc,n \right\}
 	      \end{align}
-	\item
-	      Un job est envoyé en livraison en même temps que le reste du lot auquel il appartient.
-	      \begin{align}
-		      f_j \geq F_k + M \left(1 - Z_{j,k} \right) &  & \forall j \in & \left\{ 1,\dotsc,n \right\},\notag \\
-		                                                 &  & \forall k \in & \left\{ 1,\dotsc,n\right\}
-	      \end{align}
-	      % correcte mais inutile, f_j sera minimisé par le solveur, 
-	      % on aura f_j = F_k pour les jobs j du lot k
-	      % $$F_k \geq f_j+M\left(1-Z_{j,k}\right)$$
 
 	      % contraintes du problème de routing
 	\item
@@ -180,6 +175,8 @@ $$IC=IC^{WIP}+IC^{FIN}+PC+VC+RC$$
 	      Si un job est livré avant un autre, il arrive plus tôt chez le client.
 	      \begin{align}
 		      D_{j2}\geq D_{j1} + t_{j1,j2} - M \left(1-x_{j1,j2,k} \right)
+			& &
+			\forall (j1, j2) \in \{ 1, \ldots, n \}^2
 	      \end{align}
 	\item
 	      Les retards de livraisons ne peuvent pas être négatifs,
@@ -190,7 +187,8 @@ $$IC=IC^{WIP}+IC^{FIN}+PC+VC+RC$$
 	      \end{align}
 	\item
 	      Un job ne peut pas être livré avant son départ en livraison.
+		% Le trajet directe d'un lieux a vers un lieux b est forcément plus court que le trajet a vers b en passant par c.
 	      \begin{align}
-		      D_j \geq f_j &  & \forall j \in\{1, \ldots, n\}
+		      D_j \geq f_j + t_{0, j} &  & \forall j \in\{1, \ldots, n\}
 	      \end{align}
 \end{itemize}
