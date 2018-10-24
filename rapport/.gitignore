@@ -1,4 +1,5 @@
 *.*
+*
 !*.tex
 !polytech/**
 !.gitignore
