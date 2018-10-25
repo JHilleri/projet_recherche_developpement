@@ -17,3 +17,6 @@ jobs:
           path: ./rapport/rapport.pdf
       - store_artifacts:
           path: ./rapport/rapport.log
+      - deploy:
+          command: |
+            scp ./rapport/rapport.pdf "$SSH_USER@$SSH_HOST:$DEPLOYMENT_PATH/${CIRCLE_BRANCH}.pdf"
