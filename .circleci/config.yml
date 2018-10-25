@@ -17,6 +17,27 @@ jobs:
           path: ./rapport/rapport.pdf
       - store_artifacts:
           path: ./rapport/rapport.log
+      - persist_to_workspace:
+          root: .
+          paths:
+            - rapport/rapport.pdf
+  deploy:
+    machine:
+      enabled: true
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - add_ssh_keys:
+          fingerprints:
+            - "32:c7:93:71:c2:82:2d:ed:55:5a:39:52:16:2f:61:29"
+      - run:
+          name: Deploy if tests pass and branch is Master
+          command: scp -o "StrictHostKeyChecking no" /tmp/workspace/rapport/rapport.pdf "$SSH_USER@$SSH_HOST:$DEPLOYMENT_PATH/${CIRCLE_BRANCH}.pdf"
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
       - deploy:
-          command: |
-            scp ./rapport/rapport.pdf "$SSH_USER@$SSH_HOST:$DEPLOYMENT_PATH/${CIRCLE_BRANCH}.pdf"
+          requires:
+            - build
