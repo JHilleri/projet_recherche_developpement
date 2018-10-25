@@ -18,9 +18,9 @@ jobs:
       - store_artifacts:
           path: ./rapport/rapport.log
       - persist_to_workspace:
-          root: /tmp/workspace
+          root: .
           paths:
-            - ./rapport/rapport.pdf
+            - rapport/rapport.pdf
   deploy:
     machine:
       enabled: true
