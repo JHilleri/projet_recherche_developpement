@@ -32,7 +32,9 @@ jobs:
             - "32:c7:93:71:c2:82:2d:ed:55:5a:39:52:16:2f:61:29"
       - run:
           name: Deploy if tests pass and branch is Master
-          command: scp -o "StrictHostKeyChecking no" /tmp/workspace/rapport/rapport.pdf "$SSH_USER@$SSH_HOST:$DEPLOYMENT_PATH/${CIRCLE_BRANCH}.pdf"
+          command: |
+            ssh -o "StrictHostKeyChecking no" "$SSH_USER@$SSH_HOST" "mkdir $DEPLOYMENT_PATH/${CIRCLE_BRANCH}"
+            scp -o "StrictHostKeyChecking no" /tmp/workspace/rapport/rapport.pdf "$SSH_USER@$SSH_HOST:$DEPLOYMENT_PATH/${CIRCLE_BRANCH}/rapport.pdf"
 workflows:
   version: 2
   build-deploy:
