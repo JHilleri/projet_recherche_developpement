@@ -22,8 +22,8 @@ jobs:
           paths:
             - rapport/rapport.pdf
   deploy:
-    machine:
-      enabled: true
+    docker:
+      - image: circleci/buildpack-deps
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -33,8 +33,8 @@ jobs:
       - run:
           name: Deploy if tests pass and branch is Master
           command: |
-            ssh -o "StrictHostKeyChecking no" "$SSH_USER@$SSH_HOST" "mkdir $DEPLOYMENT_PATH/${CIRCLE_BRANCH}"
-            scp -o "StrictHostKeyChecking no" /tmp/workspace/rapport/rapport.pdf "$SSH_USER@$SSH_HOST:$DEPLOYMENT_PATH/${CIRCLE_BRANCH}/rapport.pdf"
+            ssh -o "StrictHostKeyChecking no" "$SSH_USER@$SSH_HOST" "pwsh $DEPLOYMENT_PATH/../make_branch_dir.ps1 $DEPLOYMENT_PATH/${CIRCLE_BRANCH}"
+            scp /tmp/workspace/rapport/rapport.pdf "$SSH_USER@$SSH_HOST:$DEPLOYMENT_PATH/${CIRCLE_BRANCH}/rapport.pdf"
 workflows:
   version: 2
   build-deploy:
