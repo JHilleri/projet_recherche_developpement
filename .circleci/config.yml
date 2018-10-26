@@ -22,8 +22,8 @@ jobs:
           paths:
             - rapport/rapport.pdf
   deploy:
-    machine:
-      enabled: true
+    docker:
+      - image: circleci/buildpack-deps
     steps:
       - attach_workspace:
           at: /tmp/workspace
