@@ -46,8 +46,7 @@ Ce projet est un sujet de recherche, mon encadrant est le seul client.
 Mon encadrant a déjà résolue le sous-problème où l'ordre des jobs et la constitution des lots sont fixées.
 L'objectif de ce projet est d'ajouter la possibilité de changer l'ordre des jobs.
 
-Il faut donc résoudre simultanément le problème de routing et celui des décalages des dates de début des jobs 
-    pour des problèmes où les ordres des jobs et les lots sont fixes.
+Il faut donc résoudre simultanément les problèmes de routing et d'atelier pour des problèmes où les lots sont fixes à l'avance.
 
 Dans un premier temps je vais utiliser un solveur.
 Ensuite, je vais réaliser un programme en C++ pour résoudre le problème avec des heuristiques.
@@ -60,10 +59,13 @@ Les durées des tâches sont connues a l'avance.
 Les durées et les coûts des trajets entre les lieux de livraisons sont connues à l'avance 
     et fixes (le trajet ne coûte pas plus si le véhicule est remplie que s'il est vide).
 
+Dans un premier temps, je vais utiliser un solveur pour résoudre le problème, 
+    s'il ne permet pas de le résoudre suffisamment rapidement, 
+    je vais faire un programme en C++ qui intégrera des heuristiques.
 
 \section{Bases méthodologiques}
 \subsection{outils de gestion de version}
-L'ensemble du projet est stocké sur Github (\url{https://github.com/JHilleri/projet_recherche_developpement}).
+L'ensemble du projet est hébergé sur Github (\url{https://github.com/JHilleri/projet_recherche_developpement}).
 
 \subsection{gestion de projet}
 La gestion de projet suit une méthode agile et s'appuie sur les outils de gestion de projet fourni par Github.
