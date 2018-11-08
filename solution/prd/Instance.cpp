@@ -1,7 +1,7 @@
-#include "stdafx.h"
-#include "Instance.h"
 #include <iostream>
 #include <fstream>
+
+#include "Instance.h"
 
 using namespace std;
 

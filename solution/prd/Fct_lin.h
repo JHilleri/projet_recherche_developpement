@@ -1,13 +1,14 @@
 #pragma once
 
 #include <iostream>
-#include "Instance.h"
 #include <vector>
 #include <list>
 #include <map>
 #include <set>
 #include <algorithm>
 #include <chrono>
+
+#include "Instance.h"
 
 class Tournee
 {

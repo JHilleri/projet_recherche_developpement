@@ -1,6 +1,7 @@
 #pragma once
 
 #include<string>
+
 #include "Job.h"
 #include "Distancier.h"
 

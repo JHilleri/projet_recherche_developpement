@@ -1,17 +1,19 @@
 #pragma once
-#include<iostream>
+#include <iostream>
 #include <fstream>
 #include <algorithm>
-#include<tuple>
+#include <tuple>
 #include <random>
 #include <chrono>
-#include "Instance.h"
-#include "Fct_lin.h"
 #include <list>
-#include "Branch_and_bound.h"
-using namespace std;
 
 #include <ilcplex/ilocplex.h>
+
+#include "Fct_lin.h"
+#include "Instance.h"
+#include "Branch_and_bound.h"
+
+using namespace std;
 
 struct Struct_Retour
 {

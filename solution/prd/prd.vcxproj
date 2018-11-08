@@ -140,7 +140,7 @@
   <ItemGroup>
     <ClCompile Include="Branch_and_bound.cpp" />
     <ClCompile Include="Distancier.cpp" />
-    <ClCompile Include="Ftc_lin.cpp" />
+    <ClCompile Include="Fct_lin.cpp" />
     <ClCompile Include="Generateur.cpp" />
     <ClCompile Include="Instance.cpp" />
     <ClCompile Include="Job.cpp" />
@@ -150,7 +150,7 @@
   <ItemGroup>
     <ClInclude Include="Branch_and_bound.h" />
     <ClInclude Include="Distancier.h" />
-    <ClInclude Include="Ftc_lin.h" />
+    <ClInclude Include="Fct_lin.h" />
     <ClInclude Include="Generateur.h" />
     <ClInclude Include="Instance.h" />
     <ClInclude Include="Job.h" />

@@ -1,15 +1,9 @@
-// Sonja-Rohmer-heuristique.cpp : définit le point d'entrée pour l'application console.
-
-//#define _CRTDBG_MAP_ALLOC 
-//#include <stdlib.h> 
-//#include <crtdbg.h> 
 #include <cstdlib>
+#include <ctime>
 
-#include "stdafx.h"
 #include <iostream>
 #include <fstream>
 #include <chrono>
-#include <ctime>
 
 #include "Instance.h"
 #include "Generateur.h"

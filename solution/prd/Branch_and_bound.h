@@ -2,14 +2,15 @@
 
 
 #include <iostream>
-#include "Instance.h"
-#include "Fct_lin.h"
 #include <vector>
 #include <list>
 #include <map>
 #include <set>
 #include <algorithm>
 #include <chrono>
+
+#include "Instance.h"
+#include "Fct_lin.h"
 
 
 //

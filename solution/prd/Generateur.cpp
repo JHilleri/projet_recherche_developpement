@@ -1,12 +1,11 @@
-#include "stdafx.h"
-#include "Generateur.h"
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <algorithm>
 
-using namespace std;
+#include "Generateur.h"
 
+using namespace std;
 
 
 Generateur::Generateur()

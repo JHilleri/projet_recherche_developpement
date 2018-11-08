@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Solveur_min_IC.h"
 
 

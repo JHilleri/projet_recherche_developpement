@@ -1,8 +1,5 @@
-#include "stdafx.h"
-
 #include "Fct_lin.h"
 #include "Branch_and_bound.h" 
-
 
 
 int Fct_lin::compteur = 0;
