@@ -743,14 +743,14 @@ Fct_lin Fct_lin::minimum_fct(const Fct_lin& f1, const Fct_lin& f2) {
 	//****
 	//Suppression des tournees des fonction utilisé (save de memoire);
 	//****
-	for each(auto var in f1.tab_link) { var.tournee.suppr(); }
-	for each(auto var in f2.tab_link) { var.tournee.suppr(); }
+	for(auto var : f1.tab_link) { var.tournee.suppr(); }
+	for(auto var : f2.tab_link) { var.tournee.suppr(); }
 
 	return function;
 }
 
 void Fct_lin::print_fct_lin()const {
-	for each (auto var in tab_link)
+	for(auto var : tab_link)
 	{
 		cout << var.t << "\t" << var.c << "\t" << var.alpha << "\t";
 

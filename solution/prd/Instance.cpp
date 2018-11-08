@@ -64,7 +64,7 @@ Instance::Instance(string file_name, bool mise_en_batch)
 Instance::~Instance()
 {
 
-	for each (Job* var in list_Job)
+	for (Job* var : list_Job)
 	{
 		delete var;
 	}
@@ -83,7 +83,7 @@ void Instance::reecrire_Instance(bool mise_en_batch)
 		fichier << nJob << " " << mMachine << endl << cV << endl;
 
 		if (mise_en_batch) {
-			for each (auto& var in tab_batch)
+			for  (auto& var : tab_batch)
 			{
 				fichier << var.size() << " ";
 			}fichier << endl;

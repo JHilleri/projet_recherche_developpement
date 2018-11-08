@@ -63,7 +63,7 @@ void Solveur_min_IC::ajust_due_date_with_windows_a_b(Instance * inst, vector<vec
 
 	int num_CC = -1;
 	int num_b = 0;
-	for each (auto bat in tab_Batch)
+	for (auto bat : tab_Batch)
 	{
 		num_CC += bat.size();
 		tab_a_b[num_b].first = cplex.getValue(C_ij[num_CC][nM - 1]);
@@ -85,7 +85,7 @@ void Solveur_min_IC::ajust_due_date_with_windows_a_b(Instance * inst, vector<vec
 	//récup des dates max
 	num_CC = -1;
 	num_b = 0;
-	for each (auto& bat in tab_Batch)
+	for (auto& bat : tab_Batch)
 	{
 		num_CC += bat.size();
 		tab_a_b[num_b].second = cplex.getValue(C_ij[num_CC][nM - 1]);
@@ -109,7 +109,7 @@ void Solveur_min_IC::ajust_due_date_with_windows_a_b(Instance * inst, vector<vec
 	int max_time_tournee;
 
 	num_b = 0; int a, b;
-	for each (vector<int> bat in tab_Batch)
+	for (vector<int> bat : tab_Batch)
 	{
 		max_time_tournee = inst->distancier.max_edge_on_sub_matrix(bat) * bat.size();
 
@@ -121,7 +121,7 @@ void Solveur_min_IC::ajust_due_date_with_windows_a_b(Instance * inst, vector<vec
 			a + (b - a + max_time_tournee) / 2);
 
 		//cout << "B " << num_b << ": \t";
-		for each (int index_j in bat)
+		for (int index_j : bat)
 		{
 			int n_dd = (int)distri_due_date(gen);
 			inst->list_Job[index_j]->due_d = n_dd;
@@ -205,7 +205,7 @@ void Solveur_min_IC::ajust_due_date_with_approx(Instance * inst, vector<vector<i
 	double windows_size = average_time_tournee;
 	//cout << "average_pij : " << average_pij << "\t" << "average_time_tournee : " << average_time_tournee << endl;
 
-	for each (vector<int> bat in tab_Batch)
+	for (vector<int> bat : tab_Batch)
 	{
 		min_w += tab_Batch[num_b].size() * average_pij;
 
@@ -217,7 +217,7 @@ void Solveur_min_IC::ajust_due_date_with_approx(Instance * inst, vector<vector<i
 		distri_due_date = uniform_int_distribution<int>(min_w, max_w);
 
 		//cout << "B " << num_b << ": \t";
-		for each (int index_j in bat)
+		for (int index_j : bat)
 		{
 			int n_dd = (int)distri_due_date(gen);
 			inst->list_Job[index_j]->due_d = n_dd;
@@ -288,7 +288,7 @@ Struct_Retour Solveur_min_IC::solve(Instance* inst, vector<vector<int>> tab_Batc
 
 	int num_CC = -1;
 	int num_b = 0;
-	for each (auto bat in tab_Batch)
+	for (auto bat : tab_Batch)
 	{
 		num_CC += bat.size();
 		tab_a_b[num_b].first = cplex.getValue(C_ij[num_CC][nM - 1]);
@@ -310,7 +310,7 @@ Struct_Retour Solveur_min_IC::solve(Instance* inst, vector<vector<int>> tab_Batc
 																							 //récup des dates max
 	num_CC = -1;
 	num_b = 0;
-	for each (auto bat in tab_Batch)
+	for (auto bat : tab_Batch)
 	{
 		num_CC += bat.size();
 		tab_a_b[num_b].second = cplex.getValue(C_ij[num_CC][nM - 1]);
@@ -324,7 +324,7 @@ Struct_Retour Solveur_min_IC::solve(Instance* inst, vector<vector<int>> tab_Batc
 
 	num_b = 0;
 	cout << "Pour chaque batch, intervalle des dates de depart interressante:" << endl;
-	for each (auto var in tab_a_b)
+	for (auto var : tab_a_b)
 	{
 		cout << "Batch " << num_b + 1 << ": [\t" << var.first << ",\t" << var.second << "\t]";
 
@@ -465,7 +465,7 @@ Struct_Retour Solveur_min_IC::solve(Instance* inst, vector<vector<int>> tab_Batc
 	cout << "Affichage des fonctions lineaires pour chaque batch." << endl << "La methode utilisee est celle passee en parametre.";
 	cout << "Legende: " << endl;
 	cout << "1) Date de depart du segment\n \t2) Cout initial\n\t\t3) Coeff directeur\n\t\t\t4) Tournee associee" << endl;
-	for each (auto fct in list_fct_lin)
+	for (auto fct : list_fct_lin)
 	{
 		cout << "--- Batch " << num_b << ":  Size batch :  " << tab_Batch[i].size() << endl; i++;
 		fct.print_fct_lin();
@@ -489,7 +489,7 @@ Struct_Retour Solveur_min_IC::solve(Instance* inst, vector<vector<int>> tab_Batc
 
 	num_CC = -1;
 	num_b = 0;
-	for each (auto fct in list_fct_lin)
+	for (auto fct : list_fct_lin)
 	{
 		num_CC += tab_Batch[num_b].size();
 		add_fct_lin_ctr(fct, num_b, C_ij[num_CC][nM - 1]); //<== ajout ici
@@ -548,7 +548,7 @@ Struct_Retour Solveur_min_IC::solve(Instance* inst, vector<vector<int>> tab_Batc
 
 	cout << endl << "Solution optimal trouvee :" << endl << "Date de depart et tournee par batch:" << endl;
 
-	for each(auto fct in list_fct_lin)
+	for(auto fct : list_fct_lin)
 	{
 		num_CC += tab_Batch[num_b].size();
 
@@ -578,9 +578,9 @@ Struct_Retour Solveur_min_IC::solve(Instance* inst, vector<vector<int>> tab_Batc
 		num_b++;
 	}cout << endl;//*/
 				  //Suppr fct
-	for each (auto fct in list_fct_lin)
+	for (auto fct : list_fct_lin)
 	{
-		for each (auto link in fct.tab_link)
+		for (auto link : fct.tab_link)
 		{
 			link.tournee.suppr();
 		}
@@ -614,7 +614,7 @@ void Solveur_min_IC::init_model_and_data(Instance* inst, vector<vector<int>>* ta
 	if (tab_Batch != nullptr) {
 		this->tab_Batch = tab_Batch;
 		nJ = 0;
-		for each (auto var in *tab_Batch) {
+		for (auto var : *tab_Batch) {
 			nJ += var.size();
 		}
 	}
@@ -630,14 +630,14 @@ void Solveur_min_IC::init_model_and_data(Instance* inst, vector<vector<int>>* ta
 void Solveur_min_IC::init_list_ind(Instance * inst, vector<vector<int>> tab_Batch)
 {
 	int size = 0;
-	for each (auto var in tab_Batch)
+	for (auto var : tab_Batch)
 	{
 		size += var.size();
 	}
 
 	list_ind = vector<int>(size);
 	int ind = 0;
-	for each (auto var in tab_Batch)
+	for (auto var : tab_Batch)
 	{
 		for (int x = 0; x < var.size(); x++)
 		{
@@ -725,7 +725,7 @@ void Solveur_min_IC::init_IC_FIN()
 	Job* last_job;
 
 	int nb_job_avant = 0;
-	for each (auto var in *tab_Batch)
+	for (auto var : *tab_Batch)
 	{
 		i_last_job = var.back();
 		last_job = inst->list_Job[i_last_job];
@@ -786,7 +786,7 @@ void Solveur_min_IC::init_sum_CC()
 	sum_CC = IloExpr(env);
 
 	int num_CC = -1;
-	for each (auto var in *tab_Batch)
+	for (auto var : *tab_Batch)
 	{
 		num_CC += var.size();
 		sum_CC += C_ij[num_CC][nM - 1];
@@ -867,7 +867,7 @@ void Solveur_min_IC::add_flot_routing_ctr()
 	//cas batch connu
 	int start_batch = 1;
 	int size_batch;
-	for each (auto bat in *tab_Batch)
+	for (auto bat : *tab_Batch)
 	{
 
 		size_batch = bat.size();
@@ -906,7 +906,7 @@ void Solveur_min_IC::add_delivery_date_ctr()
 	int i_CC = -1;
 	int num_b = 0;
 	IloIntVar* CC;
-	for each (auto bat in *tab_Batch)
+	for (auto bat : *tab_Batch)
 	{
 		size_batch = bat.size();
 
@@ -952,7 +952,7 @@ void Solveur_min_IC::add_departure_date_ctr()
 	int i_CC = -1;
 	int num_b = 0;
 	IloIntVar* CC;
-	for each (auto bat in *tab_Batch)
+	for (auto bat : *tab_Batch)
 	{
 		size_batch = bat.size();
 
@@ -979,7 +979,7 @@ void Solveur_min_IC::modify_departure_date(const vector<int>& date_depart, int d
 	int i_CC = -1;
 	int num_b = 0;
 
-	for each (auto bat in *tab_Batch)
+	for (auto bat : *tab_Batch)
 	{
 		size_batch = bat.size();
 

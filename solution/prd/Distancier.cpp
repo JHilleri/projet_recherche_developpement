@@ -113,10 +113,10 @@ ostream& operator<<(ostream& os, Distancier dist);
 ostream& operator<<(ostream& os, Distancier dist)
 {
 	//for each (vector<int>* var in dist.tab)
-	for each (vector<int> var in dist.tab)
+	for (vector<int> var : dist.tab)
 	{
 		//for each (int nb in *var)
-		for each (int nb in var)
+		for (int nb : var)
 		{
 			os << nb << " ";
 		}

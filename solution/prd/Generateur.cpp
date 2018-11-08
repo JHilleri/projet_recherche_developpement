@@ -47,7 +47,7 @@ void Generateur::generate_instance(ofstream* fichier, int taille_max_batch)
 	sort(vect_due_date.begin(), vect_due_date.end());
 
 	int i = 0;
-	for each (int var in vect_due_date)
+	for (int var : vect_due_date)
 	{
 		generate_job(fichier, i, nb_M, var);
 		i++;

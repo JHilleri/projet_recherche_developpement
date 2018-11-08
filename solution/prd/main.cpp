@@ -44,10 +44,10 @@ int main(int argc, char **argv)
 	vector<vector<int>> batch_predefini = Fct_lin::build_regular_batch_repartition(100, 10);
 
 	cout << "Ordonnancement et mise en batch proposée" << endl;
-	for each (auto var in batch_predefini)
+	for (auto var : batch_predefini)
 	{
 		cout << "{";
-		for each (auto i in var)
+		for (auto i : var)
 		{
 			cout << i << ", ";
 		}cout << "}; ";
