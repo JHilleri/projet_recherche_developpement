@@ -360,11 +360,11 @@ Struct_Retour Solveur_min_IC::solve(Instance* inst, vector<vector<int>> tab_Batc
 
 		//!!!!!!!
 		//*******
-		Fct_lin& best = Fct_lin::create_fct_max(0, 0);
-		Fct_lin& f_EDD = Fct_lin::create_fct_max(0, 0);
-		Fct_lin& f_near = Fct_lin::create_fct_max(0, 0);
-		Tournee & t_EDD = Tournee::create_tournee_vide(0);
-		Tournee & t_near = Tournee::create_tournee_vide(0);
+		Fct_lin best = Fct_lin::create_fct_max(0, 0);
+		Fct_lin f_EDD = Fct_lin::create_fct_max(0, 0);
+		Fct_lin f_near = Fct_lin::create_fct_max(0, 0);
+		Tournee t_EDD = Tournee::create_tournee_vide(0);
+		Tournee t_near = Tournee::create_tournee_vide(0);
 
 		Solveur_min_IC solve_CPLEX;
 		Branch_and_bound b_and_b;
@@ -553,7 +553,7 @@ Struct_Retour Solveur_min_IC::solve(Instance* inst, vector<vector<int>> tab_Batc
 		num_CC += tab_Batch[num_b].size();
 
 		int date_depart = cplex.getValue(C_ij[num_CC][nM - 1]);
-		Tournee& t = fct.found_tournee(date_depart);
+		Tournee t = fct.found_tournee(date_depart);
 
 
 
