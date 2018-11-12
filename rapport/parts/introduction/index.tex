@@ -1,10 +1,85 @@
 \chapter{Introduction}
 
 \section{Acteurs, enjeux et contexte}
-Ce projet est encadré par Hugo Chevroton, il joue le rôle du client.
-Dans ce projet, on considère un problème d'atelier combiné a un problème de routing.
+Ce projet reprend le travail de mon encadrant, Hugo Chevroton, 
+    qui travaille sur l'intégration de problèmes de routing dans des problèmes d'ateliers.
+    L'objectif de cette approche est de fournir de meilleures solutions.
+Dans ce projet, je travaille sur une sous-partie de ce problème.
+
+\subsection{Présentation du sujet général}
+Dans une entreprise qui réalise des commandes et les fait livrer chez ces clients,
+    il faut déterminer dans quel ordre réaliser les commandes et planifier les itinéraires des livreurs.
+Ces deux problèmes sont généralement résolus séparément.
+Le travail de mon encadrant porte sur l'intégration de ces problèmes en un seul,
+     de façon a trouver de meilleures solutions.
+
+Les commandes sont réalisées dans un atelier, 
+    elles passent toutes successivement par les mêmes étapes de production, dans le même ordre.
+Dans le cadre de ce projet, on nomme les commandes jobs et les étapes de productions des machines.
+Le travail que doit réaliser une machine sur un job est appelé une tâche.
+
+On considère qu'une machine ne peut travailler que sur un job à la fois 
+    et qu'un job ne peut être que sur une machine a la fois.
+La durée des tâches peut varier selon les machines et selon les jobs.
+
+Lorsqu'un job est en attente entre deux machines, il engendre des coûts d'inventaires.
+On distingues les couts d'inventaire des jobs pendant la production 
+    et les couts d'inventaire des jobs terminé en attente de livraison.
+
+Les jobs sont répartis en lots, une fois que tous les jobs d'un lot sont terminés, ils partent en livraison.
+Chaque lot est livré par un même véhicule en une tournée.
+
+Pour résoudre ce problèmes, il y a quatre degrés de liberté que l'on peut utiliser :
+\begin{itemize}
+    \item Ordre de réalisation des jobs.
+    \item Mise en attente de la production pour réduire les couts d'inventaires.
+    \item Constitution des lots.
+    \item Ordre de distributions des jobs pour chaque lot.
+\end{itemize}
+
+La modélisation du problème général est présentée dans la partie \autoref{appendix:modelisation_global}.
+
+\subsection{Acteurs}
+Ce projet est un sujet de recherche, mon encadrant est le seul client.
 
 \section{Objectifs}
-L'objectif de ce projet est de chercher à résoudre ces deux problèmes simultanément.
+Mon encadrant a déjà résolue le sous-problème où l'ordre des jobs et la constitution des lots sont fixées.
+L'objectif de ce projet est d'ajouter la possibilité de changer l'ordre des jobs.
+
+Il faut donc résoudre simultanément les problèmes de routing et d'atelier pour des problèmes où les lots sont fixes à l'avance.
+
+Dans un premier temps je vais utiliser un solveur.
+Ensuite, je vais réaliser un programme en C++ pour résoudre le problème avec des heuristiques.
+
 \section{Hypothèses}
+Dans ce projet, on considère que l'atelier de production est constitué de plusieurs machines 
+    et que tous les jobs doivent passer successivement sur chaque machine dans le même ordre.
+
+Les durées des tâches sont connues a l'avance.
+Les durées et les coûts des trajets entre les lieux de livraisons sont connues à l'avance 
+    et fixes (le trajet ne coûte pas plus si le véhicule est remplie que s'il est vide).
+
+Dans un premier temps, je vais utiliser un solveur pour résoudre le problème, 
+    s'il ne permet pas de le résoudre suffisamment rapidement, 
+    je vais faire un programme en C++ qui intégrera des heuristiques.
+
 \section{Bases méthodologiques}
+\subsection{outils de gestion de version}
+L'ensemble du projet est hébergé sur Github (\url{https://github.com/JHilleri/projet_recherche_developpement}).
+
+\subsection{gestion de projet}
+La gestion de projet suit une méthode agile et s'appuie sur les outils de gestion de projet fourni par Github.
+
+Chaque semaine, les tâches à réaliser sont définies avec mon encadrant.
+Ces tâches sont ajoutées sur github dans l'onglet Issues et leurs avancements est suivit sur un tableau kanban.
+
+Lorsque je termine une tache, j'ouvre un "pull request" pour que mon encadrant valide mon travail.
+Une fois mon travail validé, j'intègre mes modifications à la branche principale du projet.
+
+\subsection{déploiement continu}
+Sur Github, seul les code sources du programme de résolution du problème et le rapport est disponible.
+Les livrables sont disponibles à l'adresse \url{http://prd.jhilleri.ovh}.
+Sur ce site, on trouve les livrables pour les différentes branches du projet.
+J'utilise l'outils CircleCI (\url{https://circleci.com}) pour l'intégration continu 
+    et le déploiement automatique des livrables.
+Le rapport est généré avec l'image docker aergus/latex qui fournit une installation complète de texlive.
