@@ -22,6 +22,7 @@ int main(int argc, char **argv)
 		std::cerr << "invalid parameters, usage \"prd.exe [path to the instance]\"" << std::endl;
 		return 0;
 	}
+
 	std::filesystem::path instance_path = std::filesystem::absolute({ argv[1] });
 	if (!std::filesystem::is_regular_file(instance_path))
 	{
@@ -42,12 +43,11 @@ int main(int argc, char **argv)
 	//ce n'est pas forcément le cas
 	batch_list batch_predefini = Fct_lin::build_regular_batch_repartition(100, 10);
 
-	std::cout << "Ordonnancement et mise en batch proposée" << std::endl;
-	std::cout << batch_predefini << std::endl;
+	std::cout << "Ordonnancement et mise en batch proposée :" << std::endl << batch_predefini << std::endl;
 
 	//tu peux changer la méthode en paramètre
-	Solveur_min_IC solveur;
-	solveur.solve(&instance, batch_predefini, algorithme_de_resolution::B_and_B, Solveur_min_IC::init_as_optima);
+	Solveur_min_IC solveur{ instance, batch_predefini };
+	solveur.solve(algorithme_de_resolution::B_and_B, Solveur_min_IC::init_as_optima);
 
 	cout << endl << "FINI";
 	return 0;

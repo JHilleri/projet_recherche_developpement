@@ -55,7 +55,7 @@ Tournee Tournee::create_tournee_random(const vector<int>& vect)
 	return swarzy;
 }
 
-Tournee Tournee::create_tournee_EDD(Instance * inst, const vector<int>& vect)
+Tournee Tournee::create_tournee_EDD(const Instance& inst, const vector<int>& vect)
 {
 	Tournee ret;
 	ret.nb = vect.size();
@@ -72,8 +72,8 @@ Tournee Tournee::create_tournee_EDD(Instance * inst, const vector<int>& vect)
 		j = i;
 
 		index = ret.tab_c[j];
-		due_date = inst->list_Job[index].due_d;
-		while (j != 0 && due_date < inst->list_Job[ret.tab_c[j - 1]].due_d) {
+		due_date = inst.list_Job[index].due_d;
+		while (j != 0 && due_date < inst.list_Job[ret.tab_c[j - 1]].due_d) {
 			ret.tab_c[j] = ret.tab_c[j - 1];
 			j--;
 		}
@@ -83,7 +83,7 @@ Tournee Tournee::create_tournee_EDD(Instance * inst, const vector<int>& vect)
 	return ret;
 }
 
-Tournee Tournee::create_tournee_nearest_insertion(Instance * inst, const vector<int>& vect)
+Tournee Tournee::create_tournee_nearest_insertion(const Instance& inst, const vector<int>& vect)
 {
 	Tournee ret;
 	ret.nb = vect.size();
@@ -97,7 +97,7 @@ Tournee Tournee::create_tournee_nearest_insertion(Instance * inst, const vector<
 		ind_dist[i].second = numeric_limits<int>::max();
 	}
 
-	Distancier& dist = inst->distancier;
+	const Distancier& dist = inst.distancier;
 	int last_index = dist.index_manu();
 
 	int k;
@@ -203,7 +203,7 @@ void Tournee::print()const
 	}
 }
 
-int Tournee::eval_routing_cost(Instance * inst) const
+int Tournee::eval_routing_cost(const Instance& inst) const
 {
 	int routing_cost = 0;
 
@@ -211,7 +211,7 @@ int Tournee::eval_routing_cost(Instance * inst) const
 	//!!!!!!!
 	//Créer un distancier de coût
 	//!!!!!!!
-	Distancier& dist = inst->distancier; 
+	const Distancier& dist = inst.distancier; 
 
 	int old_index = dist.index_manu();
 	int index;
@@ -226,7 +226,7 @@ int Tournee::eval_routing_cost(Instance * inst) const
 }
 
 //create a function lin for specific travel on specific intervalle
-Fct_lin Fct_lin::create_fct_lin(const Tournee& road, Instance * inst, int m_a, int m_b)
+Fct_lin Fct_lin::create_fct_lin(const Tournee& road, Instance& inst, int m_a, int m_b)
 {
 	Fct_lin fct;
 
@@ -236,7 +236,7 @@ Fct_lin Fct_lin::create_fct_lin(const Tournee& road, Instance * inst, int m_a, i
 	fct.routing_cost = road.eval_routing_cost(inst);
 	std::vector<pair<int, int>> ahead; //{ [alpha_i, avance_i], [alpha_j, avance_j] }
 
-	Distancier& dist = inst->distancier;
+	Distancier& dist = inst.distancier;
 
 	int old_index = dist.index_manu();
 	int index;
@@ -247,7 +247,7 @@ Fct_lin Fct_lin::create_fct_lin(const Tournee& road, Instance * inst, int m_a, i
 		index = road.tab_c[i];
 		arrival_date += dist.dist(old_index, index);
 
-		ahead.push_back(pair < int, int>(inst->list_Job[index].piM, inst->list_Job[index].due_d - arrival_date));
+		ahead.push_back(pair < int, int>(inst.list_Job[index].piM, inst.list_Job[index].due_d - arrival_date));
 
 		old_index = index;
 
@@ -787,9 +787,9 @@ double Fct_lin::ratio_courbe_inf(const Fct_lin & fct_1, const Fct_lin & fct_2)
 	return swarzy;
 }
 
-pair<int, int> Fct_lin::a_b_inf(Instance * inst, const vector<int>& batch)
+pair<int, int> Fct_lin::a_b_inf(Instance& inst, const vector<int>& batch)
 {
-	auto& jobs = inst->list_Job;
+	auto& jobs = inst.list_Job;
 	int min_dd_date = jobs[batch.front()].due_d;
 	int max_dd_date = jobs[batch.front()].due_d;
 
@@ -802,7 +802,7 @@ pair<int, int> Fct_lin::a_b_inf(Instance * inst, const vector<int>& batch)
 		if (due_date > max_dd_date) max_dd_date = due_date;
 	}
 
-	auto& dist = inst->distancier;
+	auto& dist = inst.distancier;
 	int max_dist = 0;
 	int distance;
 	for (int i = 0; i < batch.size(); i++)
@@ -826,7 +826,7 @@ pair<int, int> Fct_lin::a_b_inf(Instance * inst, const vector<int>& batch)
 	return pair<int, int>(min_dd_date - duree_tournee, max_dd_date);
 }
 
-Fct_lin Fct_lin::generate_fct(Instance * inst, const vector<int>& batch, int method, int min_a, int max_b)
+Fct_lin Fct_lin::generate_fct(Instance & inst, const vector<int>& batch, int method, int min_a, int max_b)
 {
 	if (min_a == numeric_limits<int>::min() || max_b == numeric_limits<int>::min()) {
 
@@ -841,7 +841,7 @@ Fct_lin Fct_lin::generate_fct(Instance * inst, const vector<int>& batch, int met
 	Fct_lin f_near = Fct_lin::create_fct_max(0, 0);
 	Tournee  t_EDD = Tournee::create_tournee_vide(0);
 	Tournee  t_near = Tournee::create_tournee_vide(0);
-	Branch_and_bound b_and_b;
+	Branch_and_bound b_and_b{ inst };
 
 	switch (method) // par defaut du prototype EDD_nearx4
 	{
@@ -879,7 +879,7 @@ Fct_lin Fct_lin::generate_fct(Instance * inst, const vector<int>& batch, int met
 		best = Fct_lin::minimum_fct(f_EDD, f_near);
 		break;
 	case B_and_B:
-		best = b_and_b.generate_fct_with_branch_and_bound(inst, batch, min_a, max_b);
+		best = b_and_b.generate_fct_with_branch_and_bound(batch, min_a, max_b);
 
 		break;
 
@@ -890,7 +890,7 @@ Fct_lin Fct_lin::generate_fct(Instance * inst, const vector<int>& batch, int met
 	return best;
 }
 
-Fct_lin Fct_lin::generate_pure_random_fct(Instance * inst, const vector<int>& batch, int min_a, int max_b)
+Fct_lin Fct_lin::generate_pure_random_fct(Instance & inst, const vector<int>& batch, int min_a, int max_b)
 {
 	Tournee t = Tournee::create_tournee(batch);
 
@@ -907,7 +907,7 @@ Fct_lin Fct_lin::generate_pure_random_fct(Instance * inst, const vector<int>& ba
 	return best;
 }
 
-Fct_lin Fct_lin::generate_fct_with_local_search(Instance * inst, Tournee& tournee_init, int min_a, int max_b)
+Fct_lin Fct_lin::generate_fct_with_local_search(Instance & inst, Tournee& tournee_init, int min_a, int max_b)
 {
 	////////
 	//Initialisation tournée courant EDD
@@ -1067,7 +1067,7 @@ Fct_lin Fct_lin::generate_fct_with_local_search(Instance * inst, Tournee& tourne
 	return best;
 }
 
-Fct_lin Fct_lin::generate_fct_with_four_extrema(Instance * inst, Tournee & tournee, int min_a, int max_b)
+Fct_lin Fct_lin::generate_fct_with_four_extrema(Instance & inst, Tournee & tournee, int min_a, int max_b)
 {
 	Fct_lin swarzy = Fct_lin::generate_fct_with_local_search(inst, tournee, min_a, max_b);
 
@@ -1086,7 +1086,7 @@ Fct_lin Fct_lin::generate_fct_with_four_extrema(Instance * inst, Tournee & tourn
 	return swarzy;
 }
 
-Fct_lin Fct_lin::rec_generate_fct_with_total_enumeration(Instance * inst, Fct_lin& best, Tournee& tournee, list<int>& batch, int size)
+Fct_lin Fct_lin::rec_generate_fct_with_total_enumeration(Instance & inst, Fct_lin& best, Tournee& tournee, list<int>& batch, int size)
 {
 	if (size != 0) {
 		int tmp;
@@ -1153,7 +1153,7 @@ Fct_lin Fct_lin::rec_generate_fct_with_total_enumeration(Instance * inst, Fct_li
 	return best;
 }
 
-Fct_lin Fct_lin::generate_fct_with_total_enumeration(Instance * inst, vector<int>& batch, int min_a, int max_b)
+Fct_lin Fct_lin::generate_fct_with_total_enumeration(Instance & inst, vector<int>& batch, int min_a, int max_b)
 {
 	Fct_lin best = create_fct_max(min_a, max_b);
 
@@ -1185,7 +1185,7 @@ Fct_lin Fct_lin::generate_fct_with_total_enumeration(Instance * inst, vector<int
 	return best;
 }
 
-int Fct_lin::search_optima_with_big_neiborhood(Instance * inst, Tournee& tournee_c, int depart) {
+int Fct_lin::search_optima_with_big_neiborhood(Instance& inst, Tournee& tournee_c, int depart) {
 
 	Fct_lin fct = Fct_lin::create_fct_lin(tournee_c, inst, depart, depart); compteur++;
 

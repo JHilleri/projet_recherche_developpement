@@ -97,7 +97,7 @@ int Distancier::dist_to_manu(int index)
 	return tab[index][nbjob];
 }
 
-int Distancier::dist(int ind1, int ind2) {
+int Distancier::dist(int ind1, int ind2) const {
 	if (ind2 > ind1) {
 		//return (*tab[ind2])[ind1];
 		return (tab[ind2][ind1]);
