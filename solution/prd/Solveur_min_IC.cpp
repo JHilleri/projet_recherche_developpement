@@ -1183,7 +1183,7 @@ Fct_lin Solveur_min_IC::eval_exact_with_CPLEX(Instance * inst, const vector<int>
 
 
 	//cette fonction se charge de construire le modele (entre autre)
-	vector<int>& chemin = solve_routing_1_batch(inst, bat, depart_au_plus_tot);
+	vector<int> chemin = solve_routing_1_batch(inst, bat, depart_au_plus_tot);
 
 
 

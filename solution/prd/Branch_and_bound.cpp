@@ -462,7 +462,12 @@ void Branch_and_bound::rec_branch_and_bound(Covering_tree covering_tree/*passage
 	}
 }
 
-Branch_and_bound::Vec_date_cost Branch_and_bound::min_assigment(Covering_tree& covering_tree, Branch_and_bound::Vec_date_cost& tab_date_cost, int travel_time_to_last_job, int branch_node, vector<vector<int>>& test)
+Branch_and_bound::Vec_date_cost Branch_and_bound::min_assigment(Covering_tree& covering_tree, Branch_and_bound::Vec_date_cost& tab_date_cost, int travel_time_to_last_job, int branch_node)
+{
+	return min_assigment(covering_tree, tab_date_cost, travel_time_to_last_job, branch_node, vector<vector<int>>{});
+}
+
+Branch_and_bound::Vec_date_cost Branch_and_bound::min_assigment(Covering_tree& covering_tree, Branch_and_bound::Vec_date_cost& tab_date_cost, int travel_time_to_last_job, int branch_node, const vector<vector<int>>& test)
 {
 	Vec_date_cost swarzy(tab_date_cost.min_a, tab_date_cost.max_b, -1);
 

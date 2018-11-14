@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 
 
 	//chemin d'instance à modifier
-	string chemin_instance = "C:/Users/21709633t/source/repos/Projet_PRD/Sonja-Rohmer-heuristique/Instance/";
+	string chemin_instance = "C:/tmp/Instance/";
 	string name_instance = "Instance_sans_batch.txt";
 	Instance* instance = new Instance(chemin_instance + name_instance);
 

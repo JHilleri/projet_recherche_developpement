@@ -118,7 +118,8 @@ private:
 		int branch_node, Vec_date_cost tab_date_cost, int time_travel_for_last_job);
 
 	//
-	Vec_date_cost min_assigment(Covering_tree& covering_tree, Vec_date_cost& tab_date_cost, int travel_time_to_last_job, int branch_node, vector<vector<int>>& test = vector<vector<int>>());
+	Vec_date_cost min_assigment(Covering_tree& covering_tree, Vec_date_cost& tab_date_cost, int travel_time_to_last_job, int branch_node, const vector<vector<int>>& test);
+	Vec_date_cost min_assigment(Covering_tree& covering_tree, Vec_date_cost& tab_date_cost, int travel_time_to_last_job, int branch_node);
 	//fonction dedié a l'algo hongrois
 	//selection zero couvrant et non couvrant
 
