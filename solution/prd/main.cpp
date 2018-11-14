@@ -28,20 +28,11 @@ int main(int argc, char **argv)
 	if (!std::filesystem::is_regular_file(instance_path))
 	{
 		std::cerr << "invalid instance path : \"" << instance_path << "\"" << std::endl;
+		return 0;
 	}
 
 	unsigned seed1 = chrono::system_clock::now().time_since_epoch().count();
 	srand(seed1);
-
-	vector<int> tab_method = vector<int>({
-		Solveur_min_IC::CPLEX,
-		Solveur_min_IC::B_and_B,
-		Solveur_min_IC::heuristic_near,
-		Solveur_min_IC::near,
-		Solveur_min_IC::EDD_near,
-		Solveur_min_IC::nearx4,
-		Solveur_min_IC::EDD_nearx4//*/
-		});
 
 
 	std::ifstream instance_file{ instance_path };
@@ -65,7 +56,7 @@ int main(int argc, char **argv)
 
 	//tu peux changer la méthode en paramètre
 	Solveur_min_IC solveur;
-	solveur.solve(&instance, batch_predefini, Solveur_min_IC::B_and_B, Solveur_min_IC::init_as_optima);
+	solveur.solve(&instance, batch_predefini, algorithme_de_resolution::B_and_B, Solveur_min_IC::init_as_optima);
 
 	cout << endl << "FINI";
 	return 0;

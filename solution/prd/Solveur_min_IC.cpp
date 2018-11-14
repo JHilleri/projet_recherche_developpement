@@ -235,7 +235,7 @@ void Solveur_min_IC::ajust_due_date_with_approx(Instance * inst, vector<vector<i
 //***
 //Cette fonction reprend l'algorithme global de résolution présenté dans l'article
 //****
-Struct_Retour Solveur_min_IC::solve(Instance* inst, vector<vector<int>> tab_Batch, int approx_method, int mode)
+Struct_Retour Solveur_min_IC::solve(Instance* inst, vector<vector<int>> tab_Batch, algorithme_de_resolution approx_method, int mode)
 {
 
 	if (mode == init_as_optima) {
@@ -375,36 +375,36 @@ Struct_Retour Solveur_min_IC::solve(Instance* inst, vector<vector<int>> tab_Batc
 
 		switch (approx_method) // par defaut du prototype EDD_nearx4
 		{
-		case heuristic_near:
+		case algorithme_de_resolution::heuristic_near:
 			t_near = Tournee::create_tournee_nearest_insertion(inst, tab_Batch[i]);
 			best = Fct_lin::create_fct_lin(t_near, inst, min_a, max_b);
 			break;
 
-		case EDD:
+		case algorithme_de_resolution::EDD:
 			t_EDD = Tournee::create_tournee_EDD(inst, tab_Batch[i]);
 			best = Fct_lin::generate_fct_with_local_search(inst, t_EDD, min_a, max_b);
 
 			//cout << "EDD  ";
 			break;
-		case EDDx4:
+		case algorithme_de_resolution::EDDx4:
 			t_EDD = Tournee::create_tournee_EDD(inst, tab_Batch[i]);
 			best = Fct_lin::generate_fct_with_four_extrema(inst, t_EDD, min_a, max_b);
 
 			//cout << "EDD_x4 ";
 			break;
-		case near:
+		case algorithme_de_resolution::near:
 			t_near = Tournee::create_tournee_nearest_insertion(inst, tab_Batch[i]);
 			best = Fct_lin::generate_fct_with_local_search(inst, t_near, min_a, max_b);
 
 			// << "near ";
 			break;
-		case nearx4:
+		case algorithme_de_resolution::nearx4:
 			t_near = Tournee::create_tournee_nearest_insertion(inst, tab_Batch[i]);
 			best = Fct_lin::generate_fct_with_four_extrema(inst, t_near, min_a, max_b);
 
 			//cout << "near_x4 ";
 			break;
-		case EDD_near:
+		case algorithme_de_resolution::EDD_near:
 			t_EDD = Tournee::create_tournee_EDD(inst, tab_Batch[i]);
 			f_EDD = Fct_lin::generate_fct_with_local_search(inst, t_EDD, min_a, max_b);
 			t_near = Tournee::create_tournee_nearest_insertion(inst, tab_Batch[i]);
@@ -414,7 +414,7 @@ Struct_Retour Solveur_min_IC::solve(Instance* inst, vector<vector<int>> tab_Batc
 
 			//cout << "EDD_near ";
 			break;
-		case EDD_nearx4:
+		case algorithme_de_resolution::EDD_nearx4:
 			t_EDD = Tournee::create_tournee_EDD(inst, tab_Batch[i]);
 			f_EDD = Fct_lin::generate_fct_with_four_extrema(inst, t_EDD, min_a, max_b);
 
@@ -427,13 +427,13 @@ Struct_Retour Solveur_min_IC::solve(Instance* inst, vector<vector<int>> tab_Batc
 
 			break;
 
-		case CPLEX:
+		case algorithme_de_resolution::CPLEX:
 			best = solve_CPLEX.eval_exact_with_CPLEX(inst, tab_Batch[i], min_a, max_b, 1);
 
 			//cout << "CPLEX ";
 			break;
 
-		case B_and_B:
+		case algorithme_de_resolution::B_and_B:
 
 			best = b_and_b.generate_fct_with_branch_and_bound(inst, tab_Batch[i], min_a, max_b);
 

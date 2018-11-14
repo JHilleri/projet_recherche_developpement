@@ -29,6 +29,19 @@ struct Struct_Retour
 
 };
 
+enum class algorithme_de_resolution
+{
+	heuristic_near = -1,
+	EDD,
+	EDDx4,
+	near,
+	nearx4,
+	EDD_near,
+	EDD_nearx4,
+	CPLEX,
+	B_and_B
+};
+
 class Solveur_min_IC
 {
 public:
@@ -46,17 +59,6 @@ public:
 	void ajust_due_date_with_approx(Instance* inst, /*vector<int>rm,*/ vector<vector<int>> tab_Batch, int nb_j_batch);
 	//******
 
-
-	static const int heuristic_near = -1;
-	static const int EDD = 0;
-	static const int EDDx4 = 1;
-	static const int near = 2;
-	static const int nearx4 = 3;
-	static const int EDD_near = 4;
-	static const int EDD_nearx4 = 5;
-	static const int CPLEX = 6;
-	static const int B_and_B = 7;
-
 	static const int init_as_optima = 0;
 	static const int comp_with_optima = 1;
 	static const int nothing_special = 2;
@@ -64,7 +66,7 @@ public:
 	//***
 	//Cette fonction reprend l'algorithme global de résolution présenté dans l'article
 	//****
-	Struct_Retour solve(Instance* inst, vector<vector<int>> tab_Batch, int approx_method = EDD_nearx4, int mode = nothing_special);
+	Struct_Retour solve(Instance* inst, vector<vector<int>> tab_Batch, algorithme_de_resolution approx_method = algorithme_de_resolution::EDD_nearx4, int mode = nothing_special);
 
 
 	//Creation d'une fonction F_k en utilisant CPLEX
