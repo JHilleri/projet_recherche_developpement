@@ -1291,9 +1291,9 @@ int Fct_lin::search_optima_with_big_neiborhood(Instance * inst, Tournee& tournee
 	return 0;
 }
 
-vector<vector<int>> Fct_lin::build_regular_batch_repartition(int nb_job, int nb_j_batch)
+batch_list Fct_lin::build_regular_batch_repartition(int nb_job, int nb_j_batch)
 {
-	vector<vector<int>> batch_j_njb = vector<vector<int>>();
+	batch_list batch_j_njb;
 	int cpt_nb_job = 0;
 	while (cpt_nb_job < nb_job)
 	{

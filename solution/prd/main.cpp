@@ -11,9 +11,7 @@
 #include "Fct_lin.h"
 #include "Solveur_min_IC.h"
 #include "Branch_and_bound.h"
-
-
-
+#include "batch_list.h"
 
 using namespace std;
 
@@ -21,7 +19,7 @@ int main(int argc, char **argv)
 {
 	if (argc < 2) // checking parameters
 	{
-		std::cerr << "usage \"prd.ex [path to the instance]" << std::endl;
+		std::cerr << "invalid parameters, usage \"prd.exe [path to the instance]\"" << std::endl;
 		return 0;
 	}
 	std::filesystem::path instance_path = std::filesystem::absolute({ argv[1] });
@@ -42,17 +40,10 @@ int main(int argc, char **argv)
 	//batch prédéfini représente l'ordonnacement  et la mise par lot
 	//Attention, cette structure sous entends que les batchs sont continus dans l'ordonnacement, 
 	//ce n'est pas forcément le cas
-	vector<vector<int>> batch_predefini = Fct_lin::build_regular_batch_repartition(100, 10);
+	batch_list batch_predefini = Fct_lin::build_regular_batch_repartition(100, 10);
 
-	cout << "Ordonnancement et mise en batch proposée" << endl;
-	for (auto var : batch_predefini)
-	{
-		cout << "{";
-		for (auto i : var)
-		{
-			cout << i << ", ";
-		}cout << "}; ";
-	}cout << endl;
+	std::cout << "Ordonnancement et mise en batch proposée" << std::endl;
+	std::cout << batch_predefini << std::endl;
 
 	//tu peux changer la méthode en paramètre
 	Solveur_min_IC solveur;

@@ -9,6 +9,7 @@
 #include <chrono>
 
 #include "Instance.h"
+#include "batch_list.h"
 
 class Tournee
 {
@@ -132,7 +133,7 @@ public:
 
 	static int search_optima_with_big_neiborhood(Instance * inst, Tournee& tournee_c, int depart);
 
-	static vector<vector<int>> build_regular_batch_repartition(int nb_job, int nb_j_batch);
+	static batch_list build_regular_batch_repartition(int nb_job, int nb_j_batch);
 
 	static int compteur;
 };
