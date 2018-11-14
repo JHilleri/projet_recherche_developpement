@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
 
 #include"Job.h"
 
@@ -11,7 +12,7 @@ class Distancier
 public:
 	Distancier();
 	Distancier(int nbj);
-	Distancier(ifstream* fichier, int nb_job);
+	Distancier(std::istream& input, int nb_job);
 	~Distancier();
 
 	void reecrire_distancier(ofstream* fichier, int nJob);

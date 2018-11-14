@@ -72,8 +72,8 @@ Tournee Tournee::create_tournee_EDD(Instance * inst, const vector<int>& vect)
 		j = i;
 
 		index = ret.tab_c[j];
-		due_date = inst->list_Job[index]->due_d;
-		while (j != 0 && due_date < inst->list_Job[ret.tab_c[j - 1]]->due_d) {
+		due_date = inst->list_Job[index].due_d;
+		while (j != 0 && due_date < inst->list_Job[ret.tab_c[j - 1]].due_d) {
 			ret.tab_c[j] = ret.tab_c[j - 1];
 			j--;
 		}
@@ -247,7 +247,7 @@ Fct_lin Fct_lin::create_fct_lin(const Tournee& road, Instance * inst, int m_a, i
 		index = road.tab_c[i];
 		arrival_date += dist.dist(old_index, index);
 
-		ahead.push_back(pair < int, int>(inst->list_Job[index]->piM, inst->list_Job[index]->due_d - arrival_date));
+		ahead.push_back(pair < int, int>(inst->list_Job[index].piM, inst->list_Job[index].due_d - arrival_date));
 
 		old_index = index;
 
@@ -790,13 +790,13 @@ double Fct_lin::ratio_courbe_inf(const Fct_lin & fct_1, const Fct_lin & fct_2)
 pair<int, int> Fct_lin::a_b_inf(Instance * inst, const vector<int>& batch)
 {
 	auto& jobs = inst->list_Job;
-	int min_dd_date = jobs[batch.front()]->due_d;
-	int max_dd_date = jobs[batch.front()]->due_d;
+	int min_dd_date = jobs[batch.front()].due_d;
+	int max_dd_date = jobs[batch.front()].due_d;
 
 	int due_date;
 	for (int i = 1; i < batch.size(); i++)
 	{
-		due_date = jobs[i]->due_d;
+		due_date = jobs[i].due_d;
 
 		if (due_date < min_dd_date) min_dd_date = due_date;
 		if (due_date > max_dd_date) max_dd_date = due_date;

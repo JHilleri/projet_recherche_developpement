@@ -27,28 +27,25 @@ Distancier::Distancier(int nbj)
 
 }
 
-Distancier::Distancier(ifstream* fichier, int nb_job)
+Distancier::Distancier(std::istream& input, int nb_job)
 {
 
 	nbjob = nb_job;
 	nblieu = nbjob + 2;
 
 	string tmp;
-	getline(*fichier, tmp);
-	getline(*fichier, tmp);
+	getline(input, tmp);
+	getline(input, tmp);
 
-	*fichier >> coord_depot.first >> coord_depot.second;
+	input >> coord_depot.first >> coord_depot.second;
 
 	tab = vector<vector<int>>(nblieu);
-	//tab = vector<vector<int>*>(nblieu);
 	for (int i = 0; i < nblieu; i++)
 	{
 		tab[i] = vector<int>(i + 1);
-		//tab[i] = new vector<int>(i + 1);
 		for (int j = 0; j < i + 1; j++)
 		{
-			//*fichier >> (*tab[i])[j];
-			*fichier >> (tab[i])[j];
+			input >> (tab[i])[j];
 		}
 	}
 }

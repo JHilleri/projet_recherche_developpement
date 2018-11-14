@@ -1,75 +1,39 @@
 #include <iostream>
 #include <fstream>
+#include <numeric>
+#include <algorithm>
 
 #include "Instance.h"
 
 using namespace std;
 
-Instance::Instance()
+Instance::Instance(std::istream & input, bool mise_en_batch)
 {
-}
-
-Instance::Instance(string file_name, bool mise_en_batch)
-{
-
-	nom_fichier = file_name;
-
-	ifstream fichier = ifstream(file_name, ios::in);
-
-	if (fichier)
+	input >> nJob >> mMachine >> cV;
+	if (mise_en_batch)
 	{
-		fichier >> nJob >> mMachine >> cV;
-
-		if (mise_en_batch) {
-			int nb_job_batch = 0;
-			int cpt = 0;
-
-			while (cpt < nJob) {
-				fichier >> nb_job_batch;
-
-				tab_batch.push_back(vector<int>());
-				for (int i = 0; i < nb_job_batch; i++)
-				{
-					tab_batch.back().push_back(cpt + i);
-				}
-
-				cpt += nb_job_batch;
-			}
-		}
-		else {
-			//suat de ligne
-			//string tmp;
-			//getline(fichier, tmp);
-		}
-
-
-		list_Job = vector<Job*>(nJob);
-		for (int i = 0; i < nJob; i++)
-		{
-			list_Job[i] = new Job(&fichier, mMachine);
-			list_Job[i]->index_lieu = i;
-		}
-
-		distancier = Distancier(&fichier, nJob);
-
-
-		fichier.close();
+		unsigned int job_number_per_batch;
+		input >> job_number_per_batch;
+		const unsigned int batch_number{ static_cast<unsigned int>(nJob) / job_number_per_batch + (static_cast<unsigned int>(nJob) % job_number_per_batch) ? 1u : 0u };
+		tab_batch = std::vector<std::vector<int>>{ batch_number };
+		int last_job_index{ 0 };
+		std::generate(tab_batch.begin(), tab_batch.end(), [&last_job_index, job_number_per_batch]() {
+			std::vector<int> new_batch{ static_cast<int>(job_number_per_batch) };
+			std::generate(new_batch.begin(), new_batch.end(), [&last_job_index]() {return last_job_index++; });
+			return new_batch;
+		});
 	}
-	else { cerr << "Impossible d'ouvrir le fichier !" << endl; }
+	list_Job = std::vector<Job>{ static_cast<unsigned int>(nJob) };
+	int i{ 0 };
+	std::generate(list_Job.begin(), list_Job.end(), [&]() {
+		Job new_job{ input, mMachine };
+		new_job.index_lieu = i++;
+		return new_job;
+	});
+
+	distancier = Distancier(input, nJob);
 }
 
-
-
-
-Instance::~Instance()
-{
-
-	for (Job* var : list_Job)
-	{
-		delete var;
-	}
-
-}
 
 void Instance::reecrire_Instance(bool mise_en_batch)
 {
@@ -92,7 +56,7 @@ void Instance::reecrire_Instance(bool mise_en_batch)
 		for (int i = 0; i < nJob; i++)
 		{
 			fichier << "Jobs " << i << " :" << endl;
-			list_Job[i]->reecrire_job(&fichier);
+			list_Job[i].reecrire_job(&fichier);
 
 		}
 

@@ -124,7 +124,7 @@ void Solveur_min_IC::ajust_due_date_with_windows_a_b(Instance * inst, vector<vec
 		for (int index_j : bat)
 		{
 			int n_dd = (int)distri_due_date(gen);
-			inst->list_Job[index_j]->due_d = n_dd;
+			inst->list_Job[index_j].due_d = n_dd;
 			//cout << n_dd << "\t";
 		}//cout << endl;
 		num_b++;
@@ -181,7 +181,7 @@ void Solveur_min_IC::ajust_due_date_with_approx(Instance * inst, vector<vector<i
 	{
 		for (int j = 0; j < inst->mMachine; j++)
 		{
-			average_pij += inst->list_Job[i]->p[j];
+			average_pij += inst->list_Job[i].p[j];
 		}
 	}
 	average_pij /= (double)(inst->nJob * inst->mMachine);
@@ -220,7 +220,7 @@ void Solveur_min_IC::ajust_due_date_with_approx(Instance * inst, vector<vector<i
 		for (int index_j : bat)
 		{
 			int n_dd = (int)distri_due_date(gen);
-			inst->list_Job[index_j]->due_d = n_dd;
+			inst->list_Job[index_j].due_d = n_dd;
 			//cout << "min_w : " << min_w << "\t" << "max_w : " << max_w << "\t" << "new_due_d : " << n_dd << endl;
 		}//cout << endl;
 		num_b++;
@@ -701,16 +701,15 @@ void Solveur_min_IC::init_Ti()
 void Solveur_min_IC::init_IC_WIP()
 {
 	int i_job;
-	Job* job;
 
 	IC_WIP = IloExpr(env);
 	for (int i = 0; i < nJ; i++)
 	{
 		i_job = list_ind[i];
-		job = inst->list_Job[i_job];
+		Job& job = inst->list_Job[i_job];
 		for (int j = 0; j < nM - 1; j++)
 		{
-			IC_WIP += job->thWIP[j] * (C_ij[i][j + 1] - job->p[j + 1] - C_ij[i][j]);
+			IC_WIP += job.thWIP[j] * (C_ij[i][j + 1] - job.p[j + 1] - C_ij[i][j]);
 		}
 	}
 }
@@ -718,25 +717,23 @@ void Solveur_min_IC::init_IC_WIP()
 void Solveur_min_IC::init_IC_FIN()
 {
 	int i_job;
-	Job* job;
 
 	IC_FIN = IloExpr(env);
 	int i_last_job;
-	Job* last_job;
-
+	
 	int nb_job_avant = 0;
 	for (auto var : *tab_Batch)
 	{
 		i_last_job = var.back();
-		last_job = inst->list_Job[i_last_job];
+		Job& last_job = inst->list_Job[i_last_job];
 		for (int i = 0; i < var.size() - 1; i++)
 		{
 			i_job = var[i];
-			job = inst->list_Job[i_job];
+			Job& job = inst->list_Job[i_job];
 
-			IC_FIN += job->thFIN *
+			IC_FIN += job.thFIN *
 				// cpl_time du dernier job du batch sur la dernier machine
-				(C_ij[nb_job_avant + var.size() - 1][nM - 1] - last_job->p[nM - 1] - C_ij[nb_job_avant + i][nM - 1]);
+				(C_ij[nb_job_avant + var.size() - 1][nM - 1] - last_job.p[nM - 1] - C_ij[nb_job_avant + i][nM - 1]);
 		}
 		nb_job_avant += var.size();
 	}
@@ -745,14 +742,13 @@ void Solveur_min_IC::init_IC_FIN()
 void Solveur_min_IC::init_PPC_M()
 {
 	int i_job;
-	Job* job;
 
 	PPC_M = IloExpr(env);
 	for (int i = 0; i < nJ; i++)
 	{
 		i_job = list_ind[i];
-		job = inst->list_Job[i_job];
-		PPC_M += T_i[i] * job->piM;
+		Job &job = inst->list_Job[i_job];
+		PPC_M += T_i[i] * job.piM;
 	}
 
 }
@@ -796,14 +792,13 @@ void Solveur_min_IC::init_sum_CC()
 void Solveur_min_IC::add_capa_machine_ctr()
 {
 	int i_job;
-	Job* job;
 	for (int i = 1; i < nJ; i++)
 	{
 		i_job = list_ind[i];
-		job = inst->list_Job[i_job];
+		Job& job = inst->list_Job[i_job];
 		for (int j = 0; j < nM; j++)
 		{
-			model.add(C_ij[i - 1][j] + job->p[j] <= C_ij[i][j]);
+			model.add(C_ij[i - 1][j] + job.p[j] <= C_ij[i][j]);
 		}
 	}
 }
@@ -811,21 +806,20 @@ void Solveur_min_IC::add_capa_machine_ctr()
 void Solveur_min_IC::add_gamme_ctr()
 {
 	int i_job;
-	Job* job;
 	for (int i = 0; i < nJ; i++)
 	{
 		i_job = list_ind[i];
-		job = inst->list_Job[i_job];
+		Job& job = inst->list_Job[i_job];
 		for (int j = 1; j < nM; j++)
 		{
-			model.add(C_ij[i][j - 1] + job->p[j] <= C_ij[i][j]);
+			model.add(C_ij[i][j - 1] + job.p[j] <= C_ij[i][j]);
 		}
 	}
 }
 
 void Solveur_min_IC::add_C00_vaut_0()
 {
-	model.add(C_ij[0][0] == inst->list_Job[list_ind[0]]->p[0]);
+	model.add(C_ij[0][0] == inst->list_Job[list_ind[0]].p[0]);
 }
 
 void Solveur_min_IC::add_simple_routing_ctr(vector<int> date_depart)
@@ -1002,7 +996,7 @@ void Solveur_min_IC::add_Ti_ctr(int depart_au_plus_tot)
 
 	for (int i = 0; i < nJ; i++)
 	{
-		model.add(T_i[i] >= D_i[i] + depart_au_plus_tot - inst->list_Job[list_ind[i]]->due_d);
+		model.add(T_i[i] >= D_i[i] + depart_au_plus_tot - inst->list_Job[list_ind[i]].due_d);
 	}
 }
 

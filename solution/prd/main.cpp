@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <chrono>
+#include <filesystem>
 
 #include "Instance.h"
 #include "Generateur.h"
@@ -18,6 +19,17 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
+	if (argc < 2) // checking parameters
+	{
+		std::cerr << "usage \"prd.ex [path to the instance]" << std::endl;
+		return 0;
+	}
+	std::filesystem::path instance_path = std::filesystem::absolute({ argv[1] });
+	if (!std::filesystem::is_regular_file(instance_path))
+	{
+		std::cerr << "invalid instance path : \"" << instance_path << "\"" << std::endl;
+	}
+
 	unsigned seed1 = chrono::system_clock::now().time_since_epoch().count();
 	srand(seed1);
 
@@ -32,10 +44,8 @@ int main(int argc, char **argv)
 		});
 
 
-	//chemin d'instance à modifier
-	string chemin_instance = "C:/tmp/Instance/";
-	string name_instance = "Instance_sans_batch.txt";
-	Instance* instance = new Instance(chemin_instance + name_instance);
+	std::ifstream instance_file{ instance_path };
+	Instance instance{ instance_file };
 
 	//Les différents jobs sont indexé de 0 à nb_job - 1
 	//batch prédéfini représente l'ordonnacement  et la mise par lot
@@ -55,7 +65,7 @@ int main(int argc, char **argv)
 
 	//tu peux changer la méthode en paramètre
 	Solveur_min_IC solveur;
-	solveur.solve(instance, batch_predefini, Solveur_min_IC::B_and_B, Solveur_min_IC::init_as_optima);
+	solveur.solve(&instance, batch_predefini, Solveur_min_IC::B_and_B, Solveur_min_IC::init_as_optima);
 
 	cout << endl << "FINI";
 	return 0;

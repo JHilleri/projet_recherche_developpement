@@ -1,5 +1,5 @@
 #include "Branch_and_Bound.h"
-
+#include <filesystem>
 //
 //Attention cancer!
 //Ce qu'il faut savoir:
@@ -282,8 +282,8 @@ void Branch_and_bound::evaluation_of_instance_file(string path, string prefix)
 		//cout << path + "Inst_" + prefix + "_" + to_string(i) + ".txt" << endl;
 		//string file_inst = "C:/Users/21709633t/source/repos/Manu_dominates_1/Sonja-Rohmer-heuristique/Instance/";
 		//inst = new Instance(file_inst + "Instance_1batch_10job/I_1bat_10job" + to_string(i) + ".txt");
-
-		inst = new Instance(path + "Inst_" + prefix + "_" + to_string(i) + ".txt");
+		std::ifstream input{ std::filesystem::path{ path + "Inst_" + prefix + "_" + to_string(i) + ".txt" } };
+		inst = new Instance{ input };
 
 		batch = vector<int>();
 		for (int i = 0; i < inst->nJob; i++) batch.push_back(i);
@@ -328,7 +328,7 @@ void Branch_and_bound::rec_branch_and_bound(Covering_tree covering_tree/*passage
 
 							  //*****
 							  //élément de la LB ne variant pas avec la date de départ
-		Job* job = inst->list_Job[branch_node];
+		Job& job = inst->list_Job[branch_node];
 
 		int min_routing_cost = covering_tree.sum_edge();
 
@@ -343,7 +343,7 @@ void Branch_and_bound::rec_branch_and_bound(Covering_tree covering_tree/*passage
 		{
 			if (tab_date_cost.date_is_valide(date)) {
 				tab_date_cost.add_cost(date, dist /* cout de routing == distance */
-					+ (max(0, date + time_travel_for_last_job - job->due_d)*job->piM)); // cout de retard du job
+					+ (max(0, date + time_travel_for_last_job - job.due_d)*job.piM)); // cout de retard du job
 			}
 		}
 
@@ -495,7 +495,6 @@ Branch_and_bound::Vec_date_cost Branch_and_bound::min_assigment(Covering_tree& c
 	for (int i = 0; i < nb_livraison; i++) tab_job_assignement_initial[i] = vector<int>(nb_livraison);
 
 
-	Job* job;
 	int i_job = 0;
 	//pour chacun des jobs restant à assigner
 	//on calcul ses pénalités de retard associé si le job
@@ -505,11 +504,11 @@ Branch_and_bound::Vec_date_cost Branch_and_bound::min_assigment(Covering_tree& c
 	for (int index_job : job_resting_for_assignement)
 	{
 		if (index_job != branch_node) {
-			job = inst->list_Job[index_job];
+			Job& job = inst->list_Job[index_job];
 			for (int i = 0; i < nb_livraison; i++)
 			{
 				// présence de négatif, mais qui compte comme 0 dans l'algo hongrois
-				tab_job_assignement_initial[i_job][i] = (delivery_date[i] - job->due_d)*job->piM;
+				tab_job_assignement_initial[i_job][i] = (delivery_date[i] - job.due_d)*job.piM;
 			}
 			i_job++;
 		}
@@ -571,9 +570,9 @@ Branch_and_bound::Vec_date_cost Branch_and_bound::min_assigment(Covering_tree& c
 
 								reste_job_en_avance = true;
 
-								job = inst->list_Job[index_job];
+								Job &job = inst->list_Job[index_job];
 
-								increase_cost = (date - old_valide_date)*job->piM;
+								increase_cost = (date - old_valide_date)*job.piM;
 
 								for (int i = 0; i < nb_livraison; i++)
 								{
@@ -707,9 +706,9 @@ Branch_and_bound::Vec_date_cost Branch_and_bound::min_assigment(Covering_tree& c
 			for (int index_job : job_resting_for_assignement)
 			{
 				if (index_job != branch_node) {
-					job = inst->list_Job[index_job];
+					Job &job = inst->list_Job[index_job];
 
-					increase_cost = (date - old_valide_date)*job->piM;
+					increase_cost = (date - old_valide_date)*job.piM;
 
 					for (int i = 0; i < nb_livraison; i++)
 					{
