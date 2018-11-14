@@ -1,6 +1,7 @@
 \chapter{modélisation du problème global}
 \label{appendix:modelisation_global}
 
+\section{Paramètres}
 \begin{labeling}{paramètres}
 
 	\item [$m$]
@@ -21,7 +22,7 @@
 	\item [$\pi_j$]
 	Cout du retard de livraison par unité de temps pour le job j
 	\item [$d_j$]
-	Date de livraison demandé pour le job j
+	Date de livraison demandée pour le job j
 	\item [$t_{j_1,j_2}$]
 	Duré du trajet entre les lieux de livraison des jobs $j_1$ et $j_2$
 	\item [$c_{j_1,j_2}$]
@@ -29,7 +30,7 @@
 \end{labeling}
 
 
-\section*{Variables}
+\section{Variables}
 
 Pour représenter l’ordre des jobs lors de la production, on utilise une matrice qui indique pour chaque job s’il doit être réaliser avant un autre.
 
@@ -71,7 +72,7 @@ Ce qui signifie dans le lot 1, $j1$ est livré avant $j2$ et dans le lot 2, $j3$
 	% \item [$PC^{local}\left(d,k\right)$] Fonction qui pour un lot $k$ calcule les pénalités de retards si la livraison débute à la date $d$. Cette fonction n’est pas encore définie.
 	\item [$z_k$] Vaut 1 si le véhicule k est utilisé.
 	\item [$Z_{j,k}$] Vaut 1 si le job $j$ fait partie du lot $k$
-	\item [$C_{i,j}$] Date de fin de la tache $j$ pour la machine $i$
+	\item [$C_{i,j}$] Date de fin de la tâche $j$ pour la machine $i$
 	\item [$F_k$] Date de départ du lot/véhicule $k$.
 	\item [$f_j$] Date de départ du job $j$.
 	\item [$IC^{WIP}$] Somme des coûts d’inventaire sur les jobs en cours
@@ -98,12 +99,12 @@ Ce qui signifie dans le lot 1, $j1$ est livré avant $j2$ et dans le lot 2, $j3$
 \end{labeling}
 
 
-\section*{Objectif}
+\section{Objectif}
 Somme des coûts à minimiser
 $$IC=IC^{WIP}+IC^{FIN}+PC+VC+RC$$
 
 
-\section*{Contraintes}
+\section{Contraintes}
 
 \begin{itemize}
 	\item
@@ -139,7 +140,7 @@ $$IC=IC^{WIP}+IC^{FIN}+PC+VC+RC$$
 		      \forall j \in\left\{1,\dotsc,n \right\}
 		\end{align}
 	\item 
-		Un job est terminé quand toutes ces taches sont terminés.
+		Un job est terminé quand toutes ces tâches sont terminées.
 		\begin{align}
 			f_j \geq C_{m, j} & & \forall j \in \left\{0,\dotsc,n\right\}
 		\end{align}
@@ -180,7 +181,7 @@ $$IC=IC^{WIP}+IC^{FIN}+PC+VC+RC$$
 	      \end{align}
 	\item
 	      Les retards de livraisons ne peuvent pas être négatifs,
-	      les livraisons en avances n’ont pas d’impacts.
+	      les livraisons en avance n’ont pas d’impacts.
 	      \begin{align}
 		      T_j & \geq 0         &  & \forall j \in\{1, \ldots, n\} \\
 		      T_j & \geq T_j \pi_j &  & \forall j \in\{1, \ldots, n\}
