@@ -1,6 +1,7 @@
 #pragma once
 
 #include<string>
+#include <iostream>
 
 #include "Job.h"
 #include "Distancier.h"
@@ -9,15 +10,14 @@
 class Instance
 {
 public:
-	Instance();
-	Instance(string fichier, bool mise_en_batch = false);
-	~Instance();
+	Instance() = default;
+	Instance(std::istream& fichier, bool mise_en_batch = false);
 
 	int nJob;
 	int mMachine;
 
 	Distancier distancier;
-	vector<Job*> list_Job;
+	vector<Job> list_Job;
 
 	vector<vector<int>> tab_batch = vector<vector<int>>();
 
@@ -33,4 +33,5 @@ public:
 
 
 };
+
 

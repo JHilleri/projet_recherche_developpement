@@ -1,7 +1,8 @@
 #include "Solveur_min_IC.h"
 
 
-Solveur_min_IC::Solveur_min_IC()
+Solveur_min_IC::Solveur_min_IC(Instance& instacne, batch_list& tab_batch)
+	:inst{instacne}, tab_Batch{tab_batch}
 {
 }
 
@@ -14,15 +15,15 @@ Solveur_min_IC::~Solveur_min_IC()
 
 
 //Utiliser pour générer les instances (fixe les due dates pour les rendre "intéressante")
-void Solveur_min_IC::ajust_due_date_with_windows_a_b(Instance * inst, vector<vector<int>> tab_Batch)
+void Solveur_min_IC::ajust_due_date_with_windows_a_b()
 {
 
 	//Copie coller du model standart
 
 	/////////////////////////////
 	// Pose du modele
-	init_model_and_data(inst, &tab_Batch); //redefinition du modele
-	init_list_ind(inst, tab_Batch);
+	init_model_and_data(); //redefinition du modele
+	init_list_ind();
 
 	init_Cij();
 
@@ -111,7 +112,7 @@ void Solveur_min_IC::ajust_due_date_with_windows_a_b(Instance * inst, vector<vec
 	num_b = 0; int a, b;
 	for (vector<int> bat : tab_Batch)
 	{
-		max_time_tournee = inst->distancier.max_edge_on_sub_matrix(bat) * bat.size();
+		max_time_tournee = inst.distancier.max_edge_on_sub_matrix(bat) * bat.size();
 
 		a = tab_a_b[num_b].first;
 		b = tab_a_b[num_b].second;
@@ -124,7 +125,7 @@ void Solveur_min_IC::ajust_due_date_with_windows_a_b(Instance * inst, vector<vec
 		for (int index_j : bat)
 		{
 			int n_dd = (int)distri_due_date(gen);
-			inst->list_Job[index_j]->due_d = n_dd;
+			inst.list_Job[index_j].due_d = n_dd;
 			//cout << n_dd << "\t";
 		}//cout << endl;
 		num_b++;
@@ -140,13 +141,13 @@ void Solveur_min_IC::ajust_due_date_with_windows_a_b(Instance * inst, vector<vec
 
 //Utiliser pour générer les instances (fixe les due dates pour les rendre "intéressante")
 
-void Solveur_min_IC::ajust_due_date_with_approx(Instance * inst, vector<vector<int>> tab_Batch, int nb_j_batch)
+void Solveur_min_IC::ajust_due_date_with_approx(int nb_j_batch)
 {
 	double coeff_from_machine_depart = 1.0;
 
 	double coeff_from_machine_length = 1.0;
 
-	switch (inst->mMachine)
+	switch (inst.mMachine)
 	{
 	case 5:
 		coeff_from_machine_depart = 1.1;
@@ -177,14 +178,14 @@ void Solveur_min_IC::ajust_due_date_with_approx(Instance * inst, vector<vector<i
 
 
 	double average_pij = 0.0;
-	for (int i = 0; i < inst->nJob; i++)
+	for (int i = 0; i < inst.nJob; i++)
 	{
-		for (int j = 0; j < inst->mMachine; j++)
+		for (int j = 0; j < inst.mMachine; j++)
 		{
-			average_pij += inst->list_Job[i]->p[j];
+			average_pij += inst.list_Job[i].p[j];
 		}
 	}
-	average_pij /= (double)(inst->nJob * inst->mMachine);
+	average_pij /= (double)(inst.nJob * inst.mMachine);
 
 	average_pij *= coeff_from_machine_depart;
 
@@ -198,10 +199,10 @@ void Solveur_min_IC::ajust_due_date_with_approx(Instance * inst, vector<vector<i
 
 	int num_b = 0;
 
-	int min_w = (inst->mMachine - 1)*average_pij;
+	int min_w = (inst.mMachine - 1)*average_pij;
 	int max_w;
 
-	double average_time_tournee = average_pij * ((inst->nJob) / tab_Batch.size()) * 2;
+	double average_time_tournee = average_pij * ((inst.nJob) / tab_Batch.size()) * 2;
 	double windows_size = average_time_tournee;
 	//cout << "average_pij : " << average_pij << "\t" << "average_time_tournee : " << average_time_tournee << endl;
 
@@ -220,7 +221,7 @@ void Solveur_min_IC::ajust_due_date_with_approx(Instance * inst, vector<vector<i
 		for (int index_j : bat)
 		{
 			int n_dd = (int)distri_due_date(gen);
-			inst->list_Job[index_j]->due_d = n_dd;
+			inst.list_Job[index_j].due_d = n_dd;
 			//cout << "min_w : " << min_w << "\t" << "max_w : " << max_w << "\t" << "new_due_d : " << n_dd << endl;
 		}//cout << endl;
 		num_b++;
@@ -235,7 +236,7 @@ void Solveur_min_IC::ajust_due_date_with_approx(Instance * inst, vector<vector<i
 //***
 //Cette fonction reprend l'algorithme global de résolution présenté dans l'article
 //****
-Struct_Retour Solveur_min_IC::solve(Instance* inst, vector<vector<int>> tab_Batch, int approx_method, int mode)
+Struct_Retour Solveur_min_IC::solve(algorithme_de_resolution approx_method, int mode)
 {
 
 	if (mode == init_as_optima) {
@@ -246,8 +247,8 @@ Struct_Retour Solveur_min_IC::solve(Instance* inst, vector<vector<int>> tab_Batc
 
 	/////////////////////////////
 	// Pose du modele
-	init_model_and_data(inst, &tab_Batch); //redefinition du modele
-	init_list_ind(inst, tab_Batch);
+	init_model_and_data(); //redefinition du modele
+	init_list_ind();
 
 	init_Cij();
 
@@ -366,8 +367,8 @@ Struct_Retour Solveur_min_IC::solve(Instance* inst, vector<vector<int>> tab_Batc
 		Tournee t_EDD = Tournee::create_tournee_vide(0);
 		Tournee t_near = Tournee::create_tournee_vide(0);
 
-		Solveur_min_IC solve_CPLEX;
-		Branch_and_bound b_and_b;
+		Solveur_min_IC solve_CPLEX{ inst, tab_Batch };
+		Branch_and_bound b_and_b{ inst };
 
 		chrono::time_point<chrono::system_clock> current, start_t = chrono::system_clock::now();
 
@@ -375,36 +376,36 @@ Struct_Retour Solveur_min_IC::solve(Instance* inst, vector<vector<int>> tab_Batc
 
 		switch (approx_method) // par defaut du prototype EDD_nearx4
 		{
-		case heuristic_near:
+		case algorithme_de_resolution::heuristic_near:
 			t_near = Tournee::create_tournee_nearest_insertion(inst, tab_Batch[i]);
 			best = Fct_lin::create_fct_lin(t_near, inst, min_a, max_b);
 			break;
 
-		case EDD:
+		case algorithme_de_resolution::EDD:
 			t_EDD = Tournee::create_tournee_EDD(inst, tab_Batch[i]);
 			best = Fct_lin::generate_fct_with_local_search(inst, t_EDD, min_a, max_b);
 
 			//cout << "EDD  ";
 			break;
-		case EDDx4:
+		case algorithme_de_resolution::EDDx4:
 			t_EDD = Tournee::create_tournee_EDD(inst, tab_Batch[i]);
 			best = Fct_lin::generate_fct_with_four_extrema(inst, t_EDD, min_a, max_b);
 
 			//cout << "EDD_x4 ";
 			break;
-		case near:
+		case algorithme_de_resolution::near:
 			t_near = Tournee::create_tournee_nearest_insertion(inst, tab_Batch[i]);
 			best = Fct_lin::generate_fct_with_local_search(inst, t_near, min_a, max_b);
 
 			// << "near ";
 			break;
-		case nearx4:
+		case algorithme_de_resolution::nearx4:
 			t_near = Tournee::create_tournee_nearest_insertion(inst, tab_Batch[i]);
 			best = Fct_lin::generate_fct_with_four_extrema(inst, t_near, min_a, max_b);
 
 			//cout << "near_x4 ";
 			break;
-		case EDD_near:
+		case algorithme_de_resolution::EDD_near:
 			t_EDD = Tournee::create_tournee_EDD(inst, tab_Batch[i]);
 			f_EDD = Fct_lin::generate_fct_with_local_search(inst, t_EDD, min_a, max_b);
 			t_near = Tournee::create_tournee_nearest_insertion(inst, tab_Batch[i]);
@@ -414,7 +415,7 @@ Struct_Retour Solveur_min_IC::solve(Instance* inst, vector<vector<int>> tab_Batc
 
 			//cout << "EDD_near ";
 			break;
-		case EDD_nearx4:
+		case algorithme_de_resolution::EDD_nearx4:
 			t_EDD = Tournee::create_tournee_EDD(inst, tab_Batch[i]);
 			f_EDD = Fct_lin::generate_fct_with_four_extrema(inst, t_EDD, min_a, max_b);
 
@@ -427,15 +428,15 @@ Struct_Retour Solveur_min_IC::solve(Instance* inst, vector<vector<int>> tab_Batc
 
 			break;
 
-		case CPLEX:
-			best = solve_CPLEX.eval_exact_with_CPLEX(inst, tab_Batch[i], min_a, max_b, 1);
+		case algorithme_de_resolution::CPLEX:
+			best = solve_CPLEX.eval_exact_with_CPLEX(tab_Batch[i], min_a, max_b, 1);
 
 			//cout << "CPLEX ";
 			break;
 
-		case B_and_B:
+		case algorithme_de_resolution::B_and_B:
 
-			best = b_and_b.generate_fct_with_branch_and_bound(inst, tab_Batch[i], min_a, max_b);
+			best = b_and_b.generate_fct_with_branch_and_bound(tab_Batch[i], min_a, max_b);
 
 			//cout << "B&B  ";
 			break;
@@ -605,29 +606,24 @@ Struct_Retour Solveur_min_IC::solve(Instance* inst, vector<vector<int>> tab_Batc
 	return retour;
 }
 
-void Solveur_min_IC::init_model_and_data(Instance* inst, vector<vector<int>>* tab_Batch)
+void Solveur_min_IC::init_model_and_data()
 {
+	nM = inst.mMachine;
 
-	this->inst = inst;
-	nM = inst->mMachine;
-
-	if (tab_Batch != nullptr) {
-		this->tab_Batch = tab_Batch;
-		nJ = 0;
-		for (auto var : *tab_Batch) {
-			nJ += var.size();
-		}
+	this->tab_Batch = tab_Batch;
+	nJ = 0;
+	for (auto var : tab_Batch) {
+		nJ += var.size();
 	}
-	else { nJ = inst->nJob; }
 
-	nM = inst->mMachine;
+	nM = inst.mMachine;
 
 	this->env = IloEnv();
 	model = IloModel(env); //modèle, on l'associe directement à l'environnement
 	cplex = IloCplex(model);//solveur, on l'associe directement au modèle
 }
 
-void Solveur_min_IC::init_list_ind(Instance * inst, vector<vector<int>> tab_Batch)
+void Solveur_min_IC::init_list_ind()
 {
 	int size = 0;
 	for (auto var : tab_Batch)
@@ -701,16 +697,15 @@ void Solveur_min_IC::init_Ti()
 void Solveur_min_IC::init_IC_WIP()
 {
 	int i_job;
-	Job* job;
 
 	IC_WIP = IloExpr(env);
 	for (int i = 0; i < nJ; i++)
 	{
 		i_job = list_ind[i];
-		job = inst->list_Job[i_job];
+		Job& job = inst.list_Job[i_job];
 		for (int j = 0; j < nM - 1; j++)
 		{
-			IC_WIP += job->thWIP[j] * (C_ij[i][j + 1] - job->p[j + 1] - C_ij[i][j]);
+			IC_WIP += job.thWIP[j] * (C_ij[i][j + 1] - job.p[j + 1] - C_ij[i][j]);
 		}
 	}
 }
@@ -718,25 +713,23 @@ void Solveur_min_IC::init_IC_WIP()
 void Solveur_min_IC::init_IC_FIN()
 {
 	int i_job;
-	Job* job;
 
 	IC_FIN = IloExpr(env);
 	int i_last_job;
-	Job* last_job;
-
+	
 	int nb_job_avant = 0;
-	for (auto var : *tab_Batch)
+	for (auto var : tab_Batch)
 	{
 		i_last_job = var.back();
-		last_job = inst->list_Job[i_last_job];
+		Job& last_job = inst.list_Job[i_last_job];
 		for (int i = 0; i < var.size() - 1; i++)
 		{
 			i_job = var[i];
-			job = inst->list_Job[i_job];
+			Job& job = inst.list_Job[i_job];
 
-			IC_FIN += job->thFIN *
+			IC_FIN += job.thFIN *
 				// cpl_time du dernier job du batch sur la dernier machine
-				(C_ij[nb_job_avant + var.size() - 1][nM - 1] - last_job->p[nM - 1] - C_ij[nb_job_avant + i][nM - 1]);
+				(C_ij[nb_job_avant + var.size() - 1][nM - 1] - last_job.p[nM - 1] - C_ij[nb_job_avant + i][nM - 1]);
 		}
 		nb_job_avant += var.size();
 	}
@@ -745,14 +738,13 @@ void Solveur_min_IC::init_IC_FIN()
 void Solveur_min_IC::init_PPC_M()
 {
 	int i_job;
-	Job* job;
 
 	PPC_M = IloExpr(env);
 	for (int i = 0; i < nJ; i++)
 	{
 		i_job = list_ind[i];
-		job = inst->list_Job[i_job];
-		PPC_M += T_i[i] * job->piM;
+		Job &job = inst.list_Job[i_job];
+		PPC_M += T_i[i] * job.piM;
 	}
 
 }
@@ -761,10 +753,10 @@ void Solveur_min_IC::init_RT()
 {
 	RT = IloExpr(env);
 
-	int index_depot_distancier = inst->distancier.index_manu();
+	int index_depot_distancier = inst.distancier.index_manu();
 	for (int i = 1; i <= nJ; i++)
 	{
-		RT += x_ij[0][i] * inst->distancier.dist(index_depot_distancier, list_ind[i - 1]);
+		RT += x_ij[0][i] * inst.distancier.dist(index_depot_distancier, list_ind[i - 1]);
 
 		//on ne prend pas en compte l'aller au dépôt
 		//RT = x_ij[i][nJ+1] * inst->distancier.dist(index_depot_distancier, list_ind[i-1]);
@@ -775,7 +767,7 @@ void Solveur_min_IC::init_RT()
 		for (int j = 1; j <= nJ; j++)
 		{
 			if (i != j) {
-				RT += x_ij[i][j] * inst->distancier.dist(list_ind[i - 1], list_ind[j - 1]);
+				RT += x_ij[i][j] * inst.distancier.dist(list_ind[i - 1], list_ind[j - 1]);
 			}
 		}
 	}
@@ -786,7 +778,7 @@ void Solveur_min_IC::init_sum_CC()
 	sum_CC = IloExpr(env);
 
 	int num_CC = -1;
-	for (auto var : *tab_Batch)
+	for (auto var : tab_Batch)
 	{
 		num_CC += var.size();
 		sum_CC += C_ij[num_CC][nM - 1];
@@ -796,14 +788,13 @@ void Solveur_min_IC::init_sum_CC()
 void Solveur_min_IC::add_capa_machine_ctr()
 {
 	int i_job;
-	Job* job;
 	for (int i = 1; i < nJ; i++)
 	{
 		i_job = list_ind[i];
-		job = inst->list_Job[i_job];
+		Job& job = inst.list_Job[i_job];
 		for (int j = 0; j < nM; j++)
 		{
-			model.add(C_ij[i - 1][j] + job->p[j] <= C_ij[i][j]);
+			model.add(C_ij[i - 1][j] + job.p[j] <= C_ij[i][j]);
 		}
 	}
 }
@@ -811,21 +802,20 @@ void Solveur_min_IC::add_capa_machine_ctr()
 void Solveur_min_IC::add_gamme_ctr()
 {
 	int i_job;
-	Job* job;
 	for (int i = 0; i < nJ; i++)
 	{
 		i_job = list_ind[i];
-		job = inst->list_Job[i_job];
+		Job& job = inst.list_Job[i_job];
 		for (int j = 1; j < nM; j++)
 		{
-			model.add(C_ij[i][j - 1] + job->p[j] <= C_ij[i][j]);
+			model.add(C_ij[i][j - 1] + job.p[j] <= C_ij[i][j]);
 		}
 	}
 }
 
 void Solveur_min_IC::add_C00_vaut_0()
 {
-	model.add(C_ij[0][0] == inst->list_Job[list_ind[0]]->p[0]);
+	model.add(C_ij[0][0] == inst.list_Job[list_ind[0]].p[0]);
 }
 
 void Solveur_min_IC::add_simple_routing_ctr(vector<int> date_depart)
@@ -844,7 +834,7 @@ void Solveur_min_IC::add_flot_routing_ctr()
 	// (Note : c'est deux lieux sont en fait le même dépot
 	//
 
-	Distancier& dist = inst->distancier;
+	Distancier& dist = inst.distancier;
 
 	IloExpr nb_depart = IloExpr(env);
 	IloExpr nb_arrivee = IloExpr(env);
@@ -856,8 +846,8 @@ void Solveur_min_IC::add_flot_routing_ctr()
 	}
 
 	//Cas avec batch connu
-	model.add(nb_depart == tab_Batch->size());
-	model.add(nb_arrivee == tab_Batch->size());
+	model.add(nb_depart == tab_Batch.size());
+	model.add(nb_arrivee == tab_Batch.size());
 
 
 	// un successeur et un prédécesseur
@@ -867,7 +857,7 @@ void Solveur_min_IC::add_flot_routing_ctr()
 	//cas batch connu
 	int start_batch = 1;
 	int size_batch;
-	for (auto bat : *tab_Batch)
+	for (auto bat : tab_Batch)
 	{
 
 		size_batch = bat.size();
@@ -894,7 +884,7 @@ void Solveur_min_IC::add_flot_routing_ctr()
 
 void Solveur_min_IC::add_delivery_date_ctr()
 {
-	Distancier& dist = inst->distancier;
+	Distancier& dist = inst.distancier;
 
 	int start_batch = 1;
 	int size_batch;
@@ -906,7 +896,7 @@ void Solveur_min_IC::add_delivery_date_ctr()
 	int i_CC = -1;
 	int num_b = 0;
 	IloIntVar* CC;
-	for (auto bat : *tab_Batch)
+	for (auto bat : tab_Batch)
 	{
 		size_batch = bat.size();
 
@@ -940,7 +930,7 @@ void Solveur_min_IC::add_delivery_date_ctr()
 //l'on puisse faire comme si le véhicule parté à t = 0
 void Solveur_min_IC::add_departure_date_ctr()
 {
-	Distancier& dist = inst->distancier;
+	Distancier& dist = inst.distancier;
 
 
 	ctr_departure_date = IloRangeArray(env, nJ);
@@ -952,7 +942,7 @@ void Solveur_min_IC::add_departure_date_ctr()
 	int i_CC = -1;
 	int num_b = 0;
 	IloIntVar* CC;
-	for (auto bat : *tab_Batch)
+	for (auto bat : tab_Batch)
 	{
 		size_batch = bat.size();
 
@@ -971,7 +961,7 @@ void Solveur_min_IC::add_departure_date_ctr()
 
 void Solveur_min_IC::modify_departure_date(const vector<int>& date_depart, int date_min_depart)
 {
-	Distancier& dist = inst->distancier;
+	Distancier& dist = inst.distancier;
 
 	int start_batch = 1;
 	int size_batch;
@@ -979,7 +969,7 @@ void Solveur_min_IC::modify_departure_date(const vector<int>& date_depart, int d
 	int i_CC = -1;
 	int num_b = 0;
 
-	for (auto bat : *tab_Batch)
+	for (auto bat : tab_Batch)
 	{
 		size_batch = bat.size();
 
@@ -1002,7 +992,7 @@ void Solveur_min_IC::add_Ti_ctr(int depart_au_plus_tot)
 
 	for (int i = 0; i < nJ; i++)
 	{
-		model.add(T_i[i] >= D_i[i] + depart_au_plus_tot - inst->list_Job[list_ind[i]]->due_d);
+		model.add(T_i[i] >= D_i[i] + depart_au_plus_tot - inst.list_Job[list_ind[i]].due_d);
 	}
 }
 
@@ -1110,17 +1100,15 @@ void Solveur_min_IC::add_fct_lin_ctr(const Fct_lin& fct, int num_fct, const IloI
 
 }//*/
 
-vector<int>  Solveur_min_IC::solve_routing_1_batch(Instance* inst, const vector<int>& bat, int depart_au_plus_tot)
+vector<int>  Solveur_min_IC::solve_routing_1_batch(const vector<int>& bat, int depart_au_plus_tot)
 {
-	this->inst = inst;
-
-	nM = inst->mMachine;
+	nM = inst.mMachine;
 	nJ = bat.size();
 
 	list_ind = bat;
 
-	tab_Batch = new vector<vector<int>>();
-	tab_Batch->push_back(bat);
+	tab_Batch = batch_list{};// TODO : this will overide the original tab_batch 
+	tab_Batch.push_back(bat);
 
 	this->env = IloEnv();
 	model = IloModel(env); //modèle, on l'associe directement à l'environnement
@@ -1159,19 +1147,19 @@ vector<int>  Solveur_min_IC::solve_routing_1_batch(Instance* inst, const vector<
 //VERSION utilisant rellement CPLEX
 //
 //
-Fct_lin Solveur_min_IC::eval_exact_with_CPLEX(Instance * inst, const vector<int>& bat, int depart_min_a, int depart_max_b, int intervalle)
+Fct_lin Solveur_min_IC::eval_exact_with_CPLEX(const vector<int>& bat, int depart_min_a, int depart_max_b, int intervalle)
 {
 	nJ = bat.size();
 
 	//***
 	//Réglage du Big_M
 	int max_dist = 0;
-	for (int i = 0; i < inst->distancier.tab.size(); i++)
+	for (int i = 0; i < inst.distancier.tab.size(); i++)
 	{
-		for (int j = 0; j < inst->distancier.tab[i].size(); j++)
+		for (int j = 0; j < inst.distancier.tab[i].size(); j++)
 		{
-			if (inst->distancier.tab[i][j] > max_dist) {
-				max_dist = inst->distancier.tab[i][j];
+			if (inst.distancier.tab[i][j] > max_dist) {
+				max_dist = inst.distancier.tab[i][j];
 			}
 		}
 	}
@@ -1183,7 +1171,7 @@ Fct_lin Solveur_min_IC::eval_exact_with_CPLEX(Instance * inst, const vector<int>
 
 
 	//cette fonction se charge de construire le modele (entre autre)
-	vector<int> chemin = solve_routing_1_batch(inst, bat, depart_au_plus_tot);
+	vector<int> chemin = solve_routing_1_batch(bat, depart_au_plus_tot);
 
 
 

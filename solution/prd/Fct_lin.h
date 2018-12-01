@@ -9,6 +9,7 @@
 #include <chrono>
 
 #include "Instance.h"
+#include "batch_list.h"
 
 class Tournee
 {
@@ -35,15 +36,15 @@ public:
 	void suppr();
 	void print() const;
 
-	int eval_routing_cost(Instance* inst) const;
+	int eval_routing_cost(const Instance& inst) const;
 
 	static Tournee create_tournee(const vector<int>& vect);
 	static Tournee create_tournee_vide(int nb_site);
 	void add_job(int job);
 	void suppr_job();
 	static Tournee create_tournee_random(const vector<int>& vect);
-	static Tournee create_tournee_EDD(Instance* inst, const vector<int>& vect);
-	static Tournee create_tournee_nearest_insertion(Instance * inst, const vector<int>& vect);
+	static Tournee create_tournee_EDD(const Instance& inst, const vector<int>& vect);
+	static Tournee create_tournee_nearest_insertion(const Instance& inst, const vector<int>& vect);
 
 	void inverse_tournee();
 	void inverse_half_tournee();
@@ -82,7 +83,7 @@ public:
 
 
 	//create a function lin for specific travel on specific intervalle
-	static Fct_lin create_fct_lin(const Tournee& road, Instance* inst, int min_a, int min_b);
+	static Fct_lin create_fct_lin(const Tournee& road, Instance& inst, int min_a, int min_b);
 	static Fct_lin create_fct_max(int min_a, int min_b);
 
 	//Create a fct lin which is the minimum of the two other
@@ -117,22 +118,22 @@ public:
 	//
 	static const int B_and_B = 7;
 
-	static pair<int, int> a_b_inf(Instance* inst, const vector<int>& batch);
+	static pair<int, int> a_b_inf(Instance& inst, const vector<int>& batch);
 
-	static Fct_lin generate_fct(Instance* inst, const vector<int>& batch, int method,
+	static Fct_lin generate_fct(Instance& inst, const vector<int>& batch, int method,
 		int min_a = numeric_limits<int>::min(), int max_b = numeric_limits<int>::min());
 
-	static Fct_lin generate_pure_random_fct(Instance*  inst, const vector<int>& batch, int min_a, int max_b);
+	static Fct_lin generate_pure_random_fct(Instance&  inst, const vector<int>& batch, int min_a, int max_b);
 
-	static Fct_lin generate_fct_with_local_search(Instance*  inst, Tournee& init_tournee, int min_a, int max_b);
-	static Fct_lin generate_fct_with_four_extrema(Instance*  inst, Tournee& init_tournee, int min_a, int max_b);
+	static Fct_lin generate_fct_with_local_search(Instance&  inst, Tournee& init_tournee, int min_a, int max_b);
+	static Fct_lin generate_fct_with_four_extrema(Instance&  inst, Tournee& init_tournee, int min_a, int max_b);
 
-	static Fct_lin rec_generate_fct_with_total_enumeration(Instance*  inst, Fct_lin& best, Tournee& init_tournee, list<int>& batch, int size);
-	static Fct_lin generate_fct_with_total_enumeration(Instance*  inst, vector<int>& batch, int min_a, int max_b);
+	static Fct_lin rec_generate_fct_with_total_enumeration(Instance&  inst, Fct_lin& best, Tournee& init_tournee, list<int>& batch, int size);
+	static Fct_lin generate_fct_with_total_enumeration(Instance&  inst, vector<int>& batch, int min_a, int max_b);
 
-	static int search_optima_with_big_neiborhood(Instance * inst, Tournee& tournee_c, int depart);
+	static int search_optima_with_big_neiborhood(Instance & inst, Tournee& tournee_c, int depart);
 
-	static vector<vector<int>> build_regular_batch_repartition(int nb_job, int nb_j_batch);
+	static batch_list build_regular_batch_repartition(int nb_job, int nb_j_batch);
 
 	static int compteur;
 };

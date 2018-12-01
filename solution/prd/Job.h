@@ -3,14 +3,14 @@
 #include <vector>
 #include <fstream>
 #include <string>
-
+#include <iostream>
 using namespace std;
 
 class Job
 {
 public:
 	Job();
-	Job(ifstream* fichier, int mMachine);
+	Job(std::istream &input, int mMachine);
 	~Job();
 
 	void reecrire_job(ofstream* fichier);
