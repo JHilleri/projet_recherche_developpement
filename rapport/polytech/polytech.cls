@@ -28,7 +28,7 @@ $clean_ext .= '.ist';
 
 add_cus_dep( 'uml', 'png', 0, 'makeplantuml' );
 sub makeplantuml {
-  system( "java -jar polytech/plantuml.jar -tpng \"$_[0].uml\" \"$_[0].png\"" );
+  system( "java -jar polytech/plantuml.jar -charset UTF-8 -tpng \"$_[0].uml\" \"$_[0].png\"" );
 }	
 
 rename 'latexmkrc.REMOVE_MY_EXTENSION', 'latexmkrc' if -e 'latexmkrc.REMOVE_MY_EXTENSION';
