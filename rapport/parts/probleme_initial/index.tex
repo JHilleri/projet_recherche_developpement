@@ -5,7 +5,7 @@
 Dans ce sous-problème où les lots et les ordres des jobs sont fixé.
 
 Il est possible de faire partir les lots au plus top pour minimiser les pénalités de retard ou les retarder pour réduire les couts d'inventaire.
-Pour connaitre l'impacte de ces décision sans résoudre le problème de livraison pour chaque combinaison, 
+Pour connaitre l'impacte de ces décision sans résoudre le problème de livraison pour chaque combinaison,
 mon encadrant construit une fonction $F_k$ qui donne pour un lot $k$ les pénalités de retard en fonction de la date de départ du lot.
 Cette fonction n'est calculer qu'une seul foi pour chaque lot car les compositions des lots sont fixes.
 Une foi cette fonction calculé, il est possible de résoudre la date de départ de chaque lot séparément et de résoudre le parcours de livraison une foi ensuite.
@@ -22,6 +22,8 @@ Une foi cette fonction calculé, il est possible de résoudre la date de départ
 	Nombre de lots.
 	\item [$j_k$]
 	Dernier job du lot $k$.
+	\item [$p_{i, j}$]
+	Durée de travail sur la machine $i$ pour le job $j$
 	\item [$a_k$]
 	Date de départ au plus tôt du lot $k$.
 	\item [$b_k$]
@@ -31,7 +33,7 @@ Une foi cette fonction calculé, il est possible de résoudre la date de départ
 	\item [$\alpha_{k, s}$]
 	Cout de chaque unité de temps dans le segment $s$ de la fonction $F_k$.
 	\item [$C_{i, j}$]
-	Date de fin du travail de la machine $i$ sur le job $j$. 
+	Date de fin du travail de la machine $i$ sur le job $j$.
 	\item [$c_{k, s}$]
 	Cout des pénalités de retard pour le $s$\ieme segment de la fonction $F_k$.
 	\item [$t_{k, s}$]
@@ -46,56 +48,64 @@ Une foi cette fonction calculé, il est possible de résoudre la date de départ
 	Vaut 0 ou 1 si la date de départ du lot $k$ est dans le segment $s$ de la fonction $F_k$.
 	\item [$d_{k, s}$]
 	Représente le temps écoulé dans le segment $s$ avant le départ du lot $k$.
+	\item [$IC^{WIP}$]
+	Cout d'inventaire pendant la production.
+	$$IC^{WIP}=\sum_{j=1}^{n} \sum_{i=1}^{m-1} \left(C_{i+1, j} - p_{i+1, j} - C_{i,j} \right) h_j^{WIP}$$
+	\item [$IC^{FIN}$]
+	Cout d'inventaire entre la fin de la production et la livraison des jobs.
+	$$IC^{FIN} = \sum_{k=1}^{V} \sum _{j\in j^k} \left(C_{m, j_k} - p_{m, j_{n_k}^k} - C_{m, j} \right) h_j^{FIN}$$
+	\item [$IC$]
+	Couts d'inventaire total.
+	$$IC = IC^{WIP} + IC^{FIN}$$
 \end{labeling}
 
 
 \section{Objectif}
 Somme des coûts à minimiser
-$$min IC + \sum_{k=1}^{V} \sum_{s=1}^{\lambda_k} \left(x_{k, s} c_{k, s}+ d_{k,s} \alpha_{k, s} \right)$$
-
+$$IC + \sum_{k=1}^{V} \sum_{s=1}^{\lambda_k} \left(x_{k, s} c_{k, s}+ d_{k,s} \alpha_{k, s} \right)$$
 
 \section{Contraintes}
 
 \begin{align}
-    C_{j_k, m} \leq \sum_{s=1}^{\lambda_k} \left( x_{k,s} t_{k, s} + d_{k, s} \right) && \forall k \in \left\{i, \cdots, V \right\}\\
-    \sum_{s=1}^{\lambda_k} x_{k, s} = 1 && \forall k \in \left\{i, \cdots, V \right\} \\
-    d_{k, s} \leq x_{k, s} \left( t_{k, s+1 - t_{k, s} -1} \right) && \forall k \in \left\{i, \cdots, V \right\}, \forall s \in \left\{1, \cdots, \lambda_k\right\} \\
-    0 \leq d_{k, \lambda_k} && \forall k \in \left\{i, \cdots, V \right\}
+	C_{j_k, m} \leq \sum_{s=1}^{\lambda_k} \left( x_{k,s} t_{k, s} + d_{k, s} \right) &  & \forall k \in \left\{i, \cdots, V \right\}                                                    \\
+	\sum_{s=1}^{\lambda_k} x_{k, s} = 1                                               &  & \forall k \in \left\{i, \cdots, V \right\}                                                    \\
+	d_{k, s} \leq x_{k, s} \left( t_{k, s+1 - t_{k, s} -1} \right)                    &  & \forall k \in \left\{i, \cdots, V \right\}, \forall s \in \left\{1, \cdots, \lambda_k\right\} \\
+	0 \leq d_{k, \lambda_k}                                                           &  & \forall k \in \left\{i, \cdots, V \right\}
 \end{align}
 \begin{itemize}
-	\item 
-		Lien entre la fin du dernier job d'un lot et le départ du lot
-		\begin{align}
-			C_{j_k, m} \leq \sum_{s=1}^{\lambda_k} \left( x_{k,s} t_{k, s} + d_{k, s} \right) && \forall k \in \left\{i, \cdots, V \right\}		
-		\end{align}
-	\item 
-		La date de départ en livraison ne peut faire partie que d'un segment de la fonction $F_k$.
-		\begin{align}
-			\sum_{s=1}^{\lambda_k} x_{k, s} = 1 && \forall k \in \left\{i, \cdots, V \right\}			
-		\end{align}
-	\item 
-		Chaque segment n'est utilisé que si il contient la date de départ du lot.
-		\begin{align}
-			d_{k, s} \leq x_{k, s} \left( t_{k, s+1 - t_{k, s} -1} \right) && \forall k \in \left\{i, \cdots, V \right\}, \forall s \in \left\{1, \cdots, \lambda_k\right\} \\
-			0 \leq d_{k, \lambda_k} && \forall k \in \left\{i, \cdots, V \right\}
-		\end{align}
+	\item
+	      Lien entre la fin du dernier job d'un lot et le départ du lot
+	      \begin{align}
+		      C_{j_k, m} \leq \sum_{s=1}^{\lambda_k} \left( x_{k,s} t_{k, s} + d_{k, s} \right) &  & \forall k \in \left\{i, \cdots, V \right\}
+	      \end{align}
+	\item
+	      La date de départ en livraison ne peut faire partie que d'un segment de la fonction $F_k$.
+	      \begin{align}
+		      \sum_{s=1}^{\lambda_k} x_{k, s} = 1 &  & \forall k \in \left\{i, \cdots, V \right\}
+	      \end{align}
+	\item
+	      Chaque segment n'est utilisé que si il contient la date de départ du lot.
+	      \begin{align}
+		      d_{k, s} \leq x_{k, s} \left( t_{k, s+1 - t_{k, s} -1} \right) &  & \forall k \in \left\{i, \cdots, V \right\}, \forall s \in \left\{1, \cdots, \lambda_k\right\} \\
+		      0 \leq d_{k, \lambda_k}                                        &  & \forall k \in \left\{i, \cdots, V \right\}
+	      \end{align}
 \end{itemize}
 
 Les contraintes suivantes servent à accélérer la résolution du problème.
 \begin{itemize}
-	\item 
-		La date de fin du lot $k$ optimal est entre les dates $a_k$ et $b_k$ calculé au préalable.
-		\begin{align}
-			a_k \leq C_{j_k, m} \leq b_k && \forall k \in \left\{1,\cdots,V\right\}
-		\end{align}
-	\item 
-		Le temps écouler dans un segment de $F_k$ avant le départ d'un lot ne doit pas faire partir le lot après $b_k$.
-		\begin{align}
-			d_{k, \Lambda_k} \leq t_{k s+1} - t_{k, s}&& s \in \left\{1,\cdots,\lambda_k\right\}, \forall k \in \left\{1,\cdots,V\right\}
-		\end{align}
-	\item 
-		La date du départ d'un lot ne peut pas précéder le début du segment auquel il appartient.
-		\begin{align}
-			x_{k, s^t} t_{k, s} \leq C_{j_k, m} && s \in \left\{1,\cdots,\lambda_k\right\}, \forall k \in \left\{1,\cdots,V\right\}
-		\end{align}
+	\item
+	      La date de fin du lot $k$ optimal est entre les dates $a_k$ et $b_k$ calculé au préalable.
+	      \begin{align}
+		      a_k \leq C_{j_k, m} \leq b_k &  & \forall k \in \left\{1,\cdots,V\right\}
+	      \end{align}
+	\item
+	      Le temps écouler dans un segment de $F_k$ avant le départ d'un lot ne doit pas faire partir le lot après $b_k$.
+	      \begin{align}
+		      d_{k, \Lambda_k} \leq t_{k s+1} - t_{k, s} &  & s \in \left\{1,\cdots,\lambda_k\right\}, \forall k \in \left\{1,\cdots,V\right\}
+	      \end{align}
+	\item
+	      La date du départ d'un lot ne peut pas précéder le début du segment auquel il appartient.
+	      \begin{align}
+		      x_{k, s^t} t_{k, s} \leq C_{j_k, m} &  & s \in \left\{1,\cdots,\lambda_k\right\}, \forall k \in \left\{1,\cdots,V\right\}
+	      \end{align}
 \end{itemize}
