@@ -1,0 +1,141 @@
+\section{Paramètres}
+\begin{labeling}{paramètres}
+	\item [$m$]
+	Nombre de machines
+	\item [$n$]
+	Nombre de jobs.
+	\item [$V$]
+	Nombre de lots.
+	\item [$N_k$]
+	Nombre de job du lot $k$.
+	\item [$p_{i, j}$]
+	Durée de travail sur la machine $i$ pour le job $j$.
+	\item [$h_{j}^{WIP}$] 
+	Cout d'inventaire pendant la production du job $j$.
+	\item [$h_{j}^{FIN}$] 
+	Cout d'inventaire après la production du job $j$.
+	\item [$a_k$]
+	Date de départ au plus tôt du lot $k$.
+	\item [$b_k$]
+	Date de départ du lot k a partir de laquelle les couts d'inventaires sont minimisé.
+	\item [$\lambda_k$]
+	Nombre de segment de la fonction $F_k$
+	\item [$\alpha_{k, s}$]
+	Cout de chaque unité de temps dans le segment $s$ de la fonction $F_k$.
+	\item [$c_{k, s}$]
+	Cout des pénalités de retard pour le $s$\ieme segment de la fonction $F_k$.
+	\item [$t_{k, s}$]
+	Date de début du $s$\ieme segment de la fonction $F_k$, $t_{k, \lambda_k+1}$ vaut $b_k$.
+	
+\end{labeling}
+
+
+\section{Variables}
+
+\begin{labeling}{variables}
+	\item [$x_{k, s}$]
+	Vaut 0 ou 1 si la date de départ du lot $k$ est dans le segment $s$ de la fonction $F_k$.
+	\item [$d_{k, s}$]
+	Représente le temps écoulé dans le segment $s$ avant le départ du lot $k$.
+	\item [$C_{i, j}$]
+	Date de fin du travail de la machine $i$ sur le job $j$.
+	
+	\item [$y_{j1,j2}$]
+	Variable de précédences en production, vaut 1 si le job $j1$ est effectué avant le job $j2$.
+	\item [$j_k$]
+	Dernier job du lot $k$.
+	\item [$F_k$] 
+	Date de fin de production du lot $k$.
+	
+	\item [$IC^{WIP}$]
+	Cout d'inventaire pendant la production.
+	$$IC^{WIP}= \sum_{j=1}^{n} \sum_{i=1}^{m-1} \left(C_{i+1, j} - p_{i+1, j} - C_{i, j} \right) h_j^{WIP}$$
+	\item [$IC^{FIN}$]
+	Cout d'inventaire entre la fin de la production et la livraison des jobs.
+	$$IC^{FIN} = \sum_{k=1}^{V} \sum _{j\in j^k} \left( F_k - C_{m, j} \right) h_j^{FIN}$$
+	\item [$IC$]
+	Couts d'inventaire total.
+	$$IC = IC^{WIP} + IC^{FIN}$$
+\end{labeling}
+
+
+\section{Objectif}
+Somme des coûts à minimiser
+$$IC + \sum_{k=1}^{V} \sum_{s=1}^{\lambda_k} \left(x_{k, s} c_{k, s}+ d_{k,s} \alpha_{k, s} \right)$$
+
+\section{Contraintes}
+
+\begin{itemize}
+	\item
+	      Lien entre la fin du dernier job d'un lot et le départ du lot
+	      \begin{align}
+		      C_{j_k, m} \leq \sum_{s=1}^{\lambda_k} \left( x_{k,s} t_{k, s} + d_{k, s} \right) &  & \forall k \in \left\{i, \cdots, V \right\}
+	      \end{align}
+	\item
+	      La date de départ en livraison ne peut faire partie que d'un segment de la fonction $F_k$.
+	      \begin{align}
+		      \sum_{s=1}^{\lambda_k} x_{k, s} = 1 &  & \forall k \in \left\{i, \cdots, V \right\}
+	      \end{align}
+	\item
+	      Chaque segment n'est utilisé que si il contient la date de départ du lot.
+	      \begin{align}
+		      d_{k, s} \leq x_{k, s} \left( t_{k, s+1 - t_{k, s} -1} \right) &  & \forall k \in \left\{i, \cdots, V \right\}, \forall s \in \left\{1, \cdots, \lambda_k\right\} \\
+		      0 \leq d_{k, \lambda_k}                                        &  & \forall k \in \left\{i, \cdots, V \right\}
+		  \end{align}
+	% 
+	\item
+	      Chaque job est soit le successeur soit le prédécesseur de chacun des autres jobs.
+	      \begin{align}
+		      y_{j1,j2}+y_{j2,j1}=1 &  &
+		      \forall j1,j2\in\left\{1,\dotsc,n\right\}, j1<j2
+	      \end{align}
+	\item
+	      Les jobs ne peuvent pas être leurs propres successeurs.
+	      \begin{align}
+		      y_{j,j}=0 &  &
+		      \forall j\in \left\{1,\cdots, n\right\}
+	      \end{align}
+	\item
+	      Contrainte de gamme, les machines ne peuvent pas travailler sur plusieurs jobs simultanément.
+	      Cette contrainte assure également que les jobs sont produits dans l'ordre prescrit.
+	      \begin{align}
+		      C_{i,j2} \geq C_{i,j1}+p_{i,j2}-M y_{j1,j2} &  &
+		      \forall i\in\left\{1,\dotsc,m\right\}, \forall\left(j1,j2\right)\in\left\{1,\cdots,n\right\}^2
+	      \end{align}
+	\item
+	      Contrainte de précédence, une machine ne peut pas travailler sur un job tant que la machine précédente n’a pas terminé de travailler dessus.
+	      Cette contrainte assure également que les tâches des jobs sont produit dans l'ordre prescrit.
+	      \begin{align}
+		      C_{i,j}\geq C_{i-1,j}+p_{i,j} &  &
+		      \forall j\in\left\{1,\cdots,n\right\},\forall i\in\left\{2,\dotsc,m\right\}
+		  \end{align}
+	\item 
+		Un job est terminé quand toutes ces tâches sont terminées.
+		\begin{align}
+			f_j \geq C_{m, j} & & \forall j \in \left\{0,\dotsc,n\right\}
+		\end{align}
+	\item
+	      Un lot ne peut être livré que si tous ces jobs sont terminés.
+	      \begin{align}
+		      F_k \geq C_{m, j} &  & \forall k \in \left\{1,\dotsc, n \right\}, \forall j \in J^k
+	      \end{align}
+\end{itemize}
+
+Les contraintes suivantes servent à accélérer la résolution du problème.
+\begin{itemize}
+	\item
+	      La date de fin du lot $k$ optimal est entre les dates $a_k$ et $b_k$ calculé au préalable.
+	      \begin{align}
+		      a_k \leq C_{j_k, m} \leq b_k &  & \forall k \in \left\{1,\cdots,V\right\}
+	      \end{align}
+	\item
+	      Le temps écouler dans un segment de $F_k$ avant le départ d'un lot ne doit pas faire partir le lot après $b_k$.
+	      \begin{align}
+		      d_{k, \Lambda_k} \leq t_{k s+1} - t_{k, s} &  & s \in \left\{1,\cdots,\lambda_k\right\}, \forall k \in \left\{1,\cdots,V\right\}
+	      \end{align}
+	\item
+	      La date du départ d'un lot ne peut pas précéder le début du segment auquel il appartient.
+	      \begin{align}
+		      x_{k, s^t} t_{k, s} \leq C_{j_k, m} &  & s \in \left\{1,\cdots,\lambda_k\right\}, \forall k \in \left\{1,\cdots,V\right\}
+	      \end{align}
+\end{itemize}
