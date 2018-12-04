@@ -16,12 +16,12 @@ Une foi cette fonction calculé, il est possible de résoudre la date de départ
 	Nombre de machines
 	\item [$n$]
 	Nombre de jobs.
-	Il est possible de faire des lots ne contenant qu’un seul job,
-	n désigne donc également le nombre maximal de lot.
 	\item [$V$]
 	Nombre de lots.
 	\item [$j_k$]
 	Dernier job du lot $k$.
+	\item [$J^k$] 
+	Liste ordonnée des jobs du lot $k$.
 	\item [$p_{i, j}$]
 	Durée de travail sur la machine $i$ pour le job $j$
 	\item [$a_k$]
@@ -32,18 +32,22 @@ Une foi cette fonction calculé, il est possible de résoudre la date de départ
 	Nombre de segment de la fonction $F_k$
 	\item [$\alpha_{k, s}$]
 	Cout de chaque unité de temps dans le segment $s$ de la fonction $F_k$.
-	\item [$C_{i, j}$]
-	Date de fin du travail de la machine $i$ sur le job $j$.
 	\item [$c_{k, s}$]
 	Cout des pénalités de retard pour le $s$\ieme segment de la fonction $F_k$.
 	\item [$t_{k, s}$]
 	Date de début du $s$\ieme segment de la fonction $F_k$, $t_{k, \lambda_k+1}$ vaut $b_k$.
+	\item [$h_{j}^{WIP}$] 
+	Cout d'inventaire pendant la production du job $j$.
+	\item [$h_{j}^{FIN}$] 
+	Cout d'inventaire après la production du job $j$.
 \end{labeling}
 
 
 \section{Variables}
 
 \begin{labeling}{variables}
+	\item [$C_{i, j}$]
+	Date de fin du travail de la machine $i$ sur le job $j$.
 	\item [$x_{k, s}$]
 	Vaut 0 ou 1 si la date de départ du lot $k$ est dans le segment $s$ de la fonction $F_k$.
 	\item [$d_{k, s}$]
