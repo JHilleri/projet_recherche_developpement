@@ -1,12 +1,32 @@
 \chapter{analyse et conception}
 
+Pour ce problème, les méthodes exactes ne sont pas suffisamment performantes pour résoudre de grande instances dans des délais raisonnables.
+La qualité d'une méthode exactes est estimé a partir de plusieurs critères :
+\begin{itemize}
+	\item Le temps de calcule nécessaire pour trouver la solution en fonction de la taille de l'instance.
+	\item L'espace mémoire requit pour résoudre l'instance en fonction de la taille de l'instance.
+	\item L'efficacité de la parallélisation de la méthode.
+\end{itemize}
+Pour des résultats plus rapides, il faut passer par des méthodes heuristiques.
+Ces méthodes permettent de trouver plus rapidement une solution correcte mais pas forcement la meilleur.
+Pour évaluer une méthode heuristique, il faut prendre en compte les critères suivant :
+\begin{itemize}
+	\item La qualité de la solution en fonction du temps et de la taille de l'instance.
+	\item L'espace mémoire utilisé en fonction de la taille de l'instance.
+	\item L'écart de qualité de la solution par rapport a celle de la méthode exacte en fonction du temps.
+	\item Le temps qu'il faut pour obtenir une solution correcte par rapport a la méthode exacte.
+\end{itemize}
+Pour évaluer une méthode heuristique, il faut une méthode exacte pour faire la comparaison.
 
 \section{méthode exacte}
 Hugo Chevroton a proposé une méthode pour résoudre le sous-problème pour lequel les ordres des jobs et les lots sont fixé,
-cette méthode est présenté dans la partie \autoref{appendix:modelisation_initiale}
+cette méthode utilise un solveur et est présenté dans la partie \autoref{appendix:appendix:modelisation_initiale}.
 
-Je modifie sa modélisation pour ajouter la liberté sur les ordres des jobs dans les lots.
+Je me base sur sa modélisation pour ajouter la liberté sur les ordres des jobs dans les lots.
 
 \input{parts/analyse_et_conception/model_exact.tex}
 
 \section{méthode heuristique}
+
+Pour la méthode heuristique, j'ai décidé d'utiliser une recherche local.
+Cette méthode consiste à améliorer une solution avec des variations successives.
