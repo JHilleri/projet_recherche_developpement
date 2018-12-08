@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="batch_list.cpp" />
     <ClCompile Include="Branch_and_bound.cpp" />
     <ClCompile Include="Distancier.cpp" />
     <ClCompile Include="Fct_lin.cpp" />
@@ -149,6 +150,7 @@
     <ClCompile Include="Solveur_min_IC.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="batch_list.h" />
     <ClInclude Include="Branch_and_bound.h" />
     <ClInclude Include="Distancier.h" />
     <ClInclude Include="Fct_lin.h" />

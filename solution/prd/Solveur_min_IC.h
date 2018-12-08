@@ -12,6 +12,7 @@
 #include "Fct_lin.h"
 #include "Instance.h"
 #include "Branch_and_bound.h"
+#include "batch_list.h"
 
 using namespace std;
 
@@ -29,10 +30,23 @@ struct Struct_Retour
 
 };
 
+enum class algorithme_de_resolution
+{
+	heuristic_near = -1,
+	EDD,
+	EDDx4,
+	near,
+	nearx4,
+	EDD_near,
+	EDD_nearx4,
+	CPLEX,
+	B_and_B
+};
+
 class Solveur_min_IC
 {
 public:
-	Solveur_min_IC();
+	Solveur_min_IC(Instance &instance, batch_list& tab_batch);
 	~Solveur_min_IC();
 
 	//retourne le temps de CPLEX en ms 
@@ -42,20 +56,9 @@ public:
 	//Utiliser pour générer les instances (fixe les due dates pour les rendre "intéressante")
 
 	//Modifie les due date des jobs de l'instance au vue de leurs fenetre de temps au depart 
-	void ajust_due_date_with_windows_a_b(Instance* inst, /*vector<int>rm,*/ vector<vector<int>> tab_Batch);
-	void ajust_due_date_with_approx(Instance* inst, /*vector<int>rm,*/ vector<vector<int>> tab_Batch, int nb_j_batch);
+	void ajust_due_date_with_windows_a_b();
+	void ajust_due_date_with_approx(int nb_j_batch);
 	//******
-
-
-	static const int heuristic_near = -1;
-	static const int EDD = 0;
-	static const int EDDx4 = 1;
-	static const int near = 2;
-	static const int nearx4 = 3;
-	static const int EDD_near = 4;
-	static const int EDD_nearx4 = 5;
-	static const int CPLEX = 6;
-	static const int B_and_B = 7;
 
 	static const int init_as_optima = 0;
 	static const int comp_with_optima = 1;
@@ -64,13 +67,13 @@ public:
 	//***
 	//Cette fonction reprend l'algorithme global de résolution présenté dans l'article
 	//****
-	Struct_Retour solve(Instance* inst, vector<vector<int>> tab_Batch, int approx_method = EDD_nearx4, int mode = nothing_special);
+	Struct_Retour solve(algorithme_de_resolution approx_method = algorithme_de_resolution::EDD_nearx4, int mode = nothing_special);
 
 
 	//Creation d'une fonction F_k en utilisant CPLEX
 	//evalue exactement le PPCM du batch pour toute date de départ comprise entre min_a et max_ avec un intervalle définie
-	Fct_lin eval_exact_with_CPLEX(Instance* inst, const vector<int>& bat, int depart_min_a, int depart_max_b, int intervalle);
-	vector<int> solve_routing_1_batch(Instance* inst, const vector<int>& bat, int departure_date);
+	Fct_lin eval_exact_with_CPLEX(const vector<int>& bat, int depart_min_a, int depart_max_b, int intervalle);
+	vector<int> solve_routing_1_batch(const vector<int>& bat, int departure_date);
 
 
 	//****
@@ -83,8 +86,8 @@ public:
 
 private:
 
-	Instance * inst;
-	vector<vector<int>>* tab_Batch;
+	Instance& inst;
+	batch_list tab_Batch;
 
 	int big_M = 1000;
 	int depart_au_plus_tot = 0;
@@ -96,8 +99,8 @@ private:
 	int nJ;
 	int nM;
 	vector<int> list_ind;
-	void init_model_and_data(Instance* inst, vector<vector<int>>* tab_Batch = nullptr);
-	void init_list_ind(Instance* inst, vector<vector<int>> tab_Batch);
+	void init_model_and_data();
+	void init_list_ind();
 
 
 	IloArray<IloIntVarArray> C_ij;

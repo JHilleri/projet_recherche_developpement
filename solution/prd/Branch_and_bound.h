@@ -34,7 +34,7 @@ class Covering_tree {
 
 public:
 
-	Instance * inst;
+	Instance& inst;
 
 	struct Edge {
 		int n_1;
@@ -61,8 +61,8 @@ public:
 
 	vector<Edge> edges;
 
-	Covering_tree() {};
-	Covering_tree(Instance* inst, const vector<int>& batch);
+	Covering_tree(Instance& instance) :inst{ instance } {};
+	Covering_tree(Instance& inst, const vector<int>& batch);
 
 	void delete_node(int indexnode);
 	int sum_edge();
@@ -70,17 +70,18 @@ public:
 
 class Branch_and_bound {
 public:
+	Branch_and_bound(Instance& instance);
 	static Tournee test;
 	static int ind_test;
 	static vector<bool> vec_bool;
 
-	Fct_lin generate_fct_with_branch_and_bound(Instance * inst, const vector<int>& batch, int min_a, int max_b);
+	Fct_lin generate_fct_with_branch_and_bound(const vector<int>& batch, int min_a, int max_b);
 
 	static void evaluation_of_instance_file(string path, string prefixe);
 
 private:
 
-	Instance * inst;
+	Instance& inst;
 
 	int nb_resting_job;
 	list<int> job_resting_for_assignement;
@@ -92,7 +93,7 @@ private:
 	Fct_lin upper_bound;
 	//Covering_tree covering_tree;
 
-	Fct_lin init_upper_bound(Instance * inst, const vector<int>& batch, int min_a, int max_b);
+	Fct_lin init_upper_bound(const vector<int>& batch, int min_a, int max_b);
 
 	//void go_in(int new_node);
 	//void go_out(int new_node, int old_node);

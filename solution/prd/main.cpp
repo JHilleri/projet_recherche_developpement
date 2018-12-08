@@ -4,58 +4,50 @@
 #include <iostream>
 #include <fstream>
 #include <chrono>
+#include <filesystem>
 
 #include "Instance.h"
 #include "Generateur.h"
 #include "Fct_lin.h"
 #include "Solveur_min_IC.h"
 #include "Branch_and_bound.h"
-
-
-
+#include "batch_list.h"
 
 using namespace std;
 
 int main(int argc, char **argv)
 {
+	if (argc < 2) // checking parameters
+	{
+		std::cerr << "invalid parameters, usage \"prd.exe [path to the instance]\"" << std::endl;
+		return 0;
+	}
+
+	std::filesystem::path instance_path = std::filesystem::absolute({ argv[1] });
+	if (!std::filesystem::is_regular_file(instance_path))
+	{
+		std::cerr << "invalid instance path : \"" << instance_path << "\"" << std::endl;
+		return 0;
+	}
+
 	unsigned seed1 = chrono::system_clock::now().time_since_epoch().count();
 	srand(seed1);
 
-	vector<int> tab_method = vector<int>({
-		Solveur_min_IC::CPLEX,
-		Solveur_min_IC::B_and_B,
-		Solveur_min_IC::heuristic_near,
-		Solveur_min_IC::near,
-		Solveur_min_IC::EDD_near,
-		Solveur_min_IC::nearx4,
-		Solveur_min_IC::EDD_nearx4//*/
-		});
 
-
-	//chemin d'instance à modifier
-	string chemin_instance = "C:/tmp/Instance/";
-	string name_instance = "Instance_sans_batch.txt";
-	Instance* instance = new Instance(chemin_instance + name_instance);
+	std::ifstream instance_file{ instance_path };
+	Instance instance{ instance_file };
 
 	//Les différents jobs sont indexé de 0 à nb_job - 1
 	//batch prédéfini représente l'ordonnacement  et la mise par lot
 	//Attention, cette structure sous entends que les batchs sont continus dans l'ordonnacement, 
 	//ce n'est pas forcément le cas
-	vector<vector<int>> batch_predefini = Fct_lin::build_regular_batch_repartition(100, 10);
+	batch_list batch_predefini = Fct_lin::build_regular_batch_repartition(100, 10);
 
-	cout << "Ordonnancement et mise en batch proposée" << endl;
-	for (auto var : batch_predefini)
-	{
-		cout << "{";
-		for (auto i : var)
-		{
-			cout << i << ", ";
-		}cout << "}; ";
-	}cout << endl;
+	std::cout << "Ordonnancement et mise en batch proposée :" << std::endl << batch_predefini << std::endl;
 
 	//tu peux changer la méthode en paramètre
-	Solveur_min_IC solveur;
-	solveur.solve(instance, batch_predefini, Solveur_min_IC::B_and_B, Solveur_min_IC::init_as_optima);
+	Solveur_min_IC solveur{ instance, batch_predefini };
+	solveur.solve(algorithme_de_resolution::B_and_B, Solveur_min_IC::init_as_optima);
 
 	cout << endl << "FINI";
 	return 0;

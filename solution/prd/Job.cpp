@@ -5,35 +5,35 @@ Job::Job()
 {
 }
 
-Job::Job(ifstream* fichier, int mMachine)
+Job::Job(std::istream & input, int mMachine)
 {
 	string tmp;
-	getline(*fichier, tmp);
-	getline(*fichier, tmp);
+	getline(input, tmp);
+	getline(input, tmp);
 	p = vector<int>(mMachine);
 
 	sum_p = 0;
 	for (int i = 0; i < mMachine; i++)
 	{
-		*fichier >> p[i];
+		input >> p[i];
 		sum_p += p[i];
 	}
 
 
 	// A decommenter
 	//Coordonées
-	*fichier >> x >> y;
+	input >> x >> y;
 
 	thWIP = vector<int>(mMachine - 1);
 	for (int i = 0; i < mMachine - 1; i++)
 	{
-		*fichier >> thWIP[i];
+		input >> thWIP[i];
 		sum_p += thWIP[i];
 	}
-	*fichier >> thFIN;
+	input >> thFIN;
 	//*/
 
-	*fichier >> due_d >> q >> hWIP >> hFIN >> piM >> pi3PL;
+	input >> due_d >> q >> hWIP >> hFIN >> piM >> pi3PL;
 }
 
 
