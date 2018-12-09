@@ -2,9 +2,10 @@
 
 \section{Acteurs, enjeux et contexte}
 Ce projet reprend le travail de mon encadrant, Hugo Chevroton, 
-    qui travaille sur l'intégration de problèmes de routing dans des problèmes d'ateliers.
-    L'objectif de cette approche est de fournir de meilleures solutions.
-Dans ce projet, je travaille sur une sous-partie de ce problème.
+    qui travaille sur l'intégration de problèmes de routing dans des problèmes d'ateliers en flow-shop avec permutation.
+Le problème de flow-shop avec permutation implique de tout les produits passent par toutes les machines, dans un même ordre.
+  L'objectif de cette approche est de fournir de meilleures solutions.
+Dans ce projet, je travaille sur une sous-partie de ce problème pour laquelle les produits sont envoyé en livraison par lots déjà définit.
 
 \subsection{Présentation du sujet général}
 Dans une entreprise qui réalise des commandes et les fait livrer chez ces clients,
@@ -43,13 +44,13 @@ La modélisation du problème général est présentée dans la partie \autoref{
 Ce projet est un sujet de recherche, mon encadrant est le seul client.
 
 \section{Objectifs}
-Mon encadrant a déjà résolue le sous-problème où l'ordre des jobs et la constitution des lots sont fixées.
+Mon encadrant a déjà résolue le sous-problème où l'ordre de production des jobs et la constitution des lots sont fixées.
 L'objectif de ce projet est d'ajouter la possibilité de changer l'ordre des jobs.
 
 Il faut donc résoudre simultanément les problèmes de routing et d'atelier pour des problèmes où les lots sont fixes à l'avance.
 
-Dans un premier temps je vais utiliser un solveur.
-Ensuite, je vais réaliser un programme en C++ pour résoudre le problème avec des heuristiques.
+Je vais réaliser un programme en C++ pour résoudre le problème,
+de façon exacte pour commencer puis avec une méthode heuristique.
 
 \section{Hypothèses}
 Dans ce projet, on considère que l'atelier de production est constitué de plusieurs machines 

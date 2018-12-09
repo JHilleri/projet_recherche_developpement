@@ -20,7 +20,7 @@ Pour évaluer une méthode heuristique, il faut une méthode exacte pour faire l
 
 \section{méthode exacte}
 Hugo Chevroton a proposé une méthode pour résoudre le sous-problème pour lequel les ordres des jobs et les lots sont fixé,
-cette méthode utilise un solveur et est présenté dans la partie \autoref{appendix:appendix:modelisation_initiale}.
+cette méthode utilise un solveur et est présenté dans la partie \autoref{appendix:modelisation_initiale}.
 
 Je me base sur sa modélisation pour ajouter la liberté sur les ordres des jobs dans les lots.
 
@@ -28,5 +28,15 @@ Je me base sur sa modélisation pour ajouter la liberté sur les ordres des jobs
 
 \section{méthode heuristique}
 
-Pour la méthode heuristique, j'ai décidé d'utiliser une recherche local.
-Cette méthode consiste à améliorer une solution avec des variations successives.
+Pour la méthode heuristique, j'ai décidé avec mon encadrant d'utiliser un algorithme de recherche local.
+Cette algorithme est présente dans la partie \autoref{section:recherche_locale}.
+	
+
+\subsection{Operateur de voisinage}
+
+
+
+\subsection{Exploration du voisinage}
+\subsection{Stratégie de sortie des minimum locaux}
+Lorsque la solution étudié n'a pas de meilleur voisin, on est dans un minimum local.
+Pour sortir de ces minimum locaux, on repart d'une nouvelle solution aléatoire.
