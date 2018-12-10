@@ -4,7 +4,7 @@
 Le problème de flow-shop avec permutation est un problème où l'on cherche à trouver l'ordre dans lequel réaliser des jobs.
 Dans ce problème, chaque job doit passer par différentes machines, toujours dans le même ordre.
 
-Pour ce problème, les solutions sont généralement représenté sous la forme de diagramme de Gantt.
+Pour ce problème, les solutions sont généralement représentées sous la forme de diagramme de Gantt.
 
 \includegraphics{parts/etat_de_l_art/gantt_exemple.png}
 
@@ -12,9 +12,9 @@ Pour ce problème, les solutions sont généralement représenté sous la forme 
 \section{Recherche locale}
 \label{section:recherche_locale}
 
-Les algorithmes de recherche locale permettent de chercher une bonne solution en apportant des améliorations successives a à une solution.
+Les algorithmes de recherche locale permettent de chercher une bonne solution en apportant des améliorations successives à une solution.
 
-A partir d'une solution, on explore les solutions voisines (qui sont obtenus en appliquant un operateur de voisinage sur la solution).
+A partir d'une solution, on explore les solutions voisines (qui sont obtenus en appliquant un opérateur de voisinage sur la solution).
 Parmi ces solutions, on en prend une qui donne un meilleur score.
 
 \begin{algorithm}
@@ -24,20 +24,20 @@ Parmi ces solutions, on en prend une qui donne un meilleur score.
 	\SetKwIF{If}{ElseIf}{Else}{si}{alors}{sinon si}{sinon}{fin}
 	\SetKwFor{ForEach}{pout toutes}{faire}{fin}
 
-	\tcc{$solution\_actuel$ : une solution généré aléatoirement}
+	\tcc{$solution\_actuelle$ : une solution générée aléatoirement}
 	\tcc{$F(s)$ : la fonction objectif à minimiser}
 	\tcc{$Operateur\_de\_voisinnage(s)$ : une fonction qui donne la liste des solutions voisines à la solution s.}
-	$meilleur\_voisine \gets solution\_actuel$
+	$meilleure\_voisine \gets solution\_actuelle$
 
-	\Repeat{$F(solution\_actuel) < F(meilleur\_voisine)$ }
+	\Repeat{$F(solution\_actuelle) < F(meilleure\_voisine)$ }
 	{
-		$solution\_actuel \gets meilleur\_voisine$
+		$solution\_actuelle \gets meilleure\_voisine$
 
-		\ForEach{$solution\_voisine$ de $Operateur\_de\_voisinnage(solution\_actuel)$}
+		\ForEach{$solution\_voisine$ de $Operateur\_de\_voisinnage(solution\_actuelle)$}
 		{
-			\If{$F(solution\_voisine) < F(meilleur\_voisine)$}
+			\If{$F(solution\_voisine) < F(meilleure\_voisine)$}
 			{
-				$meilleur\_voisine \gets solution\_voisine$
+				$meilleure\_voisine \gets solution\_voisine$
 			}
 		}
 	}

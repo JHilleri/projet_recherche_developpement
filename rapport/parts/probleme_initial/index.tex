@@ -2,13 +2,13 @@
 
 \label{appendix:modelisation_initiale}
 
-Dans ce sous-problème où les lots et les ordres des jobs sont fixé.
+Dans ce sous-problème où les lots et les ordres des jobs sont fixés.
 
-Il est possible de faire partir les lots au plus top pour minimiser les pénalités de retard ou les retarder pour réduire les couts d'inventaire.
-Pour connaitre l'impacte de ces décision sans résoudre le problème de livraison pour chaque combinaison,
+Il est possible de faire partir les lots au plus tôt pour minimiser les pénalités de retard ou les retarder pour réduire les couts d'inventaire.
+Pour connaitre l'impact de ces décisions sans résoudre le problème de livraison pour chaque combinaison,
 mon encadrant construit une fonction $F_k$ qui donne pour un lot $k$ les pénalités de retard en fonction de la date de départ du lot.
-Cette fonction n'est calculer qu'une seul foi pour chaque lot car les compositions des lots sont fixes.
-Une foi cette fonction calculé, il est possible de résoudre la date de départ de chaque lot séparément et de résoudre le parcours de livraison une foi ensuite.
+Cette fonction n'est calculée qu'une seul fois pour chaque lot car les compositions des lots sont fixes.
+Une fois cette fonction calculée, il est possible de résoudre la date de départ de chaque lot séparément.
 
 \section{Paramètres}
 \begin{labeling}{paramètres}
@@ -27,13 +27,13 @@ Une foi cette fonction calculé, il est possible de résoudre la date de départ
 	\item [$a_k$]
 	Date de départ au plus tôt du lot $k$.
 	\item [$b_k$]
-	Date de départ du lot k a partir de laquelle les couts d'inventaires sont minimisé.
+	Date de départ du lot k à partir de laquelle les couts d'inventaires sont minimisés.
 	\item [$\lambda_k$]
 	Nombre de segment de la fonction $F_k$
 	\item [$\alpha_{k, s}$]
-	Cout de chaque unité de temps dans le segment $s$ de la fonction $F_k$.
+	Couts de chaque unité de temps dans le segment $s$ de la fonction $F_k$.
 	\item [$c_{k, s}$]
-	Cout des pénalités de retard pour le $s$\ieme segment de la fonction $F_k$.
+	Couts des pénalités de retard pour le $s$\ieme segment de la fonction $F_k$.
 	\item [$t_{k, s}$]
 	Date de début du $s$\ieme segment de la fonction $F_k$, $t_{k, \lambda_k+1}$ vaut $b_k$.
 	\item [$h_{j}^{WIP}$] 
@@ -88,7 +88,7 @@ $$IC + \sum_{k=1}^{V} \sum_{s=1}^{\lambda_k} \left(x_{k, s} c_{k, s}+ d_{k,s} \a
 		      \sum_{s=1}^{\lambda_k} x_{k, s} = 1 &  & \forall k \in \left\{i, \cdots, V \right\}
 	      \end{align}
 	\item
-	      Chaque segment n'est utilisé que si il contient la date de départ du lot.
+	      Chaque segment n'est utilisé que s'il contient la date de départ du lot.
 	      \begin{align}
 		      d_{k, s} \leq x_{k, s} \left( t_{k, s+1 - t_{k, s} -1} \right) &  & \forall k \in \left\{i, \cdots, V \right\}, \forall s \in \left\{1, \cdots, \lambda_k\right\} \\
 		      0 \leq d_{k, \lambda_k}                                        &  & \forall k \in \left\{i, \cdots, V \right\}
@@ -98,12 +98,12 @@ $$IC + \sum_{k=1}^{V} \sum_{s=1}^{\lambda_k} \left(x_{k, s} c_{k, s}+ d_{k,s} \a
 Les contraintes suivantes servent à accélérer la résolution du problème.
 \begin{itemize}
 	\item
-	      La date de fin du lot $k$ optimal est entre les dates $a_k$ et $b_k$ calculé au préalable.
+	      La date de fin optimale du lot $k$ est entre les dates $a_k$ et $b_k$ calculé au préalable.
 	      \begin{align}
 		      a_k \leq C_{j_k, m} \leq b_k &  & \forall k \in \left\{1,\cdots,V\right\}
 	      \end{align}
 	\item
-	      Le temps écouler dans un segment de $F_k$ avant le départ d'un lot ne doit pas faire partir le lot après $b_k$.
+	      Le temps écoulé dans un segment de $F_k$ avant le départ d'un lot ne doit pas faire partir le lot après $b_k$.
 	      \begin{align}
 		      d_{k, \Lambda_k} \leq t_{k s+1} - t_{k, s} &  & s \in \left\{1,\cdots,\lambda_k\right\}, \forall k \in \left\{1,\cdots,V\right\}
 	      \end{align}
