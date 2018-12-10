@@ -12,17 +12,14 @@ Il s'agit d'un projet de recherche, les utilisateurs seront des chercheurs souha
 \section{Fonctionnalités du système}
 L'application développée dans ce projet a pour objectif de trouver la meilleure solution pour le problème défini précédemment.
 Elle est utilisée pour comparer les résultats des différents algorithmes.
-Deux méthodes sont explorées, une méthode exacte utilisant un solveur et l'autre une méthode heuristique.
+Deux méthodes sont explorées, une méthode exacte utilisant un solveur et une recherche locale.
 
 \includegraphics[width=\textwidth]{parts/description_generale/use_cases}
+
+Le programme est un exécutable en console, il prend en paramètre le chemin vers l'instance à résoudre et l'algorithme utilisé.
+Une fois le programme terminé, il affiche les résultats dans la console.
+
+
 \section{Structure générale du système}
 
-Le programme comprendra une partie commune pour les deux algorithmes.
-Cette partie commune comprendra :
-\begin{itemize}
-    \item les descriptions des instances.
-    \item les descriptions des solutions.
-    \item les validations des solutions.
-\end{itemize}
-
-L'utilisateur pourra choisir la méthode a utiliser.
+\includegraphics[width=\textwidth]{parts/description_generale/composants}

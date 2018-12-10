@@ -4,9 +4,11 @@
 
 Dans ce sous-problème où les lots et les ordres des jobs sont fixés.
 
+% Ce modèle ce base sur celui proposé par mon encadrant Hugo Chevroton \cite{second_papier}.
+
 Il est possible de faire partir les lots au plus tôt pour minimiser les pénalités de retard ou les retarder pour réduire les couts d'inventaire.
 Pour connaitre l'impact de ces décisions sans résoudre le problème de livraison pour chaque combinaison,
-mon encadrant construit une fonction $F_k$ qui donne pour un lot $k$ les pénalités de retard en fonction de la date de départ du lot.
+mon encadrant à trouvé une solution, construire une fonction $F_k$ qui donne pour un lot $k$ les pénalités de retard en fonction de la date de départ du lot.
 Cette fonction n'est calculée qu'une seul fois pour chaque lot car les compositions des lots sont fixes.
 Une fois cette fonction calculée, il est possible de résoudre la date de départ de chaque lot séparément.
 

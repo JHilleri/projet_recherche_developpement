@@ -1,4 +1,4 @@
-\documentclass[noposter]{polytech/polytech}
+\documentclass{polytech/polytech}
 \usepackage{scrextend}
 
 \schooldepartment{di}
@@ -7,14 +7,32 @@
 \title{Ordonnancement de production dans un problème intégrant la distribution}
 \student{Jean}{Hilleriteau}{jean.hilleriteau@etu.univ-tours.fr}
 \academicsupervisor[di]{Hugo}{Chevroton}{hugo.chevroton@etu.univ-tours.fr}
-\resume{texte}
-\abstract{texte}
-\motcle{mot clé}
-\keyword{mot clé}
+\resume{
+    Ce projet vise à développer un algorithme pour optimiser la planification de jobs dans un problème d'atelier qui s'intègre avec un problème de livraison.
+}
+\abstract{
+    This project is about to optimise a jobs scheduling in a flow-shop problem integrated with a salesman problem.
+}
+\motcle{flow-shop avec permutation}
+\motcle{C++}
+\motcle{recherche locale}
+\motcle{resolution exacte}
+\keyword{permutation flow-shop}
+\keyword{C++}
+\keyword{local search}
+\keyword{exact resolution}
 
-\posterblock{Objectifs}{Objectifs du projet}{polytech/polytech}{}
-\posterblock{Mise en \oe{}uvre}{}{polytech/polytech}{}
-\posterblock{Résultats attendus}{}{polytech/polytech}{}
+\posterblock{Objectifs}{
+    L'objectif de ce projet est de comparer des méthodes pour résoudre un problème d'ordonnancement d'atelier et un problème de livraison.
+}{polytech/polytech}{}
+\posterblock{Mise en \oe{}uvre}{
+    Le projet prend la forme d'une application codé en C++ qui implémente une méthode de résolution exacte et une recherche locale.
+}{polytech/polytech}{}
+\posterblock{Résultats attendus}{
+    Le résultat attendu est un programme permettant de résoudre le problème d'atelier en prenant en compte son impact sur le problème de livraison.
+    }{polytech/polytech}{}
+
+\addbibresource{bibliographie}
 
 \begin{document}
 
@@ -34,6 +52,7 @@
 
 \input{parts/modelisation/index.tex}
 \input{parts/probleme_initial/index.tex}
+\input{parts/spécifications/index.tex}
 \input{parts/plannification/index.tex}
 
 \end{document}

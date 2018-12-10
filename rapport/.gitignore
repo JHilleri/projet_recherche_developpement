@@ -3,4 +3,5 @@
 !polytech/**
 !.gitignore
 !*.png
+!*.bib
 !parts/

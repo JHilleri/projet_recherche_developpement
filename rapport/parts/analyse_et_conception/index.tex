@@ -19,6 +19,7 @@ Pour évaluer une méthode heuristique, il faut prendre en compte les critères 
 Pour évaluer une méthode heuristique, il faut une méthode exacte pour faire la comparaison.
 
 \section{méthode exacte}
+\label{section:analyse:methode_exacte}
 Hugo Chevroton a proposé une méthode pour résoudre le sous-problème pour lequel les ordres des jobs et les lots sont fixés,
 cette méthode utilise un solveur et est présentée dans la partie \autoref{appendix:modelisation_initiale}.
 
@@ -27,16 +28,30 @@ Je me base sur sa modélisation pour ajouter la liberté sur les ordres des jobs
 \input{parts/analyse_et_conception/model_exact.tex}
 
 \section{méthode heuristique}
+\label{section:analyse:methode_heuristique}
 
 Pour la méthode heuristique, j'ai décidé avec mon encadrant d'utiliser un algorithme de recherche locale.
 Cet algorithme est présenté dans la partie \autoref{section:recherche_locale}.
 	
+Les solutions sont représentées par une liste de jobs classé dans l'ordre de leurs réalisation.
 
 \subsection{Operateur de voisinage}
 
-
+L'opérateur à pour rôle de définir les solutions voisines de la solution principale.
+L'opérateur donne des solutions où l'emplacement d'un job dans l'ordre de réalisation a été changé.
+Cet opérateur permet de conserver des séquences de jobs qui peuvent être bon.
 
 \subsection{Exploration du voisinage}
+
+Tester toute les solutions voisines prend du temps.
+Pour accélérer l'algorithme, l'exploration du voisinage s'arrête a la première solution qui est meilleur que la solution initiale.
+De cette façon, la solution vas aller plus rapidement vers le minimum local.
+
 \subsection{Stratégie de sortie des minimum locaux}
 Lorsque la solution étudiée n'a pas de meilleur voisin, on est dans un minimum local.
 Pour sortir de ces minimums locaux, on repart d'une nouvelle solution aléatoire.
+
+\subsection{Condition d'arrêt}
+Une fois dans un minimum local, l'algorithme repart sur une solution aléatoire, il n'y à donc pas de fin.
+Pour l'arrêter, il faut limiter le temps qui lui est accordé.
+Pour cela, on utilise la durée donnée en paramètre par l'utilisateur.
