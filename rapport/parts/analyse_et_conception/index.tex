@@ -1,15 +1,15 @@
 \chapter{analyse et conception}
 
-Pour ce problème, les méthodes exactes ne sont pas suffisamment performantes pour résoudre de grande instances dans des délais raisonnables.
-La qualité d'une méthode exactes est estimé a partir de plusieurs critères :
+Pour ce problème, les méthodes exactes ne sont pas suffisamment performantes pour résoudre de grandes instances dans des délais raisonnables.
+La qualité d'une méthode exacte est estimée à partir de plusieurs critères :
 \begin{itemize}
-	\item Le temps de calcule nécessaire pour trouver la solution en fonction de la taille de l'instance.
+	\item Le temps de calcul nécessaire pour trouver la solution en fonction de la taille de l'instance.
 	\item L'espace mémoire requit pour résoudre l'instance en fonction de la taille de l'instance.
 	\item L'efficacité de la parallélisation de la méthode.
 \end{itemize}
 Pour des résultats plus rapides, il faut passer par des méthodes heuristiques.
-Ces méthodes permettent de trouver plus rapidement une solution correcte mais pas forcement la meilleur.
-Pour évaluer une méthode heuristique, il faut prendre en compte les critères suivant :
+Ces méthodes permettent de trouver plus rapidement une solution correcte mais pas forcément la meilleure.
+Pour évaluer une méthode heuristique, il faut prendre en compte les critères suivants :
 \begin{itemize}
 	\item La qualité de la solution en fonction du temps et de la taille de l'instance.
 	\item L'espace mémoire utilisé en fonction de la taille de l'instance.
@@ -19,14 +19,39 @@ Pour évaluer une méthode heuristique, il faut prendre en compte les critères 
 Pour évaluer une méthode heuristique, il faut une méthode exacte pour faire la comparaison.
 
 \section{méthode exacte}
-Hugo Chevroton a proposé une méthode pour résoudre le sous-problème pour lequel les ordres des jobs et les lots sont fixé,
-cette méthode utilise un solveur et est présenté dans la partie \autoref{appendix:appendix:modelisation_initiale}.
+\label{section:analyse:methode_exacte}
+Hugo Chevroton a proposé une méthode pour résoudre le sous-problème pour lequel les ordres des jobs et les lots sont fixés,
+cette méthode utilise un solveur et est présentée dans la partie \autoref{appendix:modelisation_initiale}.
 
 Je me base sur sa modélisation pour ajouter la liberté sur les ordres des jobs dans les lots.
 
 \input{parts/analyse_et_conception/model_exact.tex}
 
 \section{méthode heuristique}
+\label{section:analyse:methode_heuristique}
 
-Pour la méthode heuristique, j'ai décidé d'utiliser une recherche local.
-Cette méthode consiste à améliorer une solution avec des variations successives.
+Pour la méthode heuristique, j'ai décidé avec mon encadrant d'utiliser un algorithme de recherche locale.
+Cet algorithme est présenté dans la partie \autoref{section:recherche_locale}.
+	
+Les solutions sont représentées par une liste de jobs classé dans l'ordre de leurs réalisation.
+
+\subsection{Operateur de voisinage}
+
+L'opérateur à pour rôle de définir les solutions voisines de la solution principale.
+L'opérateur donne des solutions où l'emplacement d'un job dans l'ordre de réalisation a été changé.
+Cet opérateur permet de conserver des séquences de jobs qui peuvent être bon.
+
+\subsection{Exploration du voisinage}
+
+Tester toute les solutions voisines prend du temps.
+Pour accélérer l'algorithme, l'exploration du voisinage s'arrête a la première solution qui est meilleur que la solution initiale.
+De cette façon, la solution vas aller plus rapidement vers le minimum local.
+
+\subsection{Stratégie de sortie des minimum locaux}
+Lorsque la solution étudiée n'a pas de meilleur voisin, on est dans un minimum local.
+Pour sortir de ces minimums locaux, on repart d'une nouvelle solution aléatoire.
+
+\subsection{Condition d'arrêt}
+Une fois dans un minimum local, l'algorithme repart sur une solution aléatoire, il n'y à donc pas de fin.
+Pour l'arrêter, il faut limiter le temps qui lui est accordé.
+Pour cela, on utilise la durée donnée en paramètre par l'utilisateur.

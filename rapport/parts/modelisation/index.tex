@@ -32,7 +32,7 @@
 
 \section{Variables}
 
-Pour représenter l’ordre des jobs lors de la production, on utilise une matrice qui indique pour chaque job s’il doit être réaliser avant un autre.
+Pour représenter l’ordre des jobs lors de la production, on utilise une matrice qui indique pour chaque job s’il doit être réalisé avant un autre.
 
 Par exemple, pour la matrice suivante.
 
@@ -78,7 +78,7 @@ Ce qui signifie dans le lot 1, $j1$ est livré avant $j2$ et dans le lot 2, $j3$
 	\item [$IC^{WIP}$] Somme des coûts d’inventaire sur les jobs en cours
 	$$IC^{WIP}=\sum_{j=1}^{n}\sum_{i=1}^{m-1}{\left(C_{i+1,j}-C_{i,j}-p_{i+1,j}\right)h_j^{WIP}}$$
 
-	\item [$IC^{FIN}$] Somme des coûts d’inventaire sur les jobs terminé.
+	\item [$IC^{FIN}$] Somme des coûts d’inventaire sur les jobs terminés.
 	$${IC}^{FIN}=\sum_{j=1}^{n}{\left(f_j-C_{m,j}\right)h_j^{FIN}}$$
 	% \item [$PC$] Somme des coûts des retards.
 	% $$PC=\sum_{k=1}^{n}{PC^{local}\left(F_k, k\right)}$$
@@ -121,14 +121,14 @@ $$IC=IC^{WIP}+IC^{FIN}+PC+VC+RC$$
 	      \end{align}
 	\item
 	      Contrainte de gamme, les machines ne peuvent pas travailler sur plusieurs jobs simultanément.
-	      Cette contrainte assure également que les jobs sont produits dans l'ordre prescrit.
+	      Cette contrainte assure également que les jobs soient produits dans l'ordre prescrit.
 	      \begin{align}
 		      C_{i,j2} \geq C_{i,j1}+p_{i,j2}-M y_{j1,j2} &  &
 		      \forall i\in\left\{1,\dotsc,m\right\}, \forall\left(j1,j2\right)\in\left\{1,\cdots,n\right\}^2
 	      \end{align}
 	\item
 	      Contrainte de précédence, une machine ne peut pas travailler sur un job tant que la machine précédente n’a pas terminé de travailler dessus.
-	      Cette contrainte assure également que les tâches des jobs sont produit dans l'ordre prescrit.
+	      Cette contrainte assure également que les tâches des jobs soient produit dans l'ordre prescrit.
 	      \begin{align}
 		      C_{i,j}\geq C_{i-1,j}+p_{i,j} &  &
 		      \forall j\in\left\{1,\cdots,n\right\},\forall i\in\left\{2,\dotsc,m\right\}

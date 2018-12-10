@@ -1,0 +1,42 @@
+\chapter{Spécifications fonctionnelles}
+
+
+\section{Lecture des paramètre}
+La première étape du programme est de lire des paramètres donnés au lancement du programme.
+Le programme attend les paramètres suivant :
+\begin{itemize}
+    \item le chemin vers le fichier qui décrit l'instance à résoudre.
+    \item l'algorithme à utiliser.
+    \item Pour la recherche locale, le temps accordé à l'algorithme.
+\end{itemize}
+
+\section{Lecture de l'instance}
+Cette fonction permet de lire le fichier de l'instance à résoudre, elle a déjà été réalisée dans le programme existant fournit par mon encadrant.
+
+\section{Résolution de l'instance}
+Cette fonction est la partie principale du projet.
+Elle permet de résoudre l'instance avec l'algorithme choisie par l'utilisateur.
+Les algorithmes à implémenter sont :
+\begin{itemize}
+    \item La méthode exacte présentée dans la partie \autoref{section:analyse:methode_exacte}.
+    \item La recherche locale présenté dans la partie \autoref{section:analyse:methode_heuristique}.
+\end{itemize}
+La résolution prend une instance en paramètre.
+Les données retournées sont :
+\begin{itemize}
+    \item la solution.
+    \item le score de la solution.
+    \item le temps écoulé.
+    \item la mémoire utilisée.
+\end{itemize}
+
+\section{Ecriture des résultats}
+Cette fonction à pour rôle d'écrire les résultats de l'algorithme dans la console.
+La fonction prend en paramètre les données fournies par la résolution de l'instance et les écrit dans la sortie standard.
+Les données sont :
+\begin{itemize}
+    \item le score de la solution.
+    \item la solution.
+    \item la durée de la résolution.
+    \item la mémoire utilisée pour la résolution.
+\end{itemize}

@@ -19,7 +19,7 @@
 	\item [$b_k$]
 	Date de départ du lot k a partir de laquelle les couts d'inventaires sont minimisé.
 	\item [$\lambda_k$]
-	Nombre de segment de la fonction $F_k$
+	Nombre de segments de la fonction $F_k$
 	\item [$\alpha_{k, s}$]
 	Cout de chaque unité de temps dans le segment $s$ de la fonction $F_k$.
 	\item [$c_{k, s}$]
@@ -77,7 +77,7 @@ $$IC + \sum_{k=1}^{V} \sum_{s=1}^{\lambda_k} \left(x_{k, s} c_{k, s}+ d_{k,s} \a
 		      \sum_{s=1}^{\lambda_k} x_{k, s} = 1 &  & \forall k \in \left\{i, \cdots, V \right\}
 	      \end{align}
 	\item
-	      Chaque segment n'est utilisé que si il contient la date de départ du lot.
+	      Chaque segment n'est utilisé que s'il contient la date de départ du lot.
 	      \begin{align}
 		      d_{k, s} \leq x_{k, s} \left( t_{k, s+1 - t_{k, s} -1} \right) &  & \forall k \in \left\{i, \cdots, V \right\}, \forall s \in \left\{1, \cdots, \lambda_k\right\} \\
 		      0 \leq d_{k, \lambda_k}                                        &  & \forall k \in \left\{i, \cdots, V \right\}
@@ -97,14 +97,14 @@ $$IC + \sum_{k=1}^{V} \sum_{s=1}^{\lambda_k} \left(x_{k, s} c_{k, s}+ d_{k,s} \a
 	      \end{align}
 	\item
 	      Contrainte de gamme, les machines ne peuvent pas travailler sur plusieurs jobs simultanément.
-	      Cette contrainte assure également que les jobs sont produits dans l'ordre prescrit.
+	      Cette contrainte assure également que les jobs soient produits dans l'ordre prescrit.
 	      \begin{align}
 		      C_{i,j2} \geq C_{i,j1}+p_{i,j2}-M y_{j1,j2} &  &
 		      \forall i\in\left\{1,\dotsc,m\right\}, \forall\left(j1,j2\right)\in\left\{1,\cdots,n\right\}^2
 	      \end{align}
 	\item
 	      Contrainte de précédence, une machine ne peut pas travailler sur un job tant que la machine précédente n’a pas terminé de travailler dessus.
-	      Cette contrainte assure également que les tâches des jobs sont produit dans l'ordre prescrit.
+	      Cette contrainte assure également que les tâches des jobs soient produit dans l'ordre prescrit.
 	      \begin{align}
 		      C_{i,j}\geq C_{i-1,j}+p_{i,j} &  &
 		      \forall j\in\left\{1,\cdots,n\right\},\forall i\in\left\{2,\dotsc,m\right\}
@@ -124,12 +124,12 @@ $$IC + \sum_{k=1}^{V} \sum_{s=1}^{\lambda_k} \left(x_{k, s} c_{k, s}+ d_{k,s} \a
 Les contraintes suivantes servent à accélérer la résolution du problème.
 \begin{itemize}
 	\item
-	      La date de fin du lot $k$ optimal est entre les dates $a_k$ et $b_k$ calculé au préalable.
+	      La date de fin optimale du lot $k$ est entre les dates $a_k$ et $b_k$ calculée au préalable.
 	      \begin{align}
 		      a_k \leq C_{j_k, m} \leq b_k &  & \forall k \in \left\{1,\cdots,V\right\}
 	      \end{align}
 	\item
-	      Le temps écouler dans un segment de $F_k$ avant le départ d'un lot ne doit pas faire partir le lot après $b_k$.
+	      Le temps écoulé dans un segment de $F_k$ avant le départ d'un lot ne doit pas faire partir le lot après $b_k$.
 	      \begin{align}
 		      d_{k, \Lambda_k} \leq t_{k s+1} - t_{k, s} &  & s \in \left\{1,\cdots,\lambda_k\right\}, \forall k \in \left\{1,\cdots,V\right\}
 	      \end{align}
