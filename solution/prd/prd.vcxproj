@@ -141,6 +141,9 @@
   <ItemGroup>
     <ClCompile Include="batch_list.cpp" />
     <ClCompile Include="Branch_and_bound.cpp" />
+    <ClCompile Include="cost_per_departure_date\branch_and_bound_functor.cpp" />
+    <ClCompile Include="cost_per_departure_date\edd_near.cpp" />
+    <ClCompile Include="cost_per_departure_date\edd_near_x4.cpp" />
     <ClCompile Include="Distancier.cpp" />
     <ClCompile Include="Fct_lin.cpp" />
     <ClCompile Include="Generateur.cpp" />
@@ -150,6 +153,10 @@
     <ClCompile Include="Solveur_min_IC.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cost_per_departure_date\algorithm.h" />
+    <ClInclude Include="cost_per_departure_date\branch_and_bound_functor.h" />
+    <ClInclude Include="cost_per_departure_date\edd_near.h" />
+    <ClInclude Include="cost_per_departure_date\edd_near_x4.h" />
     <ClInclude Include="batch_list.h" />
     <ClInclude Include="Branch_and_bound.h" />
     <ClInclude Include="Distancier.h" />

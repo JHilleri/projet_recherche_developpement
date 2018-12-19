@@ -16,20 +16,25 @@
 
 using namespace std;
 
+// TODO : remove unused attribute in Struct_Retour
 struct Struct_Retour
 {
 	int cpl_time_ms;
 	int IC;
 	int PC;
 	int IC_PC;
-	int nb_tournee;
-	double av_tournee;
-	int nb_link;
-	double av_link;
+	int nb_tournee; // unused
+	double av_tournee; // unused
+	int nb_link; // unused
+	double av_link; // unused
 	double ecart_a_opti;
 
 };
 
+/**
+	Enumerate the available algorithms
+	TODO : replace with fonctors
+**/
 enum class algorithme_de_resolution
 {
 	heuristic_near = -1,
@@ -53,10 +58,15 @@ public:
 	//int init_instance_avec_calcul_a_l_optima(Instance* inst, /*vector<int>rm,*/ vector<vector<int>> tab_Batch);
 
 	//******
-	//Utiliser pour générer les instances (fixe les due dates pour les rendre "intéressante")
+	//Utiliser pour gï¿½nï¿½rer les instances (fixe les due dates pour les rendre "intï¿½ressante")
 
-	//Modifie les due date des jobs de l'instance au vue de leurs fenetre de temps au depart 
-	void ajust_due_date_with_windows_a_b();
+	//Modifie les due date des jobs de l'instance au vue de leurs fenetre de temps au depart
+
+	/*
+		Set the batch departure window
+		TODO : Adapt the methode to handle job sheduling variations
+	*/
+	void ajust_due_date_with_windows_a_b(); 
 	void ajust_due_date_with_approx(int nb_j_batch);
 	//******
 
@@ -65,13 +75,13 @@ public:
 	static const int nothing_special = 2;
 
 	//***
-	//Cette fonction reprend l'algorithme global de résolution présenté dans l'article
+	//Cette fonction reprend l'algorithme global de rï¿½solution prï¿½sentï¿½ dans l'article
 	//****
 	Struct_Retour solve(algorithme_de_resolution approx_method = algorithme_de_resolution::EDD_nearx4, int mode = nothing_special);
 
 
 	//Creation d'une fonction F_k en utilisant CPLEX
-	//evalue exactement le PPCM du batch pour toute date de départ comprise entre min_a et max_ avec un intervalle définie
+	//evalue exactement le PPCM du batch pour toute date de dï¿½part comprise entre min_a et max_ avec un intervalle dï¿½finie
 	Fct_lin eval_exact_with_CPLEX(const vector<int>& bat, int depart_min_a, int depart_max_b, int intervalle);
 	vector<int> solve_routing_1_batch(const vector<int>& bat, int departure_date);
 
@@ -93,7 +103,7 @@ private:
 	int depart_au_plus_tot = 0;
 
 	IloEnv env;//variable d'environnement
-	IloModel model; //modèle, on l'associe directement à l'environnement
+	IloModel model; //modï¿½le, on l'associe directement ï¿½ l'environnement
 	IloCplex cplex; //solveur cplex
 
 	int nJ;
@@ -106,11 +116,11 @@ private:
 	IloArray<IloIntVarArray> C_ij;
 	void init_Cij();
 
-	IloExpr sum_CC; //somme des dates de départ des batch
+	IloExpr sum_CC; //somme des dates de dï¿½part des batch
 	void init_sum_CC();
 
 
-	//var lié au routing 
+	//var liï¿½ au routing 
 	IloArray<IloBoolVarArray> x_ij;
 	void init_xij();
 
@@ -121,9 +131,9 @@ private:
 	void init_Ti();
 
 
-	//Variable utilisees pour traduire les fonctions linéaires
+	//Variable utilisees pour traduire les fonctions linï¿½aires
 	//en programme MILP
-	//(Met égualement à jour l'expression de PPC_M
+	//(Met ï¿½gualement ï¿½ jour l'expression de PPC_M
 	IloArray<IloIntVarArray>d_bi;
 	IloArray<IloBoolVarArray>x_bi;
 	void add_fct_lin_ctr(const Fct_lin& fct, int num_fct, const IloIntVar& C);
@@ -154,8 +164,8 @@ private:
 	void add_flot_routing_ctr();
 	void add_delivery_date_ctr();
 
-	//ici on considère que dans les contraintes sur Ti et de departure date les date de départ sont 
-	//adapter pour simuler un depart à l'instant 0
+	//ici on considï¿½re que dans les contraintes sur Ti et de departure date les date de dï¿½part sont 
+	//adapter pour simuler un depart ï¿½ l'instant 0
 	void add_departure_date_ctr();
 
 	void modify_departure_date(const vector<int>& date_depart, int date_min_depart);

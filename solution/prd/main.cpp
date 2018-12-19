@@ -47,8 +47,12 @@ int main(int argc, char **argv)
 
 	//tu peux changer la méthode en paramètre
 	Solveur_min_IC solveur{ instance, batch_predefini };
-	solveur.solve(algorithme_de_resolution::B_and_B, Solveur_min_IC::init_as_optima);
+	auto out_1 = solveur.solve(algorithme_de_resolution::B_and_B, Solveur_min_IC::init_as_optima);
 
 	cout << endl << "FINI";
+	auto out_2 = solveur.solve(algorithme_de_resolution::B_and_B, Solveur_min_IC::init_as_optima);
+	std::cout << out_1.IC << ", " << out_1.PC << std::endl;
+	std::cout << out_2.IC << ", " << out_2.PC << std::endl;
+
 	return 0;
 }
