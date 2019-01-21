@@ -63,20 +63,20 @@ void Distancier::reecrire_distancier(ofstream* fichier, int nJob)
 	}
 }
 
-int Distancier::max_edge_on_sub_matrix(const vector<int>& batch)
+int Distancier::max_edge_on_sub_matrix(const vector<int>& batch_old)
 {
 	int max_dist = 0;
 	int distance;
-	for (int i = 0; i < batch.size(); i++)
+	for (int i = 0; i < batch_old.size(); i++)
 	{
-		distance = dist(index_manu(), batch[i]);
+		distance = dist(index_manu(), batch_old[i]);
 		if (distance > max_dist) {
 			max_dist = distance;
 		}
 
-		for (int j = i + 1; j < batch.size(); j++)
+		for (int j = i + 1; j < batch_old.size(); j++)
 		{
-			distance = dist(batch[i], batch[j]);
+			distance = dist(batch_old[i], batch_old[j]);
 			if (distance > max_dist) {
 				max_dist = distance;
 			}

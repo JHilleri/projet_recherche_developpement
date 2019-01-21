@@ -23,10 +23,10 @@ Instance::Instance(std::istream & input, bool mise_en_batch)
 			return new_batch;
 		});
 	}
-	list_Job = std::vector<Job>{ static_cast<unsigned int>(nJob) };
+	list_Job = std::vector<Job_old>{ static_cast<unsigned int>(nJob) };
 	int i{ 0 };
 	std::generate(list_Job.begin(), list_Job.end(), [&]() {
-		Job new_job{ input, mMachine };
+		Job_old new_job{ input, mMachine };
 		new_job.index_lieu = i++;
 		return new_job;
 	});

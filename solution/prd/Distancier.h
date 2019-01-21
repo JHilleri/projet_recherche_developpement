@@ -17,7 +17,7 @@ public:
 
 	void reecrire_distancier(ofstream* fichier, int nJob);
 
-	int max_edge_on_sub_matrix(const vector<int>& batch);
+	int max_edge_on_sub_matrix(const vector<int>& batch_old);
 
 	vector<vector<int>> tab;
 	//vector<vector<int>*> tab;

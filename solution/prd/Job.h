@@ -6,12 +6,12 @@
 #include <iostream>
 using namespace std;
 
-class Job
+class Job_old
 {
 public:
-	Job();
-	Job(std::istream &input, int mMachine);
-	~Job();
+	Job_old();
+	Job_old(std::istream &input, int mMachine);
+	~Job_old();
 
 	void reecrire_job(ofstream* fichier);
 

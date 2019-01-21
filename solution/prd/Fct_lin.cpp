@@ -787,14 +787,14 @@ double Fct_lin::ratio_courbe_inf(const Fct_lin & fct_1, const Fct_lin & fct_2)
 	return swarzy;
 }
 
-pair<int, int> Fct_lin::a_b_inf(Instance& inst, const vector<int>& batch)
+pair<int, int> Fct_lin::a_b_inf(Instance& inst, const vector<int>& batch_old)
 {
 	auto& jobs = inst.list_Job;
-	int min_dd_date = jobs[batch.front()].due_d;
-	int max_dd_date = jobs[batch.front()].due_d;
+	int min_dd_date = jobs[batch_old.front()].due_d;
+	int max_dd_date = jobs[batch_old.front()].due_d;
 
 	int due_date;
-	for (int i = 1; i < batch.size(); i++)
+	for (int i = 1; i < batch_old.size(); i++)
 	{
 		due_date = jobs[i].due_d;
 
@@ -805,32 +805,32 @@ pair<int, int> Fct_lin::a_b_inf(Instance& inst, const vector<int>& batch)
 	auto& dist = inst.distancier;
 	int max_dist = 0;
 	int distance;
-	for (int i = 0; i < batch.size(); i++)
+	for (int i = 0; i < batch_old.size(); i++)
 	{
-		distance = dist.dist(dist.index_manu(), batch[i]);
+		distance = dist.dist(dist.index_manu(), batch_old[i]);
 		if (distance > max_dist) {
 			max_dist = distance;
 		}
 
-		for (int j = i + 1; j < batch.size(); j++)
+		for (int j = i + 1; j < batch_old.size(); j++)
 		{
-			distance = dist.dist(batch[i], batch[j]);
+			distance = dist.dist(batch_old[i], batch_old[j]);
 			if (distance > max_dist) {
 				max_dist = distance;
 			}
 		}
 	}
 
-	int duree_tournee = max_dist * batch.size();
+	int duree_tournee = max_dist * batch_old.size();
 
 	return pair<int, int>(min_dd_date - duree_tournee, max_dd_date);
 }
 
-Fct_lin Fct_lin::generate_fct(Instance & inst, const vector<int>& batch, int method, int min_a, int max_b)
+Fct_lin Fct_lin::generate_fct(Instance & inst, const vector<int>& batch_old, int method, int min_a, int max_b)
 {
 	if (min_a == numeric_limits<int>::min() || max_b == numeric_limits<int>::min()) {
 
-		auto a_b = a_b_inf(inst, batch);
+		auto a_b = a_b_inf(inst, batch_old);
 
 		min_a = a_b.first;
 		max_b = a_b.second;
@@ -846,40 +846,40 @@ Fct_lin Fct_lin::generate_fct(Instance & inst, const vector<int>& batch, int met
 	switch (method) // par defaut du prototype EDD_nearx4
 	{
 	case EDD:
-		t_EDD = Tournee::create_tournee_EDD(inst, batch);
+		t_EDD = Tournee::create_tournee_EDD(inst, batch_old);
 		best = Fct_lin::generate_fct_with_local_search(inst, t_EDD, min_a, max_b);
 		break;
 	case EDDx4:
-		t_near = Tournee::create_tournee_nearest_insertion(inst, batch);
+		t_near = Tournee::create_tournee_nearest_insertion(inst, batch_old);
 		best = Fct_lin::generate_fct_with_local_search(inst, t_near, min_a, max_b);
 		break;
 	case near:
-		t_EDD = Tournee::create_tournee_EDD(inst, batch);
+		t_EDD = Tournee::create_tournee_EDD(inst, batch_old);
 		best = Fct_lin::generate_fct_with_four_extrema(inst, t_EDD, min_a, max_b);
 		break;
 	case nearx4:
-		t_near = Tournee::create_tournee_nearest_insertion(inst, batch);
+		t_near = Tournee::create_tournee_nearest_insertion(inst, batch_old);
 		best = Fct_lin::generate_fct_with_four_extrema(inst, t_near, min_a, max_b);
 		break;
 	case EDD_near:
-		t_EDD = Tournee::create_tournee_EDD(inst, batch);
+		t_EDD = Tournee::create_tournee_EDD(inst, batch_old);
 		f_EDD = Fct_lin::generate_fct_with_local_search(inst, t_EDD, min_a, max_b);
-		t_near = Tournee::create_tournee_nearest_insertion(inst, batch);
+		t_near = Tournee::create_tournee_nearest_insertion(inst, batch_old);
 		f_near = Fct_lin::generate_fct_with_local_search(inst, t_near, min_a, max_b);
 
 		best = Fct_lin::minimum_fct(f_EDD, f_near);
 		break;
 	case EDD_nearx4:
-		t_EDD = Tournee::create_tournee_EDD(inst, batch);
+		t_EDD = Tournee::create_tournee_EDD(inst, batch_old);
 		f_EDD = Fct_lin::generate_fct_with_four_extrema(inst, t_EDD, min_a, max_b);
 
-		t_near = Tournee::create_tournee_nearest_insertion(inst, batch);
+		t_near = Tournee::create_tournee_nearest_insertion(inst, batch_old);
 		f_near = Fct_lin::generate_fct_with_four_extrema(inst, t_near, min_a, max_b);
 
 		best = Fct_lin::minimum_fct(f_EDD, f_near);
 		break;
 	case B_and_B:
-		best = b_and_b.generate_fct_with_branch_and_bound(batch, min_a, max_b);
+		best = b_and_b.generate_fct_with_branch_and_bound(batch_old, min_a, max_b);
 
 		break;
 
@@ -890,9 +890,9 @@ Fct_lin Fct_lin::generate_fct(Instance & inst, const vector<int>& batch, int met
 	return best;
 }
 
-Fct_lin Fct_lin::generate_pure_random_fct(Instance & inst, const vector<int>& batch, int min_a, int max_b)
+Fct_lin Fct_lin::generate_pure_random_fct(Instance & inst, const vector<int>& batch_old, int min_a, int max_b)
 {
-	Tournee t = Tournee::create_tournee(batch);
+	Tournee t = Tournee::create_tournee(batch_old);
 
 	Fct_lin fct = Fct_lin::create_fct_lin(t, inst, min_a, max_b); compteur++;
 	Fct_lin best = fct;
@@ -1086,21 +1086,21 @@ Fct_lin Fct_lin::generate_fct_with_four_extrema(Instance & inst, Tournee & tourn
 	return swarzy;
 }
 
-Fct_lin Fct_lin::rec_generate_fct_with_total_enumeration(Instance & inst, Fct_lin& best, Tournee& tournee, list<int>& batch, int size)
+Fct_lin Fct_lin::rec_generate_fct_with_total_enumeration(Instance & inst, Fct_lin& best, Tournee& tournee, list<int>& batch_old, int size)
 {
 	if (size != 0) {
 		int tmp;
 		for (int i = 0; i < size; i++)
 		{
-			tmp = batch.front();
-			batch.pop_front();
+			tmp = batch_old.front();
+			batch_old.pop_front();
 
 			tournee.add_job(tmp);
 
-			/*best =*/ rec_generate_fct_with_total_enumeration(inst, best, tournee, batch, size - 1);
+			/*best =*/ rec_generate_fct_with_total_enumeration(inst, best, tournee, batch_old, size - 1);
 
 			tournee.suppr_job();
-			batch.push_back(tmp);
+			batch_old.push_back(tmp);
 		}
 	}
 	else {
@@ -1153,19 +1153,19 @@ Fct_lin Fct_lin::rec_generate_fct_with_total_enumeration(Instance & inst, Fct_li
 	return best;
 }
 
-Fct_lin Fct_lin::generate_fct_with_total_enumeration(Instance & inst, vector<int>& batch, int min_a, int max_b)
+Fct_lin Fct_lin::generate_fct_with_total_enumeration(Instance & inst, vector<int>& batch_old, int min_a, int max_b)
 {
 	Fct_lin best = create_fct_max(min_a, max_b);
 
 	list<int> bat;
-	for (int i = 0; i < batch.size(); i++)
+	for (int i = 0; i < batch_old.size(); i++)
 	{
-		bat.push_back(batch[i]);
+		bat.push_back(batch_old[i]);
 	}
 
-	Tournee tournee = Tournee::create_tournee_vide(batch.size());
+	Tournee tournee = Tournee::create_tournee_vide(batch_old.size());
 
-	best = Fct_lin::rec_generate_fct_with_total_enumeration(inst, best, tournee, bat, batch.size());
+	best = Fct_lin::rec_generate_fct_with_total_enumeration(inst, best, tournee, bat, batch_old.size());
 
 	/*int val_from_opt;
 	int val_from_tournee_opt;

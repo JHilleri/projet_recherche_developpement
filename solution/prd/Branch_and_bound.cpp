@@ -14,16 +14,16 @@
 //(definition des bornes etc...)
 //****
 
-Covering_tree::Covering_tree(Instance& inst, const vector<int>& batch)
+Covering_tree::Covering_tree(Instance& inst, const vector<int>& batch_old)
 	:Covering_tree{inst}
 {
 	edges = vector<Edge>();
 
 	link_with = map<int, vector<int>>();
-	for (int i = 0; i < batch.size(); i++) link_with[batch[i]] = vector<int>();
+	for (int i = 0; i < batch_old.size(); i++) link_with[batch_old[i]] = vector<int>();
 
 	vector<vector<int>> sous_ens = vector<vector<int>>();
-	for (int i = 0; i < batch.size(); i++) sous_ens.push_back(vector<int>({ batch[i] }));
+	for (int i = 0; i < batch_old.size(); i++) sous_ens.push_back(vector<int>({ batch_old[i] }));
 
 	////
 	connect_ss_ens(sous_ens);
@@ -192,26 +192,26 @@ Branch_and_bound::Branch_and_bound(Instance & instance)
 {
 }
 
-Fct_lin Branch_and_bound::generate_fct_with_branch_and_bound(const vector<int>& batch, int min_a, int max_b)
+Fct_lin Branch_and_bound::generate_fct_with_branch_and_bound(const vector<int>& batch_old, int min_a, int max_b)
 {
 	vec_bool = vector<bool>(max_b - min_a + 1, false);
 
 	//generation d'une upper bound avec des heuristic
-	upper_bound = init_upper_bound(batch, min_a, max_b);
+	upper_bound = init_upper_bound(batch_old, min_a, max_b);
 
-	nb_resting_job = batch.size();
+	nb_resting_job = batch_old.size();
 	//index des jobs restant a assigné lors de la descante de l'arbre
 	job_resting_for_assignement = list<int>();
-	for (int var : batch) job_resting_for_assignement.push_back(var);
+	for (int var : batch_old) job_resting_for_assignement.push_back(var);
 
 	//liste ordoné des jobs déjà fixé
-	tournee = Tournee::create_tournee_vide(batch.size());
+	tournee = Tournee::create_tournee_vide(batch_old.size());
 
 	//index du dernier site visiter, départ du depot
 	last_visited_site_index = inst.distancier.index_manu();
 
 	//arbre couvrant de point minimum, initialiser avec tous les noeud du batch
-	Covering_tree covering_tree = Covering_tree(inst, batch);
+	Covering_tree covering_tree = Covering_tree(inst, batch_old);
 
 	//cout de la solution en fonction de la date de départ
 	//à un état d'avancement du B&B => LowerBound
@@ -265,7 +265,7 @@ void Branch_and_bound::evaluation_of_instance_file(string path, string prefix)
 	memo >> nb_inst >> duree_tournee;
 	memo.close();
 
-	vector<int> batch;
+	vector<int> batch_old;
 	Fct_lin fct; int aire;
 
 	ofstream of_file = ofstream(path + "1Opti_" + prefix + ".txt", ios::out | ios::trunc);
@@ -288,10 +288,10 @@ void Branch_and_bound::evaluation_of_instance_file(string path, string prefix)
 		Instance inst{ input };
 		Branch_and_bound b_and_b{ inst };
 
-		batch = vector<int>();
-		for (int i = 0; i < inst.nJob; i++) batch.push_back(i);
+		batch_old = vector<int>();
+		for (int i = 0; i < inst.nJob; i++) batch_old.push_back(i);
 
-		fct = b_and_b.generate_fct_with_branch_and_bound(batch, min_a, max_b);
+		fct = b_and_b.generate_fct_with_branch_and_bound(batch_old, min_a, max_b);
 
 		//fct.print_fct_lin();
 
@@ -304,10 +304,10 @@ void Branch_and_bound::evaluation_of_instance_file(string path, string prefix)
 
 }
 
-Fct_lin Branch_and_bound::init_upper_bound(const vector<int>& batch, int min_a, int max_b)
+Fct_lin Branch_and_bound::init_upper_bound(const vector<int>& batch_old, int min_a, int max_b)
 {
-	Tournee t_EDD = Tournee::create_tournee_EDD(inst, batch);
-	Tournee t_near = Tournee::create_tournee_nearest_insertion(inst, batch);
+	Tournee t_EDD = Tournee::create_tournee_EDD(inst, batch_old);
+	Tournee t_near = Tournee::create_tournee_nearest_insertion(inst, batch_old);
 
 
 	Fct_lin f_EDDx4 = Fct_lin::generate_fct_with_four_extrema(inst, t_EDD, min_a, max_b);
@@ -329,7 +329,7 @@ void Branch_and_bound::rec_branch_and_bound(Covering_tree covering_tree/*passage
 
 							  //*****
 							  //élément de la LB ne variant pas avec la date de départ
-		Job& job = inst.list_Job[branch_node];
+		Job_old& job = inst.list_Job[branch_node];
 
 		int min_routing_cost = covering_tree.sum_edge();
 
@@ -505,7 +505,7 @@ Branch_and_bound::Vec_date_cost Branch_and_bound::min_assigment(Covering_tree& c
 	for (int index_job : job_resting_for_assignement)
 	{
 		if (index_job != branch_node) {
-			Job& job = inst.list_Job[index_job];
+			Job_old& job = inst.list_Job[index_job];
 			for (int i = 0; i < nb_livraison; i++)
 			{
 				// présence de négatif, mais qui compte comme 0 dans l'algo hongrois
@@ -571,7 +571,7 @@ Branch_and_bound::Vec_date_cost Branch_and_bound::min_assigment(Covering_tree& c
 
 								reste_job_en_avance = true;
 
-								Job &job = inst.list_Job[index_job];
+								Job_old &job = inst.list_Job[index_job];
 
 								increase_cost = (date - old_valide_date)*job.piM;
 
@@ -707,7 +707,7 @@ Branch_and_bound::Vec_date_cost Branch_and_bound::min_assigment(Covering_tree& c
 			for (int index_job : job_resting_for_assignement)
 			{
 				if (index_job != branch_node) {
-					Job &job = inst.list_Job[index_job];
+					Job_old &job = inst.list_Job[index_job];
 
 					increase_cost = (date - old_valide_date)*job.piM;
 
