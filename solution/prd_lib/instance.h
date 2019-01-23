@@ -15,9 +15,13 @@ public:
 	distance_unit distance_between(const job & job_1, const job & job_2) const ;
 	index_type job_number() const;
 	index_type machine_number() const;
+	const std::vector<batch> & batchs() const;
 
+
+	std::vector<batch> & batchs();
 	std::vector<std::vector<distance_unit>> & distances();
 
+	void set_batchs(const std::vector<batch> & batchs);
 	void set_job_number(index_type job_number);
 	void set_machine_number(index_type machine_number);
 	void set_distances(const std::vector<std::vector<distance_unit>> & distances);
@@ -26,5 +30,6 @@ private:
 	index_type m_job_number;
 	index_type m_machine_number;
 	std::vector<std::vector<distance_unit>> m_distances;
+	std::vector<batch> m_batchs;
 };
 

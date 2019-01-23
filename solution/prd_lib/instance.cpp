@@ -23,9 +23,24 @@ index_type instance::machine_number() const
 	return m_machine_number;
 }
 
+const std::vector<batch>& instance::batchs() const
+{
+	return m_batchs;
+}
+
+std::vector<batch>& instance::batchs()
+{
+	return m_batchs;
+}
+
 std::vector<std::vector<distance_unit>> & instance::distances()
 {
 	return m_distances;
+}
+
+void instance::set_batchs(const std::vector<batch>& batchs)
+{
+	m_batchs = batchs;
 }
 
 inline void instance::set_job_number(index_type job_number)
