@@ -1,48 +1,46 @@
 #include "instance_reader.h"
+#include "instance_reader_utils.h"
 
 #include <string>
 #include <regex>
 #include <algorithm>
 
-index_type read_job_index(std::istream & input)
-{
-	std::regex job_index_regular_expression("Jobs (\\d+) :");
-	std::smatch match;
-	std::string job_name;
-	std::getline(input, job_name);
-	bool job_index_found = std::regex_search(job_name, match, job_index_regular_expression);
-	if (!job_index_found)
-	{
-		throw std::exception("can't find the job index");
-	}
-	std::string index_string{match[1]};
-	return std::stoi(index_string);
-}
+
 
 inline instance instance_reader::read(std::istream & input)
 {
 	index_type job_number;
 	index_type machine_number;
 	index_type vehicule_cost; // unused
+	index_type jobs_per_batch;
+	index_type batch_number;
+	bool use_multiple_batchs{ false };
 
 	input >> job_number >> machine_number >> vehicule_cost;
-	input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-	std::vector<job> jobs{ job_number };
-
-	for (unsigned int job_index{ 0 }; job_index < job_number; ++job_index)
+	if (use_multiple_batchs)
 	{
-		index_type index{ read_job_index(input) };
-		std::vector<time_unit> work_durations(machine_number);
-		std::generate(work_durations.begin(), work_durations.end(), [&input]() {
-			int work_duration;
-			input >> work_duration;
-			return work_duration;
-		});
-
+		input >> jobs_per_batch;
 	}
+	else
+	{
+		jobs_per_batch = job_number;
+	}
+	batch_number = job_number / jobs_per_batch;
+
+	input.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // end of the second line
+
+	time_unit first_possible_departure{ 0 };
+	std::vector<batch> batchs(batch_number);
+	std::generate(batchs.begin(), batchs.end(), [&]() {
+		std::vector<job> jobs(jobs_per_batch);
+		std::generate(jobs.begin(), jobs.end(), [&]() {
+			return read_job(input, machine_number);
+		});
+		return batch(jobs);
+	});
+	instance result;
+	result.set_batchs(batchs);
 
 
-	// TODO: Ajoutez ici votre code d'implémentation..
-	return instance();
+	return result;
 }
