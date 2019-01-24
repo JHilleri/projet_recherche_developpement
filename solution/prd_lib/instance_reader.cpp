@@ -16,34 +16,26 @@ namespace {
 /*
 	read an instance from an input stream
 */
-instance instance_reader::read(std::istream & input)
+instance instance_reader::read(std::istream & input, index_type job_per_batch)
 {
 	// some datas are present in the readed file format but not used in this program
 
 	index_type job_count;
 	index_type machine_count;
 	index_type vehicule_cost; // unused
-	index_type jobs_per_batch;
 	index_type batch_count;
-	bool use_multiple_batchs{ false };
 
 	input >> job_count >> machine_count >> vehicule_cost;
-	if (use_multiple_batchs)
-	{
-		input >> jobs_per_batch;
-	}
-	else
-	{
-		jobs_per_batch = job_count;
-	}
-	batch_count = job_count / jobs_per_batch;
+
+	//batch_count = job_count / job_per_batch;
+	batch_count = (job_count / job_per_batch + (job_count % job_per_batch) ? 1 : 0);
 
 	input.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // end of the second line
 
 	time_unit first_possible_departure{ 0 };
 	std::vector<batch> batchs(batch_count);
-	std::generate(batchs.begin(), batchs.end(), [&]() {
-		std::vector<job> jobs(jobs_per_batch);
+	std::generate(batchs.begin(), --batchs.end(), [&]() {
+		std::vector<job> jobs(job_per_batch);
 		std::generate(jobs.begin(), jobs.end(), [&]() {
 			job result = read_job(input, machine_count);
 			go_to_next_line(input);
@@ -51,6 +43,16 @@ instance instance_reader::read(std::istream & input)
 		});
 		return batch(jobs);
 	});
+	{
+		std::vector<job> jobs(job_count - (batch_count - 1) * job_per_batch);
+		std::generate(jobs.begin(), jobs.end(), [&]() {
+			job result = read_job(input, machine_count);
+			go_to_next_line(input);
+			return result;
+		});
+		batchs.back() = batch( jobs );
+	}
+
 	instance result;
 	result.set_batchs(batchs);
 	result.set_job_number(job_count);

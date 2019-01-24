@@ -9,6 +9,11 @@ batch::batch( const std::vector<job>& jobs)
 {
 }
 
+batch::batch(std::initializer_list<job> jobs)
+	:m_jobs{jobs}
+{
+}
+
 
 const std::vector<job>& batch::jobs() const
 {

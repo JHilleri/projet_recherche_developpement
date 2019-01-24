@@ -14,6 +14,7 @@ public:
 	batch(const std::vector<job> & jobs);
 	batch(const batch &) = default;
 	batch() = default;
+	batch(std::initializer_list<job> jobs);
 	batch & operator=(const batch &) = default;
 
 	/*time_unit first_possible_departure_date() const;
