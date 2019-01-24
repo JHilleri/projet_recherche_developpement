@@ -20,6 +20,11 @@ index_type read_job_index(std::istream & input)
 	return std::stoi(index_string);
 }
 
+std::istream & go_to_next_line(std::istream & input)
+{
+	return input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
+
 job read_job(std::istream & input, index_type machine_number)
 {
 	index_type index{ read_job_index(input) };
