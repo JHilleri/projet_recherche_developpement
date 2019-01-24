@@ -28,7 +28,8 @@ instance instance_reader::read(std::istream & input, index_type job_per_batch)
 	input >> job_count >> machine_count >> vehicule_cost;
 
 	//batch_count = job_count / job_per_batch;
-	batch_count = (job_count / job_per_batch + (job_count % job_per_batch) ? 1 : 0);
+	index_type partial_batch = (job_count % job_per_batch) ? 1 : 0;
+	batch_count = (job_count / job_per_batch + partial_batch);
 
 	input.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // end of the second line
 
