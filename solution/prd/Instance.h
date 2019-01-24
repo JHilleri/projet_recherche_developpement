@@ -17,7 +17,7 @@ public:
 	int mMachine;
 
 	Distancier distancier;
-	vector<Job> list_Job;
+	vector<Job_old> list_Job;
 
 	/*
 		array of batchs, each batch contain the index of his jobs

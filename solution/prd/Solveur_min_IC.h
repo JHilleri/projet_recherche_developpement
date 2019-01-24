@@ -13,6 +13,8 @@
 #include "Instance.h"
 #include "Branch_and_bound.h"
 #include "batch_list.h"
+#include "cost_per_departure_date/algorithm.h"
+
 
 using namespace std;
 
@@ -23,11 +25,6 @@ struct Struct_Retour
 	int IC;
 	int PC;
 	int IC_PC;
-	int nb_tournee; // unused
-	double av_tournee; // unused
-	int nb_link; // unused
-	double av_link; // unused
-	double ecart_a_opti;
 
 };
 
@@ -66,7 +63,9 @@ public:
 		Set the batch departure window
 		TODO : Adapt the methode to handle job sheduling variations
 	*/
-	void ajust_due_date_with_windows_a_b(); 
+	void ajust_due_date_with_windows_a_b();
+	void model_initialisation();
+
 	void ajust_due_date_with_approx(int nb_j_batch);
 	//******
 
@@ -79,6 +78,8 @@ public:
 	//****
 	Struct_Retour solve(algorithme_de_resolution approx_method = algorithme_de_resolution::EDD_nearx4, int mode = nothing_special);
 
+	Struct_Retour operator()(cost_per_departure_date::algorithm &algoritm, int mode = nothing_special);
+	vector<pair<int, int>> get_departure_windows(IloObjective & obj);
 
 	//Creation d'une fonction F_k en utilisant CPLEX
 	//evalue exactement le PPCM du batch pour toute date de d�part comprise entre min_a et max_ avec un intervalle d�finie
@@ -175,3 +176,5 @@ private:
 	vector<int> extrait_chemin_model();
 
 };
+
+void print_departure_windows(std::ostream & output, std::vector<std::pair<int, int>> &tab_a_b);

@@ -118,18 +118,18 @@ public:
 	//
 	static const int B_and_B = 7;
 
-	static pair<int, int> a_b_inf(Instance& inst, const vector<int>& batch);
+	static pair<int, int> a_b_inf(Instance& inst, const vector<int>& batch_old);
 
-	static Fct_lin generate_fct(Instance& inst, const vector<int>& batch, int method,
+	static Fct_lin generate_fct(Instance& inst, const vector<int>& batch_old, int method,
 		int min_a = numeric_limits<int>::min(), int max_b = numeric_limits<int>::min());
 
-	static Fct_lin generate_pure_random_fct(Instance&  inst, const vector<int>& batch, int min_a, int max_b);
+	static Fct_lin generate_pure_random_fct(Instance&  inst, const vector<int>& batch_old, int min_a, int max_b);
 
 	static Fct_lin generate_fct_with_local_search(Instance&  inst, Tournee& init_tournee, int min_a, int max_b);
 	static Fct_lin generate_fct_with_four_extrema(Instance&  inst, Tournee& init_tournee, int min_a, int max_b);
 
-	static Fct_lin rec_generate_fct_with_total_enumeration(Instance&  inst, Fct_lin& best, Tournee& init_tournee, list<int>& batch, int size);
-	static Fct_lin generate_fct_with_total_enumeration(Instance&  inst, vector<int>& batch, int min_a, int max_b);
+	static Fct_lin rec_generate_fct_with_total_enumeration(Instance&  inst, Fct_lin& best, Tournee& init_tournee, list<int>& batch_old, int size);
+	static Fct_lin generate_fct_with_total_enumeration(Instance&  inst, vector<int>& batch_old, int min_a, int max_b);
 
 	static int search_optima_with_big_neiborhood(Instance & inst, Tournee& tournee_c, int depart);
 

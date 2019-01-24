@@ -3,20 +3,26 @@
 #include "cost_per_departure_date/edd_near.h"
 #include "cost_per_departure_date/branch_and_bound_functor.h"
 
+#include <numeric>
+#include <functional>
+
 Solveur_min_IC::Solveur_min_IC(Instance& instacne, batch_list& tab_batch)
 	:inst{instacne}, tab_Batch{tab_batch}
 {
+	model_initialisation(); // pose du modï¿½le
+	cplex.setOut(env.getNullStream());
 }
 
 
 Solveur_min_IC::~Solveur_min_IC()
 {
+	model.end();
 	cplex.end();
 	env.end();
 }
 
 
-//Utiliser pour générer les instances (fixe les due dates pour les rendre "intéressante")
+//Utiliser pour gï¿½nï¿½rer les instances (fixe les due dates pour les rendre "intï¿½ressante")
 void Solveur_min_IC::ajust_due_date_with_windows_a_b()
 {
 
@@ -24,30 +30,16 @@ void Solveur_min_IC::ajust_due_date_with_windows_a_b()
 
 	/////////////////////////////
 	// Pose du modele
-	init_model_and_data(); //redefinition du modele
-	init_list_ind();
-
-	init_Cij();
-
-	add_capa_machine_ctr();
-	add_gamme_ctr();
-	add_C00_vaut_0();
-
-	init_IC_WIP();
-	init_IC_FIN();
-	init_sum_CC();
-
-	//Modele posé
+	model_initialisation();
+	//Modele posï¿½
 	///////////////////////////
-
 
 	cplex.setOut(env.getNullStream());
 
 
 	///////////////////////////
-	// Premiere résolution : min Cmax
+	// Premiere rï¿½solution : min Cmax
 
-	//obj = IloMinimize(env, IC_WIP + IC_FIN  + C_ij[nJ - 1][nM - 1] / 10000, "obj");
 	obj = IloMinimize(env, sum_CC, "obj");
 	model.add(obj);
 
@@ -55,11 +47,6 @@ void Solveur_min_IC::ajust_due_date_with_windows_a_b()
 	chrono::time_point<chrono::system_clock> current, start_t = chrono::system_clock::now();
 
 	cplex.solve();
-
-	/**/
-	/*std::cout << " !!! min Cmax !!!" << endl;
-	std::cout << "====> Date de fin : " << cplex.getValue(C_ij[nJ - 1][nM - 1]) << endl;
-	std::cout << "====> IC : " << cplex.getValue(IC_WIP) + cplex.getValue(IC_FIN) << endl;//*/
 
 	//recup des dates minimums
 	vector<pair<int, int>> tab_a_b(tab_Batch.size());
@@ -75,7 +62,7 @@ void Solveur_min_IC::ajust_due_date_with_windows_a_b()
 	////////////////////////
 
 	///////////////////////////
-	// Deuxième résolution : min IC
+	// Deuxiï¿½me rï¿½solution : min IC
 	obj.setExpr(IC_WIP + IC_FIN + sum_CC / (cplex.getValue(sum_CC) * 10));
 
 	cplex.solve();
@@ -85,7 +72,7 @@ void Solveur_min_IC::ajust_due_date_with_windows_a_b()
 	std::cout << "====> Date de fin : " << cplex.getValue(C_ij[nJ - 1][nM - 1]) << endl;
 	std::cout << "====> IC : " << cplex.getValue(IC_WIP) + cplex.getValue(IC_FIN) << endl;//*/
 
-	//récup des dates max
+	//rï¿½cup des dates max
 	num_CC = -1;
 	num_b = 0;
 	for (auto& bat : tab_Batch)
@@ -96,7 +83,7 @@ void Solveur_min_IC::ajust_due_date_with_windows_a_b()
 	}
 	//////////////////////////
 
-	/*std::cout << "Intervalle de départ pour chaque batch" << endl;
+	/*std::cout << "Intervalle de dï¿½part pour chaque batch" << endl;
 	for each (auto var in tab_a_b)
 	{
 	std::cout <<"a : " << var.first << " b : " << var.second << endl;;
@@ -120,7 +107,7 @@ void Solveur_min_IC::ajust_due_date_with_windows_a_b()
 		b = tab_a_b[num_b].second;
 
 		distri_due_date = uniform_int_distribution<int>(
-			a *0.8, //Quelque date peuvent tomber avant le départ au plus tot
+			a *0.8, //Quelque date peuvent tomber avant le dï¿½part au plus tot
 			a + (b - a + max_time_tournee) / 2);
 
 		//std::cout << "B " << num_b << ": \t";
@@ -141,7 +128,103 @@ void Solveur_min_IC::ajust_due_date_with_windows_a_b()
 	env.end();
 }
 
-//Utiliser pour générer les instances (fixe les due dates pour les rendre "intéressante")
+void Solveur_min_IC::model_initialisation()
+{
+	nM = inst.mMachine;
+	nJ = std::accumulate(tab_Batch.begin(), tab_Batch.end(), 0, [](int a, const batch_old &b) {return a + b.size(); });
+
+	this->env = IloEnv();
+	model = IloModel(env); //modï¿½le, on l'associe directement ï¿½ l'environnement
+	cplex = IloCplex(model);//solveur, on l'associe directement au modï¿½le
+
+	list_ind = vector<int>(nJ);
+	int ind = 0;
+	for (auto var : tab_Batch)
+	{
+		for (int x = 0; x < var.size(); x++)
+		{
+			list_ind[ind] = var[x];
+			ind++;
+		}
+	}
+
+	//init_Cij();
+	C_ij = IloArray<IloIntVarArray>(env, nJ);
+	for (int j = 0; j < nJ; j++) {
+		C_ij[j] = IloIntVarArray(env, nM, 0, INT_MAX);
+		for (int k = 0; k < nM; k++) {
+			string str = "C_" + to_string(j) + "_" + to_string(k);
+			C_ij[j][k].setName(str.c_str());
+		}
+	}
+
+	//add_capa_machine_ctr();
+	for (int i = 1; i < nJ; i++)
+	{
+		int i_job = list_ind[i];
+		Job_old& job = inst.list_Job[i_job];
+		for (int j = 0; j < nM; j++)
+		{
+			model.add(C_ij[i - 1][j] + job.p[j] <= C_ij[i][j]);
+		}
+	}
+
+	//add_gamme_ctr();
+	for (int i = 0; i < nJ; i++)
+	{
+		int i_job = list_ind[i];
+		Job_old& job = inst.list_Job[i_job];
+		for (int j = 1; j < nM; j++)
+		{
+			model.add(C_ij[i][j - 1] + job.p[j] <= C_ij[i][j]);
+		}
+	}
+
+	//add_C00_vaut_0();
+	model.add(C_ij[0][0] == inst.list_Job[list_ind[0]].p[0]);
+
+	//init_IC_WIP();
+	IC_WIP = IloExpr(env);
+	for (int i = 0; i < nJ; i++)
+	{
+		int i_job = list_ind[i];
+		Job_old& job = inst.list_Job[i_job];
+		for (int j = 0; j < nM - 1; j++)
+		{
+			IC_WIP += job.thWIP[j] * (C_ij[i][j + 1] - job.p[j + 1] - C_ij[i][j]);
+		}
+	}
+
+	//init_IC_FIN();
+	IC_FIN = IloExpr(env);
+	int nb_job_avant = 0;
+	for (auto var : tab_Batch)
+	{
+		int i_last_job = var.back();
+		Job_old& last_job = inst.list_Job[i_last_job];
+		for (int i = 0; i < var.size() - 1; i++)
+		{
+			int i_job = var[i];
+			Job_old& job = inst.list_Job[i_job];
+
+			IC_FIN += job.thFIN *
+				// cpl_time du dernier job du batch sur la dernier machine
+				(C_ij[nb_job_avant + var.size() - 1][nM - 1] - last_job.p[nM - 1] - C_ij[nb_job_avant + i][nM - 1]);
+		}
+		nb_job_avant += var.size();
+	}
+	//init_sum_CC();
+	sum_CC = IloExpr(env);
+
+	int num_CC = -1;
+	for (auto var : tab_Batch)
+	{
+		num_CC += var.size();
+		sum_CC += C_ij[num_CC][nM - 1];
+	}
+}
+
+//Utiliser pour gï¿½nï¿½rer les instances (fixe les due dates pour les rendre "intï¿½ressante")
 
 void Solveur_min_IC::ajust_due_date_with_approx(int nb_j_batch)
 {
@@ -236,7 +319,7 @@ void Solveur_min_IC::ajust_due_date_with_approx(int nb_j_batch)
 
 
 //***
-//Cette fonction reprend l'algorithme global de résolution présenté dans l'article
+//Cette fonction reprend l'algorithme global de rï¿½solution prï¿½sentï¿½ dans l'article
 //****
 Struct_Retour Solveur_min_IC::solve(algorithme_de_resolution approx_method, int mode)
 {
@@ -245,53 +328,31 @@ Struct_Retour Solveur_min_IC::solve(algorithme_de_resolution approx_method, int 
 		best_fct_par_batch = vector<Fct_lin>(tab_Batch.size());
 	}
 
-	std::cout << "----------" << endl << "Chargement du modèle initial et resolution" << endl << "----------" << endl << endl;
+	std::cout << "----------" << endl << "Chargement du modï¿½le initial et resolution" << endl << "----------" << endl << endl;
 
 	/////////////////////////////
 	// Pose du modele
-	init_model_and_data(); //redefinition du modele
-	init_list_ind();
-
-	init_Cij();
-
-	add_capa_machine_ctr();
-	add_gamme_ctr();
-	add_C00_vaut_0();
-
-	init_IC_WIP();
-	init_IC_FIN();
-	init_sum_CC();
-
-	//Modele posé
+	model_initialisation();
+	//Modele posï¿½
 	///////////////////////////
 
 
-	cplex.setOut(env.getNullStream());
 
 	vector<pair<int, int>> tab_a_b{ tab_Batch.size() };
 
 	IloObjective obj = IloMinimize(env, sum_CC, "obj");
 	///////////////////////////
-	// Premiere résolution : min Cmax
+	// Premiere rï¿½solution : min Cmax
 	// calcule de a
+	chrono::time_point<chrono::system_clock> start_t = chrono::system_clock::now();
 	{
-
-		//obj = IloMinimize(env, IC_WIP + IC_FIN  + C_ij[nJ - 1][nM - 1] / 10000, "obj");
 		model.add(obj);
 
 		//Capture du temps
-		chrono::time_point<chrono::system_clock> current, start_t = chrono::system_clock::now();
 
 		cplex.solve();
-
-		/**/
-		std::cout << "Date de fin le plus tot possible calculee :" << endl;
-		std::cout << "====> Date de fin : " << cplex.getValue(C_ij[nJ - 1][nM - 1]) << endl;
-		std::cout << "====> IC : " << cplex.getValue(IC_WIP) + cplex.getValue(IC_FIN) << endl << endl;//*/
-
-																									  //recup des dates minimums
-
-																									  // num_CC equivalent à J_k
+		//recup des dates minimums
+		// num_CC equivalent ï¿½ J_k
 		int num_CC = -1;
 		int num_b = 0;
 		for (auto bat : tab_Batch)
@@ -301,22 +362,16 @@ Struct_Retour Solveur_min_IC::solve(algorithme_de_resolution approx_method, int 
 			num_b++;
 		}
 	}
-	////////////////////////
-
+	const auto earlyer_departur_date{ cplex.getValue(C_ij[nJ - 1][nM - 1]) };
+	const auto earlyer_departur_inventory_cost{ cplex.getValue(IC_WIP) + cplex.getValue(IC_FIN) };
 	///////////////////////////
-	// Deuxième résolution : min IC
+	// Deuxiï¿½me rï¿½solution : min IC
 	// calcule de b
 	{
 		obj.setExpr(IC_WIP + IC_FIN + sum_CC / (cplex.getValue(sum_CC) * 5));
 
 		cplex.solve();
-
-		/**/
-		std::cout << "Date de fin pour inventaire minimum calculee :" << endl;
-		std::cout << "====> Date de fin : " << cplex.getValue(C_ij[nJ - 1][nM - 1]) << endl;
-		std::cout << "====> IC : " << cplex.getValue(IC_WIP) + cplex.getValue(IC_FIN) << endl << endl;//*/
-
-																									  //récup des dates max
+		//rï¿½cup des dates max
 		int num_CC = -1;
 		int num_b = 0;
 		for (auto bat : tab_Batch)
@@ -326,37 +381,38 @@ Struct_Retour Solveur_min_IC::solve(algorithme_de_resolution approx_method, int 
 			num_b++;
 		}
 	}
+	const auto minimal_inventory_end_date{ cplex.getValue(C_ij[nJ - 1][nM - 1]) };
+	const auto minimal_inventory_inventory_cost{ cplex.getValue(IC_WIP) + cplex.getValue(IC_FIN) };
+
+
+	std::cout << "Date de fin le plus tot possible calculee :" << endl;
+	std::cout << "====> Date de fin : " << earlyer_departur_date << endl;
+	std::cout << "====> IC : " << earlyer_departur_inventory_cost << endl << endl;
+	std::cout << "Date de fin pour inventaire minimum calculee :" << endl;
+	std::cout << "====> Date de fin : " << minimal_inventory_end_date << endl;
+	std::cout << "====> IC : " << minimal_inventory_inventory_cost << endl << endl;
 
 	//////////////////////////
 
 	if (mode == init_as_optima) {
 		a_b_par_batch = tab_a_b;
 	}
-	{
-		int num_b = 0;
-		std::cout << "Pour chaque batch, intervalle des dates de depart interressante:" << endl;
-		for (auto var : tab_a_b)
-		{
-			std::cout << "Batch " << num_b + 1 << ": [\t" << var.first << ",\t" << var.second << "\t]";
 
-			num_b++;
-			std::cout << endl;
-		}std::cout << endl;
-	}
+	print_departure_windows(std::cout, tab_a_b);
 
 	std::cout << "----------" << endl << "Calcul des profils de fonction de livraison F_k pour chaque batch" << endl << "----------" << endl << endl;
 
 	/////////////////////////
-	// Estimation du coût d'une tournée en fonction de sa date 
+	// Estimation du coï¿½t d'une tournï¿½e en fonction de sa date 
 	//pour chaque batch
 
 
 	//
-	// Attention, comprendre comment le fonction F_k sont créer en détail
-	// n'est pas demandé.
+	// Attention, comprendre comment le fonction F_k sont crï¿½er en dï¿½tail
+	// n'est pas demandï¿½.
 	//
 
-	// ==> traçage d'une fonction linéaire par morceau
+	// ==> traï¿½age d'une fonction linï¿½aire par morceau
 	vector<Fct_lin> list_fct_lin;
 
 	int min_a, max_b;
@@ -364,7 +420,7 @@ Struct_Retour Solveur_min_IC::solve(algorithme_de_resolution approx_method, int 
 
 	int average_time = 0;
 
-	chrono::time_point<chrono::system_clock> current, start_t;
+	chrono::time_point<chrono::system_clock> current;
 	for (int i = 0; i < tab_Batch.size(); i++)
 	{
 		min_a = tab_a_b[i].first;
@@ -380,7 +436,6 @@ Struct_Retour Solveur_min_IC::solve(algorithme_de_resolution approx_method, int 
 		Tournee t_near = Tournee::create_tournee_vide(0);
 
 		Solveur_min_IC solve_CPLEX{ inst, tab_Batch };
-		//Branch_and_bound b_and_b{ inst };
 
 		start_t = chrono::system_clock::now();
 
@@ -391,30 +446,21 @@ Struct_Retour Solveur_min_IC::solve(algorithme_de_resolution approx_method, int 
 			t_near = Tournee::create_tournee_nearest_insertion(inst, tab_Batch[i]);
 			best = Fct_lin::create_fct_lin(t_near, inst, min_a, max_b);
 			break;
-
 		case algorithme_de_resolution::EDD:
 			t_EDD = Tournee::create_tournee_EDD(inst, tab_Batch[i]);
 			best = Fct_lin::generate_fct_with_local_search(inst, t_EDD, min_a, max_b);
-
-			//std::cout << "EDD  ";
 			break;
 		case algorithme_de_resolution::EDDx4:
 			t_EDD = Tournee::create_tournee_EDD(inst, tab_Batch[i]);
 			best = Fct_lin::generate_fct_with_four_extrema(inst, t_EDD, min_a, max_b);
-
-			//std::cout << "EDD_x4 ";
 			break;
 		case algorithme_de_resolution::near:
 			t_near = Tournee::create_tournee_nearest_insertion(inst, tab_Batch[i]);
 			best = Fct_lin::generate_fct_with_local_search(inst, t_near, min_a, max_b);
-
-			// << "near ";
 			break;
 		case algorithme_de_resolution::nearx4:
 			t_near = Tournee::create_tournee_nearest_insertion(inst, tab_Batch[i]);
 			best = Fct_lin::generate_fct_with_four_extrema(inst, t_near, min_a, max_b);
-
-			//std::cout << "near_x4 ";
 			break;
 		case algorithme_de_resolution::EDD_near: // utile
 			best = cost_per_departure_date::edd_near{}(inst, tab_Batch[i], min_a, max_b);
@@ -424,15 +470,10 @@ Struct_Retour Solveur_min_IC::solve(algorithme_de_resolution approx_method, int 
 			break;
 		case algorithme_de_resolution::CPLEX:
 			best = solve_CPLEX.eval_exact_with_CPLEX(tab_Batch[i], min_a, max_b, 1);
-
-			//std::cout << "CPLEX ";
 			break;
-
 		case algorithme_de_resolution::B_and_B: // utile
-			//best = b_and_b.generate_fct_with_branch_and_bound(tab_Batch[i], min_a, max_b);
 			best = cost_per_departure_date::branch_and_bound{}(inst, tab_Batch[i], min_a, max_b);
 			break;
-
 		default: std::cout << "Method non reconnu" << endl;
 			break;
 		}
@@ -452,8 +493,6 @@ Struct_Retour Solveur_min_IC::solve(algorithme_de_resolution approx_method, int 
 	//
 	/////////////////////////
 
-	//std::cout << "Average time: " << average_time / tab_Batch.size() << endl;
-
 	int i = 0; int num_b = 0;
 	std::cout << "Affichage des fonctions lineaires pour chaque batch." << endl << "La methode utilisee est celle passee en parametre.";
 	std::cout << "Legende: " << endl;
@@ -470,8 +509,8 @@ Struct_Retour Solveur_min_IC::solve(algorithme_de_resolution approx_method, int 
 	std::cout << "----------" << endl << "Ajout des profils au F_k au modele et resolution globale" << endl << "----------" << endl << endl;
 
 	//////////////////////
-	//Ajout du coût des tournées aux modèles
-	//(Traduction des fonction lin en modèle math)
+	//Ajout du coï¿½t des tournï¿½es aux modï¿½les
+	//(Traduction des fonction lin en modï¿½le math)
 
 	PPC_M = IloExpr(env);
 	//Retard_incompressible = IloExpr(env);
@@ -494,9 +533,7 @@ Struct_Retour Solveur_min_IC::solve(algorithme_de_resolution approx_method, int 
 	//
 	///////////////////////
 
-	// Deuxième résolution : min IC + PPC_M
-
-	//std::cout << " !!! min IC + PC + RT !!!" << endl;
+	// Deuxiï¿½me rï¿½solution : min IC + PPC_M
 	obj.setExpr(IC_WIP + IC_FIN + PPC_M);
 
 	cplex.solve();
@@ -505,15 +542,10 @@ Struct_Retour Solveur_min_IC::solve(algorithme_de_resolution approx_method, int 
 	current = chrono::system_clock::now();
 	cpt_time_approx += chrono::duration_cast<chrono::milliseconds>(current - start_t).count();
 
+#ifdef DEBUG
 	cplex.exportModel("CPLEX.lp");// debug
+#endif // DEBUG
 
-	/**/
-	//std::cout << "====> Date de fin : " << cplex.getValue(C_ij[nJ - 1][nM - 1]) << endl;
-	//std::cout << "====> IC : " << cplex.getValue(IC_WIP) + cplex.getValue(IC_FIN) << endl;
-	//std::cout << "====> PPC_M : " << cplex.getValue(PPC_M) << endl;
-	//std::cout << "====> std::cout total : " << cplex.getValue(PPC_M) + cplex.getValue(IC_WIP) + cplex.getValue(IC_FIN) << endl;
-	//std::cout << "Ratio IC / PPC_M: " << (cplex.getValue(IC_WIP) + cplex.getValue(IC_FIN)) / cplex.getValue(PPC_M) << endl;
-	//*/
 
 	int result = cplex.getValue(PPC_M) + cplex.getValue(IC_WIP) + cplex.getValue(IC_FIN);
 
@@ -523,16 +555,11 @@ Struct_Retour Solveur_min_IC::solve(algorithme_de_resolution approx_method, int 
 
 	double ecart_a_l_opti = -42.0;
 	if (comp_with_optima) {
-
 		ecart_a_l_opti = (result - global_optima)*100.0 / (global_optima);
-
-		//std::cout << "  => Ecart a loptima: " << ecart_a_l_opti << " %" << endl;
 	}
 
-
-
 	//
-	// Affichage tournée choisit et comparaison batch
+	// Affichage tournï¿½e choisit et comparaison batch
 	//des fonctions optis
 	//
 
@@ -553,27 +580,14 @@ Struct_Retour Solveur_min_IC::solve(algorithme_de_resolution approx_method, int 
 
 
 
-			std::cout << "Batch " << num_b + 1 << " Date de depart :  " << date_depart << "  Tournee: {"; t.print(); std::cout << "}" << endl <<
+			std::cout << "Batch " << num_b + 1 << " Date de depart :  " << date_depart << "  Tournee: {"; 
+			t.print(); 
+			std::cout << "}" << endl <<
 				"\tCout du trajet: " << t.eval_routing_cost(inst) << "  Cout du retard: " << fct.eval_fct_lin(date_depart) - t.eval_routing_cost(inst) << endl;
 
-			/*if (comp_with_optima) {
-			int result = fct.eval_fct_lin( date_depart );
-
-			int opti_a_cette_date = best_fct_par_batch[num_b].eval_fct_lin(date_depart);
-
-			double ecart_a_l_opti = (result - opti_a_cette_date)*100.0 / (opti_a_cette_date);
-
-			int aire_opti = best_fct_par_batch[num_b].calcul_aire_sous_la_courbe();
-			int aire_approx = fct.calcul_aire_sous_la_courbe();
-
-			std::cout << "  => Ecart a loptima: " << ecart_a_l_opti << " %" <<
-			"\t\t=> Ecart d'aire:"<< (aire_approx - aire_opti)*100.0 / (aire_opti) << " %" << endl;
-
-			moyenne_ecart_a_l_optima += ecart_a_l_opti;
-			}//*/
 			num_b++;
-		}std::cout << endl;//*/
-					  //Suppr fct
+		}
+		std::cout << endl;
 	}
 
 	for (auto fct : list_fct_lin)
@@ -586,7 +600,6 @@ Struct_Retour Solveur_min_IC::solve(algorithme_de_resolution approx_method, int 
 
 	Struct_Retour retour;
 
-	retour.ecart_a_opti = ecart_a_l_opti;
 	retour.cpl_time_ms = cpt_time_approx;
 	retour.IC = cplex.getValue(IC_WIP) + cplex.getValue(IC_FIN);
 	retour.PC = cplex.getValue(PPC_M);
@@ -603,24 +616,174 @@ Struct_Retour Solveur_min_IC::solve(algorithme_de_resolution approx_method, int 
 	return retour;
 }
 
+Struct_Retour Solveur_min_IC::operator()(cost_per_departure_date::algorithm &algoritm, int mode)
+{
+	chrono::time_point<chrono::system_clock> start_t = chrono::system_clock::now();
+	IloObjective obj = IloMinimize(env, sum_CC, "obj");
+
+	vector<pair<int, int>> tab_a_b = get_departure_windows(obj);
+	print_departure_windows(std::cout, tab_a_b);
+	
+	std::cout << "----------" << endl << "Calcul des profils de fonction de livraison F_k pour chaque batch" << endl << "----------" << endl << endl;
+
+	/////////////////////////
+	// Estimation du coï¿½t d'une tournï¿½e en fonction de sa date 
+	//pour chaque batch
+	// ==> traï¿½age d'une fonction linï¿½aire par morceau
+	vector<Fct_lin> list_fct_lin{ tab_Batch.size() };
+
+	for (int i = 0; i < tab_Batch.size(); i++)
+	{
+		auto [min_a, max_b] = tab_a_b[i];
+		list_fct_lin[i] = algoritm(inst, tab_Batch[i], min_a, max_b);
+		if (mode == init_as_optima) 
+			best_fct_par_batch[i] = list_fct_lin[i];
+	}
+	//
+	/////////////////////////
+
+	std::cout << "Affichage des fonctions lineaires pour chaque batch." << endl << "La methode utilisee est celle passee en parametre.";
+	std::cout << "Legende: " << endl;
+	std::cout << "1) Date de depart du segment\n \t2) std::cout initial\n\t\t3) Coeff directeur\n\t\t\t4) Tournee associee" << endl;
+	for (int i{ 0 }; i < list_fct_lin.size(); ++i)
+	{
+		std::cout << "--- Batch " << i << ":  Size batch :  " << tab_Batch[i].size() << endl; i++;
+		list_fct_lin[i].print_fct_lin();
+	}
+	std::cout << endl;
+
+	std::cout << "----------" << endl << "Ajout des profils au F_k au modele et resolution globale" << endl << "----------" << endl << endl;
+
+	//////////////////////
+	//Ajout du coï¿½t des tournï¿½es aux modï¿½les
+	//(Traduction des fonction lin en modï¿½le math)
+
+	PPC_M = IloExpr(env);
+	//Retard_incompressible = IloExpr(env);
+
+	//on a un jeu de variable par batch / fonction lineaire
+	d_bi = IloArray<IloIntVarArray>(env, list_fct_lin.size());
+	x_bi = IloArray<IloBoolVarArray>(env, list_fct_lin.size());
+
+	for (int num_b{ 0 }, num_CC{ -1 }; num_b < list_fct_lin.size(); ++num_b)
+	{
+		num_CC += tab_Batch[num_b].size();
+		add_fct_lin_ctr(list_fct_lin[num_b], num_b, C_ij[num_CC][nM - 1]); //<== ajout ici
+															//des contraintes et de valeurs de variable
+	}
+	//
+	///////////////////////
+
+	// Deuxiï¿½me rï¿½solution : min IC + PPC_M
+	obj.setExpr(IC_WIP + IC_FIN + PPC_M);
+
+	cplex.solve();
+
+	//Capture du temps total
+	chrono::time_point<chrono::system_clock> current = chrono::system_clock::now();
+	int cpt_time_approx = chrono::duration_cast<chrono::milliseconds>(current - start_t).count();
+
+#ifdef DEBUG
+	cplex.exportModel("CPLEX.lp");// debug
+#endif // DEBUG
+
+	//
+	// Affichage tournï¿½e choisit et comparaison batch
+	//des fonctions optis
+	//
+	std::cout << endl << "Solution optimal trouvee :" << endl << "Date de depart et tournee par batch:" << endl;
+
+	for (int num_b{ 0 }, num_CC{ -1 }; num_b < list_fct_lin.size(); ++num_b)
+	{
+		num_CC += tab_Batch[num_b].size();
+
+		int date_depart = cplex.getValue(C_ij[num_CC][nM - 1]);
+		Tournee t = list_fct_lin[num_b].found_tournee(date_depart);
+
+		std::cout << "Batch " << num_b + 1 << " Date de depart :  " << date_depart << "  Tournee: {";
+		t.print();
+		std::cout << "}" << endl <<
+			"\tCout du trajet: " << t.eval_routing_cost(inst) << "  Cout du retard: " << list_fct_lin[num_b].eval_fct_lin(date_depart) - t.eval_routing_cost(inst) << endl;
+	}
+	std::cout << endl;
+
+	Struct_Retour retour;
+
+	retour.cpl_time_ms = cpt_time_approx;
+	retour.IC = cplex.getValue(IC_WIP) + cplex.getValue(IC_FIN);
+	retour.PC = cplex.getValue(PPC_M);
+	retour.IC_PC = cplex.getValue(IC_WIP) + cplex.getValue(IC_FIN) + cplex.getValue(PPC_M);
+
+	return retour;
+}
+
+vector<pair<int, int>> Solveur_min_IC::get_departure_windows(IloObjective & obj)
+{
+	vector<pair<int, int>> tab_a_b{ tab_Batch.size() };
+	///////////////////////////
+	// Premiere rï¿½solution : min Cmax
+	// calcule de a
+	model.add(obj);
+	cplex.solve();
+	//recup des dates minimums
+	// num_CC equivalent ï¿½ J_k
+	for (int num_b{ 0 }, num_CC{ -1 }; num_b < tab_Batch.size(); ++num_b)
+	{
+		num_CC += tab_Batch[num_b].size();
+		tab_a_b[num_b].first = cplex.getValue(C_ij[num_CC][nM - 1]);
+	}
+	const auto earlyer_departur_date{ cplex.getValue(C_ij[nJ - 1][nM - 1]) };
+	const auto earlyer_departur_inventory_cost{ cplex.getValue(IC_WIP) + cplex.getValue(IC_FIN) };
+	///////////////////////////
+	// Deuxiï¿½me rï¿½solution : min IC
+	// calcule de b
+	obj.setExpr(IC_WIP + IC_FIN + sum_CC / (cplex.getValue(sum_CC) * 5));
+	cplex.solve();
+	//rï¿½cup des dates max
+	for (int num_b{ 0 }, num_CC{ -1 }; num_b < tab_Batch.size(); ++num_b)
+	{
+		num_CC += tab_Batch[num_b].size();
+		tab_a_b[num_b].second = cplex.getValue(C_ij[num_CC][nM - 1]);
+	}
+	const auto minimal_inventory_end_date{ cplex.getValue(C_ij[nJ - 1][nM - 1]) };
+	const auto minimal_inventory_inventory_cost{ cplex.getValue(IC_WIP) + cplex.getValue(IC_FIN) };
+
+
+	std::cout << "Date de fin le plus tot possible calculee :" << endl;
+	std::cout << "====> Date de fin : " << earlyer_departur_date << endl;
+	std::cout << "====> IC : " << earlyer_departur_inventory_cost << endl << endl;
+	std::cout << "Date de fin pour inventaire minimum calculee :" << endl;
+	std::cout << "====> Date de fin : " << minimal_inventory_end_date << endl;
+	std::cout << "====> IC : " << minimal_inventory_inventory_cost << endl << endl;
+
+	return tab_a_b;
+}
+
+void print_departure_windows(std::ostream & output, std::vector<std::pair<int, int>> &tab_a_b)
+{
+	int num_b = 0;
+	output << "Pour chaque batch, intervalle des dates de depart interressante:" << endl;
+	for (auto var : tab_a_b)
+	{
+		output << "Batch " << num_b + 1 << ": [\t" << var.first << ",\t" << var.second << "\t]";
+
+		num_b++;
+		output << endl;
+	}
+	output << endl;
+}
+
 
 
 
 void Solveur_min_IC::init_model_and_data()
 {
 	nM = inst.mMachine;
-
-	this->tab_Batch = tab_Batch;
-	nJ = 0;
-	for (auto var : tab_Batch) {
-		nJ += var.size();
-	}
-
-	nM = inst.mMachine;
+	//nJ = std::accumulate(tab_Batch.begin(), tab_Batch.end(), 0);
 
 	this->env = IloEnv();
-	model = IloModel(env); //modèle, on l'associe directement à l'environnement
-	cplex = IloCplex(model);//solveur, on l'associe directement au modèle
+	model = IloModel(env); //modï¿½le, on l'associe directement ï¿½ l'environnement
+	cplex = IloCplex(model);//solveur, on l'associe directement au modï¿½le
 }
 
 void Solveur_min_IC::init_list_ind()
@@ -703,7 +866,7 @@ void Solveur_min_IC::init_IC_WIP()
 	for (int i = 0; i < nJ; i++)
 	{
 		i_job = list_ind[i];
-		Job& job = inst.list_Job[i_job];
+		Job_old& job = inst.list_Job[i_job];
 		for (int j = 0; j < nM - 1; j++)
 		{
 			IC_WIP += job.thWIP[j] * (C_ij[i][j + 1] - job.p[j + 1] - C_ij[i][j]);
@@ -722,11 +885,11 @@ void Solveur_min_IC::init_IC_FIN()
 	for (auto var : tab_Batch)
 	{
 		i_last_job = var.back();
-		Job& last_job = inst.list_Job[i_last_job];
+		Job_old& last_job = inst.list_Job[i_last_job];
 		for (int i = 0; i < var.size() - 1; i++)
 		{
 			i_job = var[i];
-			Job& job = inst.list_Job[i_job];
+			Job_old& job = inst.list_Job[i_job];
 
 			IC_FIN += job.thFIN *
 				// cpl_time du dernier job du batch sur la dernier machine
@@ -744,7 +907,7 @@ void Solveur_min_IC::init_PPC_M()
 	for (int i = 0; i < nJ; i++)
 	{
 		i_job = list_ind[i];
-		Job &job = inst.list_Job[i_job];
+		Job_old &job = inst.list_Job[i_job];
 		PPC_M += T_i[i] * job.piM;
 	}
 
@@ -759,7 +922,7 @@ void Solveur_min_IC::init_RT()
 	{
 		RT += x_ij[0][i] * inst.distancier.dist(index_depot_distancier, list_ind[i - 1]);
 
-		//on ne prend pas en compte l'aller au dépôt
+		//on ne prend pas en compte l'aller au dï¿½pï¿½t
 		//RT = x_ij[i][nJ+1] * inst->distancier.dist(index_depot_distancier, list_ind[i-1]);
 	}
 
@@ -792,7 +955,7 @@ void Solveur_min_IC::add_capa_machine_ctr()
 	for (int i = 1; i < nJ; i++)
 	{
 		i_job = list_ind[i];
-		Job& job = inst.list_Job[i_job];
+		Job_old& job = inst.list_Job[i_job];
 		for (int j = 0; j < nM; j++)
 		{
 			model.add(C_ij[i - 1][j] + job.p[j] <= C_ij[i][j]);
@@ -806,7 +969,7 @@ void Solveur_min_IC::add_gamme_ctr()
 	for (int i = 0; i < nJ; i++)
 	{
 		i_job = list_ind[i];
-		Job& job = inst.list_Job[i_job];
+		Job_old& job = inst.list_Job[i_job];
 		for (int j = 1; j < nM; j++)
 		{
 			model.add(C_ij[i][j - 1] + job.p[j] <= C_ij[i][j]);
@@ -830,9 +993,9 @@ void Solveur_min_IC::add_simple_routing_ctr(vector<int> date_depart)
 void Solveur_min_IC::add_flot_routing_ctr()
 {
 	//
-	// L'index 0 (x_ij[0][-]) dans le modèle correspond au lieu de départ de la tournée
-	// L'index nJ+1 (x_ij[-][nJ+1]) dans le modèle correspond au lieu de d'arrivée de la tournée
-	// (Note : c'est deux lieux sont en fait le même dépot
+	// L'index 0 (x_ij[0][-]) dans le modï¿½le correspond au lieu de dï¿½part de la tournï¿½e
+	// L'index nJ+1 (x_ij[-][nJ+1]) dans le modï¿½le correspond au lieu de d'arrivï¿½e de la tournï¿½e
+	// (Note : c'est deux lieux sont en fait le mï¿½me dï¿½pot
 	//
 
 	Distancier& dist = inst.distancier;
@@ -851,7 +1014,7 @@ void Solveur_min_IC::add_flot_routing_ctr()
 	model.add(nb_arrivee == tab_Batch.size());
 
 
-	// un successeur et un prédécesseur
+	// un successeur et un prï¿½dï¿½cesseur
 	IloExpr pred_i = IloExpr(env);
 	IloExpr succ_i = IloExpr(env);
 
@@ -914,7 +1077,7 @@ void Solveur_min_IC::add_delivery_date_ctr()
 
 					model.add(D_i[j - 1] >= D_i[i - 1] + dist_i_j - big_M * (1 - x_ij[i][j]));
 
-					//brisage de sous tours si les jobs sont au même endroit
+					//brisage de sous tours si les jobs sont au mï¿½me endroit
 					if (dist_i_j == 0 && i < j) {
 						model.add(x_ij[j][i] == 0);
 					}
@@ -927,8 +1090,8 @@ void Solveur_min_IC::add_delivery_date_ctr()
 	}
 }
 
-//on fait l'hypothèse que valeurs des instances sont adaptés pour que le 
-//l'on puisse faire comme si le véhicule parté à t = 0
+//on fait l'hypothï¿½se que valeurs des instances sont adaptï¿½s pour que le 
+//l'on puisse faire comme si le vï¿½hicule partï¿½ ï¿½ t = 0
 void Solveur_min_IC::add_departure_date_ctr()
 {
 	Distancier& dist = inst.distancier;
@@ -989,7 +1152,7 @@ void Solveur_min_IC::modify_departure_date(const vector<int>& date_depart, int d
 void Solveur_min_IC::add_Ti_ctr(int depart_au_plus_tot)
 {
 	int i_job;
-	Job* job;
+	Job_old* job;
 
 	for (int i = 0; i < nJ; i++)
 	{
@@ -1042,7 +1205,7 @@ void Solveur_min_IC::add_fct_lin_ctr(const Fct_lin& fct, int num_fct, const IloI
 {
 	int nb_link = fct.tab_link.size();
 	d_bi[num_fct] = IloIntVarArray(env, nb_link, 0, INT_MAX);
-	x_bi[num_fct] = IloBoolVarArray(env, nb_link + 1); // permet de generer le max_b de manière propre
+	x_bi[num_fct] = IloBoolVarArray(env, nb_link + 1); // permet de generer le max_b de maniï¿½re propre
 
 	for (size_t i = 0; i < nb_link; i++)
 	{
@@ -1112,8 +1275,8 @@ vector<int>  Solveur_min_IC::solve_routing_1_batch(const vector<int>& bat, int d
 	tab_Batch.push_back(bat);
 
 	this->env = IloEnv();
-	model = IloModel(env); //modèle, on l'associe directement à l'environnement
-	cplex = IloCplex(model);//solveur, on l'associe directement au modèle
+	model = IloModel(env); //modï¿½le, on l'associe directement ï¿½ l'environnement
+	cplex = IloCplex(model);//solveur, on l'associe directement au modï¿½le
 
 	init_xij();
 	init_Di();
@@ -1153,7 +1316,7 @@ Fct_lin Solveur_min_IC::eval_exact_with_CPLEX(const vector<int>& bat, int depart
 	nJ = bat.size();
 
 	//***
-	//Réglage du Big_M
+	//Rï¿½glage du Big_M
 	int max_dist = 0;
 	for (int i = 0; i < inst.distancier.tab.size(); i++)
 	{
@@ -1183,7 +1346,7 @@ Fct_lin Solveur_min_IC::eval_exact_with_CPLEX(const vector<int>& bat, int depart
 	fct_lin.min_a = depart_min_a;
 	fct_lin.max_b = depart_max_b;
 
-	//pour l'instant on ne recupère pas les tournée du modele
+	//pour l'instant on ne recupï¿½re pas les tournï¿½e du modele
 	fct_lin.tab_link.push_back(Fct_lin::create_link(depart_min_a, cplex.getObjValue(), 0, Tournee::create_tournee(chemin)));
 
 
@@ -1193,7 +1356,7 @@ Fct_lin Solveur_min_IC::eval_exact_with_CPLEX(const vector<int>& bat, int depart
 	int depart = depart_min_a + intervalle - ((depart_min_a + intervalle) % intervalle);
 	for (depart; depart < depart_max_b; depart += intervalle)
 	{
-		//modification de la date de départ dans les contraintes
+		//modification de la date de dï¿½part dans les contraintes
 		vect[0] = depart;
 		modify_departure_date(vect, depart_min_a);
 
@@ -1204,7 +1367,7 @@ Fct_lin Solveur_min_IC::eval_exact_with_CPLEX(const vector<int>& bat, int depart
 		//<< "   ==> RT : " << cplex.getValue(RT) << endl;
 		//std::cout << depart << "\t" << cplex.getObjValue() << endl;
 
-		//pour l'instant on ne recupère pas les tournée du modele
+		//pour l'instant on ne recupï¿½re pas les tournï¿½e du modele
 		fct_lin.tab_link.push_back(Fct_lin::create_link(depart, cplex.getObjValue(), 0, Tournee::create_tournee(chemin)));
 	}
 

@@ -1,11 +1,11 @@
 #include "Job.h"
 
 
-Job::Job()
+Job_old::Job_old()
 {
 }
 
-Job::Job(std::istream & input, int mMachine)
+Job_old::Job_old(std::istream & input, int mMachine)
 {
 	string tmp;
 	getline(input, tmp);
@@ -37,11 +37,11 @@ Job::Job(std::istream & input, int mMachine)
 }
 
 
-Job::~Job()
+Job_old::~Job_old()
 {
 }
 
-void Job::reecrire_job(ofstream * fichier)
+void Job_old::reecrire_job(ofstream * fichier)
 {
 	int mMachine = p.size();
 	for (int i = 0; i < mMachine; i++)

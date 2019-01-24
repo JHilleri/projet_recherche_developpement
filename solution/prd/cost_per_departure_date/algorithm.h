@@ -7,7 +7,7 @@ namespace cost_per_departure_date
 	class algorithm
 	{
 	public:
-		virtual Fct_lin operator()(Instance & inst, const batch & batch, int min_a, int max_b) = 0;
+		virtual Fct_lin operator()(Instance & inst, const batch_old & batch_old, int min_a, int max_b) = 0;
 	};
 }
 
