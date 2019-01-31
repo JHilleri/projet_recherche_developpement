@@ -47,10 +47,10 @@ namespace {
 /*
 	read an instance from an input stream
 */
-Instance instance_reader::read(std::istream & input, index_type job_per_batch)
+instance instance_reader::read(std::istream & input, index_type job_per_batch)
 {
 	// some datas are present in the readed file format but not used in this program
-	Instance result;
+	instance result;
 
 	index_type job_count;
 	index_type machine_count;

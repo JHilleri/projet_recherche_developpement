@@ -12,47 +12,47 @@ job::job(index_type index, const std::vector<time_unit>& duration_per_machine, t
 {
 }
 
-index_type job::index() const
+index_type job::get_index() const
 { 
 	return m_index; 
 }
 
-const std::vector<time_unit>& job::duration_per_machine() const
+const std::vector<time_unit>& job::get_duration_per_machine() const
 {
 	return m_duration_per_machine;
 }
 
-time_unit job::total_duration() const 
+time_unit job::get_total_duration() const 
 { 
 	return std::accumulate(m_duration_per_machine.begin(), m_duration_per_machine.end(), 0); 
 }
 
-time_unit job::due_date() const 
+time_unit job::get_due_date() const 
 { 
 	return m_due_date; 
 }
 
-cost_unit job::penalty_per_delivery_delay() const 
+cost_unit job::get_penalty_per_delivery_delay() const 
 { 
 	return m_penalty_per_delivery; 
 }
 
-const std::vector<cost_unit>& job::in_progress_inventory_cost() const 
+const std::vector<cost_unit>& job::get_in_progress_inventory_cost() const 
 { 
 	return m_in_progress_inventory_cost; 
 }
 
-cost_unit job::ended_inventory_cost() const 
+cost_unit job::get_ended_inventory_cost() const 
 { 
 	return m_ended_inventory_cost; 
 }
 
-std::vector<time_unit>& job::duration_per_machine()
+std::vector<time_unit>& job::get_duration_per_machine()
 {
 	return m_duration_per_machine;
 }
 
-std::vector<cost_unit>& job::in_progress_inventory_cost()
+std::vector<cost_unit>& job::get_in_progress_inventory_cost()
 {
 	return m_in_progress_inventory_cost;
 }
@@ -97,6 +97,6 @@ bool job::operator==(const job & job2) const
 		&& (m_in_progress_inventory_cost.size() == job2.m_in_progress_inventory_cost.size())
 		&& (std::equal(m_duration_per_machine.begin(), m_duration_per_machine.end(), job2.m_duration_per_machine.begin()))
 		&& (std::equal(m_in_progress_inventory_cost.begin(), m_in_progress_inventory_cost.end(), job2.m_in_progress_inventory_cost.begin()))
-		&& (total_duration() == job2.total_duration());
+		&& (get_total_duration() == job2.get_total_duration());
 }
 

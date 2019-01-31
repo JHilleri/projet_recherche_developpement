@@ -23,7 +23,7 @@ public:
 
 	/*time_unit first_possible_departure_date() const;
 	time_unit last_possible_departure_date() const;*/
-	const job_list & jobs() const;
+	const job_list & get_jobs() const;
 
 
 private:

@@ -9,15 +9,15 @@
 class solution
 {
 public:
-	solution(Instance & instance) : m_instance{ new Instance(instance) } {}
+	solution(instance & instance_model) : m_instance{ std::make_shared<instance const>(instance_model) } {}
 	solution(Const_instance_ptr instance_ptr) : m_instance{ instance_ptr } {}
 
-	double score() const { return m_score; };
-	inline cost_unit inventory_cost() const { return m_inventory_cost; }
-	inline cost_unit delivery_cost() const { return m_delivery_cost; }
-	inline cost_unit total_cost() const { return m_inventory_cost + m_delivery_cost; }
-	std::vector<planned_batch> const & planned_batchs() const { return m_planned_batchs; }
-	Const_instance_ptr instance() const { return m_instance; }
+	double get_score() const { return m_score; };
+	inline cost_unit get_inventory_cost() const { return m_inventory_cost; }
+	inline cost_unit get_delivery_cost() const { return m_delivery_cost; }
+	inline cost_unit get_total_cost() const { return m_inventory_cost + m_delivery_cost; }
+	std::vector<planned_batch> const & get_planned_batchs() const { return m_planned_batchs; }
+	Const_instance_ptr get_instance() const { return m_instance; }
 
 	inline void set_inventory_cost(cost_unit inventory_cost) { m_inventory_cost = inventory_cost; }
 	inline void set_delivery_cost(cost_unit delivery_cost) { m_delivery_cost = delivery_cost; }

@@ -11,16 +11,16 @@ class job
 	job(index_type index, const std::vector<time_unit> &duration_per_machine, 
 		time_unit due_date, cost_unit penalty_per_delivery_delay, const  std::vector<cost_unit> &in_progress_inventory_cost, cost_unit ended_inventory_cost);
 
-	index_type index() const;
-	const std::vector<time_unit> &duration_per_machine() const;
-	time_unit total_duration() const;
-	time_unit due_date() const;
-	cost_unit penalty_per_delivery_delay() const;
-	const std::vector<cost_unit> &in_progress_inventory_cost() const;
-	cost_unit ended_inventory_cost() const;
+	index_type get_index() const;
+	const std::vector<time_unit> &get_duration_per_machine() const;
+	time_unit get_total_duration() const;
+	time_unit get_due_date() const;
+	cost_unit get_penalty_per_delivery_delay() const;
+	const std::vector<cost_unit> &get_in_progress_inventory_cost() const;
+	cost_unit get_ended_inventory_cost() const;
 
-	std::vector<time_unit> &duration_per_machine();
-	std::vector<cost_unit> &in_progress_inventory_cost();
+	std::vector<time_unit> &get_duration_per_machine();
+	std::vector<cost_unit> &get_in_progress_inventory_cost();
 
 	void set_index(index_type index);
 	void set_duration_per_machine(const std::vector<time_unit> &duration_per_machine);

@@ -7,7 +7,7 @@ class instance_reader
 {
 public:
 
-	Instance read(std::istream & input, index_type job_per_batch);
+	instance read(std::istream & input, index_type job_per_batch);
 
 };
 

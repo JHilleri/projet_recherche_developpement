@@ -21,7 +21,7 @@ batch::batch(std::initializer_list<job> jobs)
 }
 
 
-const job_list& batch::jobs() const
+const job_list& batch::get_jobs() const
 {
 	return m_jobs;
 }

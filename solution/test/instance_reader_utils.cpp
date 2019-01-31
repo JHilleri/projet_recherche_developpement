@@ -40,26 +40,26 @@ void test_job_reading(std::istream & input, index_type machine_number, const job
 {
 	const job readed_job{ read_job(input, machine_number) };
 
-	EXPECT_EQ(readed_job.index(), expected.index());
-	EXPECT_EQ(readed_job.due_date(), expected.due_date());
-	EXPECT_EQ(readed_job.ended_inventory_cost(), expected.ended_inventory_cost());
-	EXPECT_EQ(readed_job.penalty_per_delivery_delay(), expected.penalty_per_delivery_delay());
+	EXPECT_EQ(readed_job.get_index(), expected.get_index());
+	EXPECT_EQ(readed_job.get_due_date(), expected.get_due_date());
+	EXPECT_EQ(readed_job.get_ended_inventory_cost(), expected.get_ended_inventory_cost());
+	EXPECT_EQ(readed_job.get_penalty_per_delivery_delay(), expected.get_penalty_per_delivery_delay());
 
-	const auto & durations{ readed_job.duration_per_machine() };
-	const auto & expected_durations{ expected.duration_per_machine() };
+	const auto & durations{ readed_job.get_duration_per_machine() };
+	const auto & expected_durations{ expected.get_duration_per_machine() };
 	EXPECT_EQ(durations.size(), machine_number);
 	for (unsigned int i{ 0 }; i < machine_number; ++i)
 	{
 		EXPECT_EQ(durations[i], expected_durations[i]);
 	}
 
-	const auto & costs{ readed_job.in_progress_inventory_cost() };
-	const auto & expected_costs{ expected.in_progress_inventory_cost() };
+	const auto & costs{ readed_job.get_in_progress_inventory_cost() };
+	const auto & expected_costs{ expected.get_in_progress_inventory_cost() };
 
-	EXPECT_EQ(readed_job.in_progress_inventory_cost().size(), expected_costs.size());
+	EXPECT_EQ(readed_job.get_in_progress_inventory_cost().size(), expected_costs.size());
 	for (unsigned int i{ 0 }; i < expected_costs.size(); ++i)
 	{
-		EXPECT_EQ(readed_job.in_progress_inventory_cost()[i], expected_costs[i]);
+		EXPECT_EQ(readed_job.get_in_progress_inventory_cost()[i], expected_costs[i]);
 	}
 }
 
