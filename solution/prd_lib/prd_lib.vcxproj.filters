@@ -33,6 +33,15 @@
     <ClInclude Include="instance_reader_utils.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="planned_job.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="planned_batch.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="solution.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="job.cpp">
@@ -48,6 +57,15 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="instance_reader_utils.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="planned_job.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="planned_batch.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="solution.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

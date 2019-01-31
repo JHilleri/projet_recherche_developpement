@@ -36,12 +36,16 @@ Distancier :
 5	7	4	0)";
 }
 
+const auto job_prt_comparator = [](const job_ptr & j1, const job_ptr & j2) {
+	return *j1 == *j2; 
+};
+
 TEST(instance_reader, read_instance_4_job_per_batch)
 {
 	std::istringstream input(instance_text());
 
 	instance_reader reader;
-	const instance instance = reader.read(input, 4);
+	const Instance instance = reader.read(input, 4);
 	EXPECT_EQ(instance.job_number(), 4);
 	EXPECT_EQ(instance.machine_number(), 10);
 	EXPECT_EQ(instance.batchs().size(), 1);
@@ -52,7 +56,7 @@ TEST(instance_reader, read_instance_4_job_per_batch)
 		{2, {9, 8, 8, 12, 7, 6, 8, 10, 15, 8 }, 246, 3, {6, 1, 3, 2, 4, 4, 6, 4, 1}, 6 },
 		{3, {13, 3, 5, 5, 7, 4, 3, 8, 9, 5}, 234, 9, {5, 8, 8, 5, 5, 6, 4, 4, 2}, 6}
 	});
-	EXPECT_TRUE(std::equal(instance.batchs()[0].jobs().begin(), instance.batchs()[0].jobs().end(), expected_batch.jobs().begin()));
+	EXPECT_TRUE(std::equal(instance.batchs()[0].jobs().begin(), instance.batchs()[0].jobs().end(), expected_batch.jobs().begin(), job_prt_comparator));
 
 	EXPECT_EQ(instance.distance_between(0, 0), 0);
 	EXPECT_EQ(instance.distance_between(0, 1), 8);
@@ -64,7 +68,7 @@ TEST(instance_reader, read_instance_2_job_per_batch)
 	std::istringstream input(instance_text());
 
 	instance_reader reader;
-	const instance instance = reader.read(input, 2);
+	const Instance instance = reader.read(input, 2);
 	EXPECT_EQ(instance.job_number(), 4);
 	EXPECT_EQ(instance.machine_number(), 10);
 	EXPECT_EQ(instance.batchs().size(), 2);
@@ -81,8 +85,8 @@ TEST(instance_reader, read_instance_2_job_per_batch)
 			{3, {13, 3, 5, 5, 7, 4, 3, 8, 9, 5}, 234, 9, {5, 8, 8, 5, 5, 6, 4, 4, 2}, 6}
 		}
 	} };
-	EXPECT_TRUE(std::equal(instance.batchs()[0].jobs().begin(), instance.batchs()[0].jobs().end(), expected_batchs[0].jobs().begin()));
-	EXPECT_TRUE(std::equal(instance.batchs()[1].jobs().begin(), instance.batchs()[1].jobs().end(), expected_batchs[1].jobs().begin()));
+	EXPECT_TRUE(std::equal(instance.batchs()[0].jobs().begin(), instance.batchs()[0].jobs().end(),expected_batchs[0].jobs().begin(), job_prt_comparator));
+	EXPECT_TRUE(std::equal(instance.batchs()[1].jobs().begin(), instance.batchs()[1].jobs().end(), expected_batchs[1].jobs().begin(), job_prt_comparator));
 
 	EXPECT_EQ(instance.distance_between(0, 0), 0);
 	EXPECT_EQ(instance.distance_between(0, 1), 8);
@@ -94,7 +98,7 @@ TEST(instance_reader, read_instance_3_job_per_batch)
 	std::istringstream input(instance_text());
 
 	instance_reader reader;
-	const instance instance = reader.read(input, 3);
+	const Instance instance = reader.read(input, 3);
 	EXPECT_EQ(instance.job_number(), 4);
 	EXPECT_EQ(instance.machine_number(), 10);
 	EXPECT_EQ(instance.batchs().size(), 2);
@@ -111,8 +115,8 @@ TEST(instance_reader, read_instance_3_job_per_batch)
 			{3, {13, 3, 5, 5, 7, 4, 3, 8, 9, 5}, 234, 9, {5, 8, 8, 5, 5, 6, 4, 4, 2}, 6}
 		}
 	} };
-	EXPECT_TRUE(std::equal(instance.batchs()[0].jobs().begin(), instance.batchs()[0].jobs().end(), expected_batchs[0].jobs().begin()));
-	EXPECT_TRUE(std::equal(instance.batchs()[1].jobs().begin(), instance.batchs()[1].jobs().end(), expected_batchs[1].jobs().begin()));
+	EXPECT_TRUE(std::equal(instance.batchs()[0].jobs().begin(), instance.batchs()[0].jobs().end(), expected_batchs[0].jobs().begin(), job_prt_comparator));
+	EXPECT_TRUE(std::equal(instance.batchs()[1].jobs().begin(), instance.batchs()[1].jobs().end(), expected_batchs[1].jobs().begin(), job_prt_comparator));
 
 	EXPECT_EQ(instance.distance_between(0, 0), 0);
 	EXPECT_EQ(instance.distance_between(0, 1), 8);

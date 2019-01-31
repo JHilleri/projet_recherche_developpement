@@ -121,6 +121,9 @@
   <ItemGroup>
     <ClInclude Include="batch.h" />
     <ClInclude Include="instance_reader_utils.h" />
+    <ClInclude Include="planned_batch.h" />
+    <ClInclude Include="planned_job.h" />
+    <ClInclude Include="solution.h" />
     <ClInclude Include="solver_types.h" />
     <ClInclude Include="instance.h" />
     <ClInclude Include="instance_reader.h" />
@@ -132,6 +135,9 @@
     <ClCompile Include="instance_reader.cpp" />
     <ClCompile Include="instance_reader_utils.cpp" />
     <ClCompile Include="job.cpp" />
+    <ClCompile Include="planned_batch.cpp" />
+    <ClCompile Include="planned_job.cpp" />
+    <ClCompile Include="solution.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

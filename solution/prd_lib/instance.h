@@ -4,10 +4,10 @@
 #include "batch.h"
 #include "job.h"
 
-class instance
+class Instance
 {
 public:
-	instance();
+	Instance();
 	/*
 		return the distance to travel from job_1 delivery location to job_2 delivery location
 		[[ expects: job_number() > job_1.index() && job_number() > job_2.index() && job_1.index() >= 0 && job_2.index() >= 0]]
@@ -32,8 +32,10 @@ private:
 	index_type m_job_number;
 	index_type m_machine_number;
 	std::vector<distance_unit> m_distances;
-	std::vector<batch> m_batchs;
+	std::vector<batch> m_planned_batchs;
 
 	index_type distance_index(index_type index_job_1, index_type index_job_2) const;
 };
+
+using Const_instance_ptr = std::shared_ptr<Instance const>;
 

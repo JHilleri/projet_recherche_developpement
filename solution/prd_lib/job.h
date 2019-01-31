@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <memory>
 
 #include "solver_types.h"
 
@@ -38,3 +39,6 @@ class job
 	std::vector<cost_unit> m_in_progress_inventory_cost;
 	cost_unit m_ended_inventory_cost;
 };
+
+using job_ptr = std::shared_ptr<job>;
+using const_job_ptr = std::shared_ptr<const job>;
