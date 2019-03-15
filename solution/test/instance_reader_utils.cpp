@@ -6,10 +6,12 @@
 #include <string>
 #include <vector>
 
+using namespace solver;
+
 TEST(instance_reader_utils, read_job_index_1_basique) {
 	std::istringstream input("Jobs 1 :");
 
-	index_type index = read_job_index(input);
+	index index = read_job_index(input);
 
 	EXPECT_EQ(index, 1);
 }
@@ -17,7 +19,7 @@ TEST(instance_reader_utils, read_job_index_1_basique) {
 TEST(instance_reader_utils, read_job_index_1_with_spaces) {
 	std::istringstream input("Jobs 1 :   ");
 
-	index_type index = read_job_index(input);
+	index index = read_job_index(input);
 
 	EXPECT_EQ(index, 1);
 }
@@ -25,7 +27,7 @@ TEST(instance_reader_utils, read_job_index_1_with_spaces) {
 TEST(instance_reader_utils, read_job_index_42_basique) {
 	std::istringstream input("Jobs 42 :");
 
-	index_type index = read_job_index(input);
+	index index = read_job_index(input);
 
 	EXPECT_EQ(index, 42);
 }
@@ -36,7 +38,7 @@ TEST(instance_reader_utils, read_job_index_empty_string) {
 	EXPECT_ANY_THROW(read_job_index(input));
 }
 
-void test_job_reading(std::istream & input, index_type machine_number, const job & expected)
+void test_job_reading(std::istream & input, index machine_number, const job & expected)
 {
 	const job readed_job{ read_job(input, machine_number) };
 

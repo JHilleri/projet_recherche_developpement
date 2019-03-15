@@ -3,11 +3,14 @@
 #include "instance.h"
 #include "solver_types.h"
 
-class instance_reader
+namespace solver
 {
-public:
+	class instance_reader
+	{
+	public:
 
-	instance read(std::istream & input, index_type job_per_batch);
+		instance read(std::istream & input, index job_per_batch);
 
-};
+	};
+}
 

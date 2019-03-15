@@ -3,6 +3,8 @@
 #include "instance.h"
 #include <vector>
 
+using namespace solver;
+
 std::string instance_text()
 {
 	return 
@@ -46,8 +48,8 @@ TEST(instance_reader, read_instance_4_job_per_batch)
 
 	instance_reader reader;
 	const instance instance = reader.read(input, 4);
-	EXPECT_EQ(instance.get_job_number(), 4);
-	EXPECT_EQ(instance.get_machine_number(), 10);
+	EXPECT_EQ(instance.get_job_count(), 4);
+	EXPECT_EQ(instance.get_machine_count(), 10);
 	EXPECT_EQ(instance.get_batchs().size(), 1);
 	EXPECT_EQ(instance.get_batchs()[0].get_jobs().size(), 4);
 	batch expected_batch({ 
@@ -69,8 +71,8 @@ TEST(instance_reader, read_instance_2_job_per_batch)
 
 	instance_reader reader;
 	const instance instance = reader.read(input, 2);
-	EXPECT_EQ(instance.get_job_number(), 4);
-	EXPECT_EQ(instance.get_machine_number(), 10);
+	EXPECT_EQ(instance.get_job_count(), 4);
+	EXPECT_EQ(instance.get_machine_count(), 10);
 	EXPECT_EQ(instance.get_batchs().size(), 2);
 	EXPECT_EQ(instance.get_batchs()[0].get_jobs().size(), 2);
 	EXPECT_EQ(instance.get_batchs()[1].get_jobs().size(), 2);
@@ -99,8 +101,8 @@ TEST(instance_reader, read_instance_3_job_per_batch)
 
 	instance_reader reader;
 	const instance instance = reader.read(input, 3);
-	EXPECT_EQ(instance.get_job_number(), 4);
-	EXPECT_EQ(instance.get_machine_number(), 10);
+	EXPECT_EQ(instance.get_job_count(), 4);
+	EXPECT_EQ(instance.get_machine_count(), 10);
 	EXPECT_EQ(instance.get_batchs().size(), 2);
 	EXPECT_EQ(instance.get_batchs()[0].get_jobs().size(), 3);
 	EXPECT_EQ(instance.get_batchs()[1].get_jobs().size(), 1);

@@ -1,6 +1,9 @@
 #pragma once
 
-using time_unit = int;
-using cost_unit = int;
-using index_type = unsigned int;
-using distance_unit = int;
+namespace solver
+{
+	using time = int;
+	using cost = int;
+	using index = unsigned int;
+	using distance = int;
+}
