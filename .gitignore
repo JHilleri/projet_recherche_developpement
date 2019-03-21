@@ -2,3 +2,4 @@
 .vscode
 solution/prd/CPLEX.lp
 .vs
+solution/prd_lib/Doxyfile
