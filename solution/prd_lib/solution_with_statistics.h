@@ -5,6 +5,7 @@
 
 namespace solver
 {
+	/// A solution with informations on the resolution process
 	class solution_with_statistics : public solution
 	{
 	private:

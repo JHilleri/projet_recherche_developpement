@@ -6,6 +6,7 @@
 
 namespace solver
 {
+	/// This class hold the data of an probleme instance
 	class instance
 	{
 	public:

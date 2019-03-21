@@ -6,6 +6,7 @@
 
 namespace solver
 {
+	/// a resolution methode implementing a local search algorithm
 	class local_search : public resolution_method
 	{
 	public:

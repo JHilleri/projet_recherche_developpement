@@ -84,11 +84,11 @@
     <ClInclude Include="local_search.h">
       <Filter>method_impl\local_search</Filter>
     </ClInclude>
-    <ClInclude Include="solution_writer.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="util.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="solution_writer.h">
+      <Filter>solution</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -144,7 +144,7 @@
       <Filter>method_impl\local_search</Filter>
     </ClCompile>
     <ClCompile Include="solution_writer.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>solution</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

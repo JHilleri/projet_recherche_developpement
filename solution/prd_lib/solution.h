@@ -8,6 +8,7 @@
 
 namespace solver
 {
+	/// hold datas of a resolved instance
 	class solution
 	{
 	public:

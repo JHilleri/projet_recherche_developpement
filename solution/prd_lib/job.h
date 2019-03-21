@@ -6,6 +6,7 @@
 
 namespace solver
 {
+	/// reprsent a job from an problem instance
 	class job
 	{
 	public:

@@ -4,6 +4,7 @@
 
 namespace solver
 {
+	/// provide a way to check the validity of a solution
 	class solution_validator
 	{
 	public:

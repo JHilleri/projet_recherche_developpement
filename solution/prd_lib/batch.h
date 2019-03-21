@@ -9,9 +9,8 @@ namespace solver
 {
 	using job_list = std::vector<job_ptr>;
 
-	/*
-		This class represent only the instance data for a batch, not the resolved solution.
-	*/
+
+	/// This class hold a set of job
 	class batch
 	{
 	public:

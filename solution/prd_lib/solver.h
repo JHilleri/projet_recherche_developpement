@@ -6,6 +6,7 @@
 
 namespace solver
 {
+	/// A class for apply resolution methode on instances and mesure the process duration
 	class solver
 	{
 	public:

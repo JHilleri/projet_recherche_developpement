@@ -4,6 +4,7 @@
 
 namespace solver
 {
+	/// hold datas of a job on a resolved instance
 	class planned_job
 	{
 	public:

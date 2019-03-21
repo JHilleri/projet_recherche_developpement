@@ -7,6 +7,7 @@
 
 namespace solver
 {
+	/// hold datas of a batch on a resolved instance
 	class planned_batch
 	{
 	public:

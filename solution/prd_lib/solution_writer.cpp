@@ -44,4 +44,10 @@ namespace solver
 		});
 		output << "]}" << std::endl;
 	}
+	void solution_writer::write(std::ostream & output, solution_with_statistics & solution_to_write)
+	{
+		output << "{\"duration\":" << solution_to_write.get_process_duration().count() << ",\"solution\":";
+		write(output, static_cast<solution&>(solution_to_write));
+		output << "}" << std::endl;
+	}
 }

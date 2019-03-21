@@ -5,6 +5,7 @@
 
 namespace solver
 {
+	/// provide a way to read an instance from an input stream
 	class instance_reader
 	{
 	public:
