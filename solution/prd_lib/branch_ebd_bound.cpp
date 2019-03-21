@@ -188,7 +188,7 @@ namespace solver
 		tournee = Tournee::create_tournee_vide(batch_old.size());
 
 		//index du dernier site visiter, d?part du depot
-		last_visited_site_index = inst.get_job_count();
+		last_visited_site_index = inst.get_job_count() - 1;
 
 		//arbre couvrant de point minimum, initialiser avec tous les noeud du batch
 		Covering_tree covering_tree = Covering_tree(inst, batch_old);
@@ -291,7 +291,7 @@ namespace solver
 
 								  //*****
 								  //?l?ment de la LB ne variant pas avec la date de d?part
-			const_job_ptr job_ptr = *inst.get_job_by_index(branch_node);
+			const_job_ptr job_ptr = inst.get_job_by_index(branch_node);
 			job const & job = *job_ptr;
 
 			int min_routing_cost = covering_tree.sum_edge();
@@ -432,7 +432,7 @@ namespace solver
 		for (int index_job : job_resting_for_assignement)
 		{
 			if (index_job != branch_node) {
-				const_job_ptr job_ptr = *inst.get_job_by_index(index_job);
+				const_job_ptr job_ptr = inst.get_job_by_index(index_job);
 				job const & job = *job_ptr;
 
 				for (int i = 0; i < nb_livraison; i++)
@@ -500,7 +500,7 @@ namespace solver
 
 									reste_job_en_avance = true;
 
-									const_job_ptr job_ptr = *inst.get_job_by_index(index_job);
+									const_job_ptr job_ptr = inst.get_job_by_index(index_job);
 									job const & job = *job_ptr;
 
 									increase_cost = (date - old_valide_date)*job.get_penalty_per_delivery_delay();
@@ -637,7 +637,7 @@ namespace solver
 				for (int index_job : job_resting_for_assignement)
 				{
 					if (index_job != branch_node) {
-						const_job_ptr job_ptr = *inst.get_job_by_index(index_job);
+						const_job_ptr job_ptr = inst.get_job_by_index(index_job);
 						job const & job = *job_ptr;
 
 						increase_cost = (date - old_valide_date)*job.get_penalty_per_delivery_delay();

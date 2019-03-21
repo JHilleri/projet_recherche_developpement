@@ -4,5 +4,5 @@
 //
 
 #pragma once
-
+//#define GTEST_LANG_CXX11
 #include "gtest/gtest.h"

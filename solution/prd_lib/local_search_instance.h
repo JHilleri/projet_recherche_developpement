@@ -18,6 +18,10 @@ namespace solver
 	class batch_solution {
 	public:
 		cost get_score() const;
+
+		cost get_delivery_cost() const;
+		cost get_inventory_cost() const;
+
 		std::reference_wrapper<local_search_instance> current_local_search_instance;
 		batch_solution(std::vector<job> const & jobs, std::vector<std::vector<time>> const & delays, local_search_instance & local_search_instance);
 		batch_solution(batch_solution const & base, permutation permutation_to_perform);
@@ -37,9 +41,8 @@ namespace solver
 		std::vector<std::vector<time>> tasks_end;
 		std::vector<std::vector<time>> tasks_begining;
 
-		cost get_delivery_cost(std::vector<std::vector<time>> const & tasks_end) const;
-		cost get_total_in_progress_inventory_cost(std::vector<std::vector<time>> const & tasks_end) const;
-		cost get_total_ended_inventory_cost(std::vector<std::vector<time>> const & tasks_end) const;
+		cost get_total_in_progress_inventory_cost() const;
+		cost get_total_ended_inventory_cost() const;
 		void update_tasks_dates();
 	};
 

@@ -60,7 +60,7 @@ namespace solver
 		index batch_count;
 		input >> job_count >> machine_count >> vehicule_cost;
 
-		result.set_job_count(job_count);
+		//result.set_job_count(job_count);
 		result.set_machine_number(machine_count);
 
 		index partial_batch = (job_count % job_per_batch) ? 1 : 0;

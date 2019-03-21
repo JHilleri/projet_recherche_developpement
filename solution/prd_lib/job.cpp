@@ -3,16 +3,7 @@
 
 namespace solver
 {
-	job::job(index index, const std::vector<time>& duration_per_machine, time due_date,
-		cost penalty_per_delivery_delay, const std::vector<cost>& in_progress_inventory_cost, cost ended_inventory_cost) :
-		m_index{ index },
-		m_duration_per_machine{ duration_per_machine },
-		m_due_date{ due_date },
-		m_penalty_per_delivery{ penalty_per_delivery_delay },
-		m_in_progress_inventory_cost{ in_progress_inventory_cost },
-		m_ended_inventory_cost{ ended_inventory_cost }
-	{
-	}
+
 
 	index job::get_index() const
 	{
@@ -102,4 +93,4 @@ namespace solver
 			&& (get_total_duration() == job2.get_total_duration());
 	}
 
-}
+	}

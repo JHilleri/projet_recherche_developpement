@@ -80,8 +80,8 @@ namespace solver
 			j = i;
 
 			index = ret.tab_c[j];
-			due_date = (*inst.get_job_by_index(index))->get_due_date();
-			while (j != 0 && due_date < inst.get_job_by_index(ret.tab_c[j - 1]).value()->get_due_date()) {
+			due_date = (inst.get_job_by_index(index))->get_due_date();
+			while (j != 0 && due_date < inst.get_job_by_index(ret.tab_c[j - 1])->get_due_date()) {
 				ret.tab_c[j] = ret.tab_c[j - 1];
 				j--;
 			}
@@ -105,7 +105,7 @@ namespace solver
 			ind_dist[i].second = std::numeric_limits<int>::max();
 		}
 
-		int last_index = inst.get_job_count();
+		int last_index = inst.get_job_count() - 1;
 
 		int k;
 		for (int i = 0; i < ret.nb; i++)
@@ -216,7 +216,7 @@ namespace solver
 		//!!!!!!!
 		//const Distancier& dist = inst.distancier;
 
-		int old_index = inst.get_job_count();
+		int old_index = inst.get_job_count() - 1;
 		int index;
 		for (int i = 0; i < nb; i++)
 		{
@@ -239,7 +239,7 @@ namespace solver
 		fct.routing_cost = road.eval_routing_cost(inst);
 		std::vector<std::pair<int, int>> ahead; //{ [alpha_i, avance_i], [alpha_j, avance_j] }
 
-		int old_index = inst.get_job_count();
+		int old_index = inst.get_job_count() - 1;
 		int index;
 		//int old_time;
 		int arrival_date = m_a;
@@ -248,7 +248,7 @@ namespace solver
 			index = road.tab_c[i];
 			arrival_date += inst.get_distance_between(old_index, index);
 
-			ahead.push_back(std::make_pair(inst.get_job_by_index(index).value()->get_due_date(), inst.get_job_by_index(index).value()->get_due_date() - arrival_date));
+			ahead.push_back(std::make_pair(inst.get_job_by_index(index)->get_due_date(), inst.get_job_by_index(index)->get_due_date() - arrival_date));
 
 			old_index = index;
 		}
@@ -714,14 +714,14 @@ namespace solver
 
 	pair<int, int> Fct_lin::a_b_inf(instance& inst, const vector<int>& batch_old)
 	{
-		int min_dd_date = inst.get_job_by_index(batch_old.front()).value()->get_due_date();
+		int min_dd_date = inst.get_job_by_index(batch_old.front())->get_due_date();
 		int max_dd_date = min_dd_date;
 
 
 		int due_date;
 		for (int i = 1; i < batch_old.size(); i++)
 		{
-			due_date = inst.get_job_by_index(i).value()->get_due_date();
+			due_date = inst.get_job_by_index(i)->get_due_date();
 
 			if (due_date < min_dd_date) min_dd_date = due_date;
 			if (due_date > max_dd_date) max_dd_date = due_date;

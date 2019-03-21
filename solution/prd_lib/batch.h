@@ -26,7 +26,7 @@ namespace solver
 		/*time_unit first_possible_departure_date() const;
 		time_unit last_possible_departure_date() const;*/
 		const job_list & get_jobs() const;
-		std::optional<const_job_ptr> get_job_by_index(index job_index) const;
+		const_job_ptr get_job_by_index(index job_index) const;
 
 	private:
 		/*time_unit m_first_possible_departure_date;

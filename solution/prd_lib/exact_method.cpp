@@ -8,9 +8,9 @@
 namespace solver
 {
 	namespace {
-		index const job_to_index(const_job_ptr & job)
+		auto const job_to_index= [](auto &job_ptr)
 		{ 
-			return job->get_index(); 
+			return job_ptr->get_index(); 
 		};
 
 		inline std::pair<time, time> get_departure_window(const_instance_ptr instance_to_solve, index batch_to_solve_index, solution const & result)
@@ -47,7 +47,7 @@ namespace solver
 
 			IloEnv cplex_environment;
 
-			index segment_count = cost_per_departure_date.tab_link.size();
+			size_t segment_count = cost_per_departure_date.tab_link.size();
 			//std::vector<cost> segments;
 
 			IloModel cplex_model(cplex_environment);
@@ -81,6 +81,7 @@ namespace solver
 	}
 	solution exact_method::operator()(const_instance_ptr instance_to_solve)
 	{
+		/*
 		if (instance_to_solve->get_batchs().size() <= 0) return solution(instance_to_solve);
 
 		IloEnv cplex_environment;
@@ -132,7 +133,7 @@ namespace solver
 			{
 				for (index index_segment = 0; index_segment < segment_count; ++index_segment)
 				{
-					X[index_batch][index_segment] * segments[index_batch][index_segment];
+					//X[index_batch][index_segment] * segments[index_batch][index_segment];
 				}
 			}
 
@@ -149,6 +150,7 @@ namespace solver
 		}
 
 		cplex_environment.end(); // todo : make it exception safe
+		*/
 		return solution(instance_to_solve);
 	}
 }

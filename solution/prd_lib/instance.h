@@ -1,6 +1,5 @@
 #pragma once
 #include <vector>
-#include <optional>
 #include "solver_types.h"
 #include "batch.h"
 #include "job.h"
@@ -29,16 +28,15 @@ namespace solver
 		void set_distance(const job & job_1, const job & job_2, distance distance);
 		void set_distance(index index_job_1, index index_job_2, distance distance);
 
-		std::optional<const_job_ptr> get_job_by_index(index job_index) const;
+		const_job_ptr get_job_by_index(index job_index) const;
 
+		index distance_index(index index_job_1, index index_job_2) const;
 	private:
-		index m_job_count;
 		index m_machine_number;
 		std::vector<distance> m_distances;
 		std::vector<batch> m_batchs;
 		std::vector<job_ptr> m_jobs;
 
-		index distance_index(index index_job_1, index index_job_2) const;
 	};
 
 	using const_instance_ptr = std::shared_ptr<instance const>;

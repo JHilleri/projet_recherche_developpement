@@ -13,7 +13,7 @@ namespace solver
 		{
 			if (batch.get_jobs().empty()) return first_depature_date;
 
-			time longest_task_duration;
+			time longest_task_duration = *std::max(batch.get_jobs()[0]->get_duration_per_machine().begin(), batch.get_jobs()[0]->get_duration_per_machine().begin());
 			for (auto const & job : batch.get_jobs())
 			{
 				for (index index_machine = 0; index_machine < machine_count; ++index_machine)
@@ -23,7 +23,7 @@ namespace solver
 						longest_task_duration = job_longest_task_duration;
 				}
 			}
-			return first_depature_date + (std::max(batch.get_jobs().size(), static_cast<size_t>(machine_count)) + 1) * longest_task_duration * 2;
+			return first_depature_date + (std::max(batch.get_jobs().size(), static_cast<size_t>(machine_count)) + 1) * longest_task_duration * 2 + 1000;
 		}
 	}
 
@@ -40,11 +40,11 @@ namespace solver
 	{
 		departure_window_ending = get_last_possible_departure(batch, departure_window_begining, machine_count);
 		std::vector<int> jobs_order(current_solution.get_jobs().size());
-		std::transform(current_solution.get_jobs().begin(), current_solution.get_jobs().end(), jobs_order.begin(), job_to_index);
+		std::transform(current_solution.get_jobs().begin(), current_solution.get_jobs().end(), jobs_order.begin(), [](job const & job_to_read) {return job_to_read.get_index(); });
 		delivery_cost_per_departure = Branch_and_bound{ *result.get_instance() }.generate_fct_with_branch_and_bound(jobs_order, departure_window_begining, departure_window_ending);
 	}
 
-	inline cost local_search_instance::get_current_score() const
+	cost local_search_instance::get_current_score() const
 	{
 		return current_solution.get_score();
 	}
@@ -52,9 +52,10 @@ namespace solver
 	std::vector<permutation> local_search_instance::get_current_permutations() const
 	{
 		std::vector<permutation> permutations;
-		for (index index_job_1, job_count = current_solution.get_jobs().size(); index_job_1 < job_count; ++index_job_1)
+		permutations.reserve(current_solution.get_jobs().size()*2-1);
+		for (index index_job_1 = 0, job_count = current_solution.get_jobs().size(); index_job_1 < job_count; ++index_job_1)
 		{
-			for (index index_job_2 = index_job_1 + 1; index_job_2 < job_count; ++index_job_1)
+			for (index index_job_2 = index_job_1 + 1; index_job_2 < job_count; ++index_job_2)
 			{
 				permutations.emplace_back(index_job_1, index_job_2);
 			}
@@ -62,29 +63,40 @@ namespace solver
 		return permutations;
 	}
 
-	inline void local_search_instance::permutate(permutation permutation_to_perform) {
+	void local_search_instance::permutate(permutation permutation_to_perform) {
 		current_solution = batch_solution(current_solution, permutation_to_perform);
 	}
 
-	inline cost local_search_instance::evaluate_permutation(permutation permutation_to_evaluate)
+	cost local_search_instance::evaluate_permutation(permutation permutation_to_evaluate)
 	{
 		return batch_solution(current_solution, permutation_to_evaluate).get_score();
 	}
 
-	inline batch_solution const & local_search_instance::get_current_batch_solution()
+	batch_solution const & local_search_instance::get_current_batch_solution()
 	{
 		return current_solution;
 	}
 
 	cost batch_solution::get_score() const
 	{
-		cost delivery_cost = get_delivery_cost(tasks_end);
-		cost total_in_progress_inventory_cost = get_total_in_progress_inventory_cost(tasks_end);
-		cost total_completed_inventory_cost = get_total_ended_inventory_cost(tasks_end);
+		cost delivery_cost = get_delivery_cost();
+		cost total_in_progress_inventory_cost = get_total_in_progress_inventory_cost();
+		cost total_completed_inventory_cost = get_total_ended_inventory_cost();
 		return delivery_cost + total_in_progress_inventory_cost + total_completed_inventory_cost;
 	}
 
-	inline batch_solution::batch_solution(std::vector<job> const & jobs, std::vector<std::vector<time>> const & delays, local_search_instance & local_search_instance) :
+	cost batch_solution::get_delivery_cost() const
+	{
+		time end = tasks_end[current_local_search_instance.get().machine_count - 1][jobs.size() - 1] + current_local_search_instance.get().departure_window_begining;
+		return current_local_search_instance.get().delivery_cost_per_departure.eval_fct_lin(end);
+	}
+
+	cost batch_solution::get_inventory_cost() const
+	{
+		return get_total_in_progress_inventory_cost() + get_total_ended_inventory_cost();
+	}
+
+	batch_solution::batch_solution(std::vector<job> const & jobs, std::vector<std::vector<time>> const & delays, local_search_instance & local_search_instance) :
 		jobs(jobs),
 		delays(delays),
 		current_local_search_instance(local_search_instance)
@@ -92,42 +104,39 @@ namespace solver
 		update_tasks_dates();
 	}
 
-	inline batch_solution::batch_solution(batch_solution const & base, permutation permutation_to_perform) :
+	batch_solution::batch_solution(batch_solution const & base, permutation permutation_to_perform) :
 		jobs(base.jobs),
 		delays(base.delays),
 		current_local_search_instance(base.current_local_search_instance)
 	{
-		std::swap(jobs[permutation_to_perform.first], jobs[permutation_to_perform.second]);
+		//std::swap(jobs[permutation_to_perform.first], jobs[permutation_to_perform.second]);
+		job tmp(std::move(jobs[permutation_to_perform.first]));
+		jobs[permutation_to_perform.first] = std::move(jobs[permutation_to_perform.second]);
+		jobs[permutation_to_perform.second] = std::move(tmp);
 		update_tasks_dates();
 	}
 
-	inline std::vector<job> const & batch_solution::get_jobs() const
+	std::vector<job> const & batch_solution::get_jobs() const
 	{
 		return jobs;
 	}
 
-	inline std::vector<std::vector<time>> const & batch_solution::get_delays() const
+	std::vector<std::vector<time>> const & batch_solution::get_delays() const
 	{
 		return delays;
 	}
 
-	inline std::vector<std::vector<time>> const & batch_solution::get_task_end() const
+	std::vector<std::vector<time>> const & batch_solution::get_task_end() const
 	{
 		return tasks_end;
 	}
 
-	inline std::vector<std::vector<time>> const & batch_solution::get_task_begin() const
+	std::vector<std::vector<time>> const & batch_solution::get_task_begin() const
 	{
 		return tasks_begining;
 	}
 
-	cost batch_solution::get_delivery_cost(std::vector<std::vector<time>> const & tasks_end) const
-	{
-		time end = tasks_end[current_local_search_instance.get().machine_count - 1][jobs.size() - 1] + current_local_search_instance.get().departure_window_begining;
-		return current_local_search_instance.get().delivery_cost_per_departure.eval_fct_lin(end);
-	}
-
-	cost batch_solution::get_total_in_progress_inventory_cost(std::vector<std::vector<time>> const & tasks_end) const
+	cost batch_solution::get_total_in_progress_inventory_cost() const
 	{
 		cost total_in_progress_inventory_cost = 0;
 		for (index index_machine = 0; index_machine < current_local_search_instance.get().machine_count - 1; ++index_machine)
@@ -142,7 +151,7 @@ namespace solver
 		return total_in_progress_inventory_cost;
 	}
 
-	cost batch_solution::get_total_ended_inventory_cost(std::vector<std::vector<time>> const & tasks_end) const
+	cost batch_solution::get_total_ended_inventory_cost() const
 	{
 		cost total_ended_inventory_cost = 0;
 		for (index index_job = 0; index_job <jobs.size(); ++index_job)
@@ -161,7 +170,7 @@ namespace solver
 		time begining = current_local_search_instance.get().departure_window_begining;
 
 		// set begining and end for all task on the first machine
-		for (index index_job, next_start = begining; index_job < jobs.size(); ++index_job)
+		for (index index_job = 0, next_start = begining; index_job < jobs.size(); ++index_job)
 		{
 			task_begining[0][index_job] = next_start + delays[0][index_job];
 			task_ending[0][index_job] = task_begining[0][index_job] + jobs[index_job].get_duration_on_machine(0);

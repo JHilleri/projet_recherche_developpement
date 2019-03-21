@@ -28,10 +28,15 @@ namespace solver
 		return m_jobs;
 	}
 
-	std::optional<const_job_ptr> batch::get_job_by_index(index job_index) const
+	const_job_ptr batch::get_job_by_index(index job_index) const
 	{
-		auto found_iterator = std::find(m_jobs.begin(), m_jobs.end(), [job_index](job_list::value_type const & job) {return job->get_index() == job_index; });
-		if (found_iterator != m_jobs.end()) return *found_iterator;
-		return {};
+		for (auto iterator = m_jobs.begin(); iterator != m_jobs.end(); ++iterator)
+		{
+			if ((*iterator)->get_index() == job_index)
+			{
+				return *iterator;
+			}
+		}
+		return { nullptr };
 	}
 }

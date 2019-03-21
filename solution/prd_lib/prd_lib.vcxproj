@@ -175,11 +175,13 @@
     <ClInclude Include="solution.h" />
     <ClInclude Include="solution_validator.h" />
     <ClInclude Include="solution_with_statistics.h" />
+    <ClInclude Include="solution_writer.h" />
     <ClInclude Include="solver_types.h" />
     <ClInclude Include="instance.h" />
     <ClInclude Include="instance_reader.h" />
     <ClInclude Include="job.h" />
     <ClInclude Include="solver.h" />
+    <ClInclude Include="util.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="batch.cpp" />
@@ -198,6 +200,7 @@
     <ClCompile Include="solution.cpp" />
     <ClCompile Include="solution_validator.cpp" />
     <ClCompile Include="solution_with_statistics.cpp" />
+    <ClCompile Include="solution_writer.cpp" />
     <ClCompile Include="solver.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

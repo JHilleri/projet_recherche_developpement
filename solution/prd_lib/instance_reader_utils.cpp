@@ -53,7 +53,8 @@ namespace solver
 		cost deliverer_penalty_per_delivery_delay;	// not used
 		input >> due_date >> quantity >> production_cost_per_machine >> production_cost_ended >> penalty_per_delivery_delay >> deliverer_penalty_per_delivery_delay;
 
-		return job(job_index, work_durations, due_date, penalty_per_delivery_delay, in_progress_invetory_cost, ended_inventory_cost);
+		job result(job_index, work_durations, due_date, penalty_per_delivery_delay, in_progress_invetory_cost, ended_inventory_cost);
+		return result;
 	}
 
 }

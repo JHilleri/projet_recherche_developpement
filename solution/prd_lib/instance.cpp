@@ -6,7 +6,6 @@ namespace solver
 {
 	instance::instance()
 	{
-		m_job_count = 0;
 		m_machine_number = 0;
 	}
 
@@ -17,7 +16,8 @@ namespace solver
 
 	distance instance::get_distance_between(index index_job_1, index index_job_2) const
 	{
-		return m_distances[distance_index(index_job_1, index_job_2)];
+		index distance_location = distance_index(index_job_1, index_job_2);
+		return m_distances[distance_location];
 	}
 
 	index instance::get_job_count() const
@@ -77,7 +77,7 @@ namespace solver
 		m_distances[distance_index(index_job_1, index_job_2)] = distance;
 	}
 
-	std::optional<const_job_ptr> instance::get_job_by_index(index job_index) const
+	const_job_ptr instance::get_job_by_index(index job_index) const
 	{
 		for (batch const & batch : m_batchs)
 		{
@@ -86,13 +86,16 @@ namespace solver
 				return found;
 			}
 		}
-		return {};
+		throw std::exception("no job found for this index");
 	}
 
 
 	index instance::distance_index(index index_job_1, index index_job_2) const
 	{
-		auto[lower_index, greater_index] = std::minmax(index_job_1, index_job_2);
-		return greater_index * (greater_index + 1) / 2 + lower_index;
+		index lower_index = std::min(index_job_1, index_job_2) + 1;
+		index greater_index = std::max(index_job_1, index_job_2) + 1;
+		//auto[lower_index, greater_index] = std::minmax(index_job_1, index_job_2);
+		index result = greater_index * (greater_index + 1) / 2 - (greater_index - lower_index ) - 1;
+		return result;
 	}
 }

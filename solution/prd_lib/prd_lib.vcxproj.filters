@@ -84,6 +84,12 @@
     <ClInclude Include="local_search.h">
       <Filter>method_impl\local_search</Filter>
     </ClInclude>
+    <ClInclude Include="solution_writer.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="util.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="instance.cpp">
@@ -136,6 +142,9 @@
     </ClCompile>
     <ClCompile Include="local_search_instance.cpp">
       <Filter>method_impl\local_search</Filter>
+    </ClCompile>
+    <ClCompile Include="solution_writer.cpp">
+      <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
