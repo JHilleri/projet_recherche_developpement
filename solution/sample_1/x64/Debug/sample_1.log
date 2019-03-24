@@ -1,2 +1,3 @@
 ﻿  main.cpp
-  sample_1.vcxproj -> C:\Users\jhi\Documents\GitHub\projet_recherche_developpement\solution\prd\x64\Debug\local_search.exe
+c:\program files\ibm\ilog\cplex_studio1271\concert\include\ilconcert\ilosys.h(705): error C2382: 'longjmp' : redéfinition ; spécifications des exceptions différentes
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\setjmp.h(162): note: voir la déclaration de 'longjmp'

@@ -4,10 +4,6 @@ namespace solver
 {
 	namespace
 	{
-		index const job_to_index(const_job_ptr & job)
-		{
-			return job->get_index();
-		}
 
 		time get_last_possible_departure(batch const & batch, time first_depature_date, index machine_count)
 		{

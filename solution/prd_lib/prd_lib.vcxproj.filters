@@ -90,6 +90,9 @@
     <ClInclude Include="solution_writer.h">
       <Filter>solution</Filter>
     </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>method_impl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="instance.cpp">
@@ -145,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="solution_writer.cpp">
       <Filter>solution</Filter>
+    </ClCompile>
+    <ClCompile Include="common.cpp">
+      <Filter>method_impl</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
