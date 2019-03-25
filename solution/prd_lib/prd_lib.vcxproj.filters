@@ -72,12 +72,6 @@
     <ClInclude Include="solution_with_statistics.h">
       <Filter>solver</Filter>
     </ClInclude>
-    <ClInclude Include="exact_method.h">
-      <Filter>method_impl\exact</Filter>
-    </ClInclude>
-    <ClInclude Include="branch_and_bound.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="linear_function.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -92,6 +86,9 @@
     </ClInclude>
     <ClInclude Include="common.h">
       <Filter>method_impl</Filter>
+    </ClInclude>
+    <ClInclude Include="branch_and_bound.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -127,9 +124,6 @@
     </ClCompile>
     <ClCompile Include="solution_with_statistics.cpp">
       <Filter>solver</Filter>
-    </ClCompile>
-    <ClCompile Include="exact_method.cpp">
-      <Filter>method_impl\exact</Filter>
     </ClCompile>
     <ClCompile Include="linear_function.cpp">
       <Filter>Fichiers sources</Filter>
