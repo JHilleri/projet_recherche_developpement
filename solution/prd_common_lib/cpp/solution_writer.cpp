@@ -34,7 +34,7 @@ namespace solver
 
 	void solver::solution_writer::write(std::ostream & output, solution & solution_to_write)
 	{
-		output << "{\"nmachine_count\": " << solution_to_write.get_instance()->get_machine_count() << ",\"score\": " << solution_to_write.get_score() << ", \"job_count\": " << solution_to_write.get_instance()->get_job_count() << ", \"batchs\": [";
+		output << "{\"machine_count\": " << solution_to_write.get_instance()->get_machine_count() << ",\"score\": " << solution_to_write.get_score() << ", \"job_count\": " << solution_to_write.get_instance()->get_job_count() << ", \"batchs\": [";
 		for_each_with_separator(solution_to_write.get_planned_batchs().begin(), solution_to_write.get_planned_batchs().end(), [&](auto const & batch)
 		{
 			write_batch(output, batch, solution_to_write.get_instance()->get_machine_count());

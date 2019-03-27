@@ -12,8 +12,8 @@ namespace solver
 	class solution
 	{
 	public:
-		solution(instance & instance_model) : m_instance{ std::make_shared<instance const>(instance_model) } {}
-		solution(const_instance_ptr instance_ptr) : m_instance{ instance_ptr } {}
+		solution(instance & instance_model) : m_instance{ std::make_shared<instance const>(instance_model) }, m_planned_batchs(instance_model.get_batchs().size()) {}
+		solution(const_instance_ptr instance_ptr) : m_instance{ instance_ptr }, m_planned_batchs(instance_ptr->get_batchs().size()) {}
 
 		double get_score() const { return m_score; };
 		inline cost get_inventory_cost() const { return m_inventory_cost; }

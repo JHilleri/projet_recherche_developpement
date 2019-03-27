@@ -21,7 +21,7 @@ namespace solver
 		}
 		batch const & batch_to_solve = instance_to_solve->get_batchs()[batch_to_solve_index];
 
-		time batch_longest_task_duration;
+		time batch_longest_task_duration = batch_to_solve.get_jobs().front()->get_duration_on_machine(0);
 		for (auto const & job : batch_to_solve.get_jobs())
 		{
 			auto const & durations = job->get_duration_per_machine();
@@ -29,7 +29,7 @@ namespace solver
 			batch_longest_task_duration = std::max(batch_longest_task_duration, job_longest_task_duration);
 		}
 
-		time departure_window_end = begining_of_batch_production + batch_longest_task_duration * (instance_to_solve->get_job_count() + instance_to_solve->get_machine_count());
+		time departure_window_end = begining_of_batch_production + batch_longest_task_duration * (batch_to_solve.get_jobs().size() + instance_to_solve->get_machine_count());
 		return std::make_pair(begining_of_batch_production, departure_window_end);
 	}
 
