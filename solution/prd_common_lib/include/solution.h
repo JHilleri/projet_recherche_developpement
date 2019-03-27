@@ -20,6 +20,7 @@ namespace solver
 		inline cost get_delivery_cost() const { return m_delivery_cost; }
 		inline cost get_total_cost() const { return m_inventory_cost + m_delivery_cost; }
 		std::vector<planned_batch> const & get_planned_batchs() const { return m_planned_batchs; }
+		std::vector<planned_batch> & get_planned_batchs() { return m_planned_batchs; }
 		const_instance_ptr get_instance() const { return m_instance; }
 
 		inline void set_inventory_cost(cost inventory_cost) { m_inventory_cost = inventory_cost; }

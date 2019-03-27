@@ -106,8 +106,6 @@ namespace solver
 		batch_result.set_jobs(planned_jobs);
 		batch_result.set_delivery_cost(proposed_batch.get_delivery_cost());
 		batch_result.set_inventory_cost(proposed_batch.get_inventory_cost());
-		auto planned_batchs = output.get_planned_batchs();
-		planned_batchs[batch_index] = batch_result;
-		output.set_planned_batchs(std::move(planned_batchs));
+		output.get_planned_batchs()[batch_index] = batch_result;
 	}
 }
