@@ -104,7 +104,7 @@ Tournee Tournee::create_tournee_nearest_insertion(const Instance& inst, const ve
 	for (int i = 0; i < ret.nb; i++)
 	{
 
-		//mise à jour de la distance avec le dernier clinet atteint
+		//mise ï¿½ jour de la distance avec le dernier clinet atteint
 		//et tri de ces distances par ordre decroissant
 		for (int j = 0; j < ret.nb - i; j++)
 		{
@@ -119,13 +119,13 @@ Tournee Tournee::create_tournee_nearest_insertion(const Instance& inst, const ve
 			ind_dist[k] = tmp;
 		}
 
-		//recup du dernier élément (le plus proche
+		//recup du dernier ï¿½lï¿½ment (le plus proche
 		last_index = ind_dist.back().first;
 
 		//suppr de ce dernier elemnet dans le tableau
 		ind_dist.pop_back();
 
-		//incrémentation du tableau
+		//incrï¿½mentation du tableau
 		ret.tab_c[i] = last_index;
 	}
 
@@ -209,7 +209,7 @@ int Tournee::eval_routing_cost(const Instance& inst) const
 
 
 	//!!!!!!!
-	//Créer un distancier de coût
+	//Crï¿½er un distancier de coï¿½t
 	//!!!!!!!
 	const Distancier& dist = inst.distancier; 
 
@@ -302,7 +302,7 @@ Fct_lin Fct_lin::create_fct_lin(const Tournee& road, Instance& inst, int m_a, in
 
 
 			while (index_a + 1 < ahead.size() && ahead[index_a].second == ahead[index_a + 1].second) {
-				//si deux jobs on exactement la même avance (.second), on les considèrent ensemble pour evité d'avoir deux maillons distings
+				//si deux jobs on exactement la mï¿½me avance (.second), on les considï¿½rent ensemble pour evitï¿½ d'avoir deux maillons distings
 				index_a++;
 				alpha += ahead[index_a].first;
 			}
@@ -398,71 +398,7 @@ double Fct_lin::intersection_t(const Link & l1, const Link & l2)
 	double t = (double)(c1 - c2) / (double)(l2.alpha - l1.alpha);
 
 	return t;
-
-	/*int t2 = (int)t;
-	if (t2 < t) {
-	return t2 + 1;
-	}
-	else {
-	return t2;
-	}*/
 }
-
-/*double Fct_lin::aire_sous_la_courbe_avec_alpha()const
-{
-double aire = 0;
-
-auto& t_link = tab_link;
-int longueur;
-int hauteur;
-
-int i;
-for ( i = 0; i < t_link.size()-1; i++)
-{
-//aire du rectangle bas
-longueur = t_link[i + 1].t - t_link[i].t;
-aire += t_link[i].c * longueur;
-
-//aire du triangle haut
-hauteur = longueur * t_link[i].alpha;
-aire += (double)(hauteur * longueur) / 2;
-}
-
-longueur = max_b - t_link[i].t;
-aire += t_link[i].c * longueur;
-hauteur = longueur * t_link[i].alpha;
-aire += (double)(hauteur * longueur) / 2;
-
-return aire;
-}
-
-double Fct_lin::aire_sous_la_courbe_sans_alpha()const
-{
-double aire = 0;
-
-auto& t_link = tab_link;
-int longueur;
-int hauteur;
-
-int i;
-for (i = 0; i < t_link.size() - 1; i++)
-{
-//aire du rectangle bas
-longueur = t_link[i + 1].t - t_link[i].t;
-aire += t_link[i].c * longueur;
-
-//aire du triangle haut
-hauteur = t_link[i + 1].c - t_link[i].c; // ==> difference ici
-aire += (double)(hauteur * longueur) / 2.0;
-}
-
-longueur = max_b - t_link[i].t;
-aire += t_link[i].c * longueur;
-hauteur = eval_max_b - t_link[i].c; // ==> difference ici
-aire += (double)(hauteur * longueur) / 2.0;
-
-return aire;
-}//*/
 
 int Fct_lin::calcul_aire_sous_la_courbe(int new_min_a, int new_min_b) const
 {
@@ -503,7 +439,6 @@ int Fct_lin::calcul_aire_sous_la_courbe(int new_min_a, int new_min_b) const
 	}
 	aire += eval_max_b;
 
-	//aire_sous_la_courbe = aire;
 	return aire;
 }
 
@@ -597,9 +532,9 @@ Fct_lin Fct_lin::minimum_fct(const Fct_lin& f1, const Fct_lin& f2) {
 
 
 		//*******
-		// gestion de l'insertion des liens par rapport à leur origine
-		if (new_link_is_f1 == new_link_is_f2) { //cas où les deux points d'inflexion sont aux mêmes endroits
-			if (eval_link_f1 < eval_link_f2) { // ici, equivalent à : link_f1.c < link_f2.c
+		// gestion de l'insertion des liens par rapport ï¿½ leur origine
+		if (new_link_is_f1 == new_link_is_f2) { //cas oï¿½ les deux points d'inflexion sont aux mï¿½mes endroits
+			if (eval_link_f1 < eval_link_f2) { // ici, equivalent ï¿½ : link_f1.c < link_f2.c
 				insert_f1 = true;
 			}
 			else if (eval_link_f1 > eval_link_f2) {
@@ -611,7 +546,7 @@ Fct_lin Fct_lin::minimum_fct(const Fct_lin& f1, const Fct_lin& f2) {
 			else if (link_f1.alpha > link_f2.alpha) {
 				insert_f2 = true;
 
-				//égualité stricte, on met le maillon qui dure de plus longtemps
+				//ï¿½gualitï¿½ stricte, on met le maillon qui dure de plus longtemps
 			}
 			else if (end_l_f1 > end_l_f2) {
 				insert_f1 = true;
@@ -721,7 +656,6 @@ Fct_lin Fct_lin::minimum_fct(const Fct_lin& f1, const Fct_lin& f2) {
 		if (size > 2 && fun_l[size - 1].t == fun_l[size - 2].t) {
 			if (fun_l[size - 1].c < fun_l[size - 2].c
 				|| (fun_l[size - 1].c == fun_l[size - 2].c && fun_l[size - 1].alpha < fun_l[size - 2].alpha)) {
-				//fun_l[size - 2].tournee.print();
 				fun_l[size - 2].tournee.suppr();
 				fun_l[size - 2] = fun_l[size - 1];
 			}
@@ -733,8 +667,6 @@ Fct_lin Fct_lin::minimum_fct(const Fct_lin& f1, const Fct_lin& f2) {
 
 			fun_l.pop_back();
 		}
-		//***
-		//*/
 	}
 
 	function.eval_max_b = min(f1.eval_max_b, f2.eval_max_b);
@@ -742,7 +674,7 @@ Fct_lin Fct_lin::minimum_fct(const Fct_lin& f1, const Fct_lin& f2) {
 	//function.aire_sous_la_courbe = function.calcul_aire_sous_la_courbe();
 
 	//****
-	//Suppression des tournees des fonction utilisé (save de memoire);
+	//Suppression des tournees des fonction utilisï¿½ (save de memoire);
 	//****
 	for(auto var : f1.tab_link) { var.tournee.suppr(); }
 	for(auto var : f2.tab_link) { var.tournee.suppr(); }
@@ -759,7 +691,6 @@ void Fct_lin::print_fct_lin()const {
 
 		cout << endl;
 	}
-	//cout << "t=" << fct.max_b << "\tc=" << fct.eval_max_b << endl;
 	cout << max_b << "\t" << eval_max_b << endl;
 }
 
@@ -781,8 +712,6 @@ double Fct_lin::ratio_courbe_inf(const Fct_lin & fct_1, const Fct_lin & fct_2)
 	if (aire_fct_1 == 0) aire_fct_1 = 1;
 
 	double swarzy = (aire_fct_2 - aire_fct_1) / aire_fct_1;
-
-	//cout << "min_a " << m_a << "  max_b" << m_b << "  min_Rt " << min_RT << "  aire retrait " << min_RT * (m_b - m_a) << endl;
 
 	return swarzy;
 }
@@ -910,7 +839,7 @@ Fct_lin Fct_lin::generate_pure_random_fct(Instance & inst, const vector<int>& ba
 Fct_lin Fct_lin::generate_fct_with_local_search(Instance & inst, Tournee& tournee_init, int min_a, int max_b)
 {
 	////////
-	//Initialisation tournée courant EDD
+	//Initialisation tournï¿½e courant EDD
 
 	Tournee tournee_c = tournee_init.copy();
 
@@ -931,12 +860,6 @@ Fct_lin Fct_lin::generate_fct_with_local_search(Instance & inst, Tournee& tourne
 	int min_tmp;
 	bool is_local_optima;
 
-	//tournee_c.print(); cout << endl;
-
-	//bool is_all_local_optima = false;
-	//while(! is_all_local_optima )
-	//{
-	//is_all_local_optima = true;
 	t_ref = best.tab_link[0].t;
 
 	tournee_c.suppr();
@@ -963,15 +886,15 @@ Fct_lin Fct_lin::generate_fct_with_local_search(Instance & inst, Tournee& tourne
 					//tournee_c.swap(i, j); //operateur SWAP
 					tournee_c.ebfsr(i, j); //operateur EBFSR
 
-										   //ajout systhématique de toute fonction créer
-										   //à la fonction de referance en construction
+										   //ajout systhï¿½matique de toute fonction crï¿½er
+										   //ï¿½ la fonction de referance en construction
 										   /////
 					fct = create_fct_lin(tournee_c, inst, min_a, max_b); compteur++;
 					best = minimum_fct(best, fct);
 
 					/////
 
-					//evaluation de la qualité du voisin
+					//evaluation de la qualitï¿½ du voisin
 					min_tmp = fct.eval_fct_lin(t_ref);
 					if (min_tmp < min_ref) {
 						is_local_optima = false;
@@ -1001,7 +924,7 @@ Fct_lin Fct_lin::generate_fct_with_local_search(Instance & inst, Tournee& tourne
 			int i_link = 0;
 			// 1 seul passage
 
-			//détection sur la fct best du prochain point d'inflexion (après t_ref)...
+			//dï¿½tection sur la fct best du prochain point d'inflexion (aprï¿½s t_ref)...
 			/*while (i_link < best.tab_link.size() && best.tab_link[i_link].t <= t_ref) i_link++;
 			// n'impliquant pas la meilleure tournee courante
 			while (i_link < best.tab_link.size() && tournee_c.equal(best.tab_link[i_link].tournee)) i_link++;
@@ -1022,8 +945,7 @@ Fct_lin Fct_lin::generate_fct_with_local_search(Instance & inst, Tournee& tourne
 			if (i_link < best.tab_link.size()) {
 				tournee_c.suppr();
 				tournee_c = best.tab_link[i_link].tournee.copy();
-				//cout << "---" << endl; tournee_c.print(); cout << endl << "---" << endl;
-				for (int i = 0; i < best.tab_link.size(); i++)//la tournee à t_ref après recherche local est localement optimale
+				for (int i = 0; i < best.tab_link.size(); i++)//la tournee ï¿½ t_ref aprï¿½s recherche local est localement optimale
 				{
 					if (best.tab_link[i].tournee.equal(tournee_c)) {
 						best.tab_link[i].is_locally_optimal = true;
@@ -1031,20 +953,8 @@ Fct_lin Fct_lin::generate_fct_with_local_search(Instance & inst, Tournee& tourne
 				}
 			}
 
-			/*cout << t_ref <<": ";
-			for each(auto& var in best.tab_link) //la tournee issue de la recherche local est localement optimale
-			{
-			if (var.is_locally_optimal) {
-			cout << "1"; }
-			else {
-			cout << "-";//("<<var.t<<")" ;
-			}
-			}cout << endl;*/
-
 			i_link = 0;
 			while (i_link < best.tab_link.size() && best.tab_link[i_link].is_locally_optimal) i_link++;
-			//*/
-
 
 			if (i_link != best.tab_link.size()) {
 
@@ -1097,57 +1007,15 @@ Fct_lin Fct_lin::rec_generate_fct_with_total_enumeration(Instance & inst, Fct_li
 
 			tournee.add_job(tmp);
 
-			/*best =*/ rec_generate_fct_with_total_enumeration(inst, best, tournee, batch_old, size - 1);
+			rec_generate_fct_with_total_enumeration(inst, best, tournee, batch_old, size - 1);
 
 			tournee.suppr_job();
 			batch_old.push_back(tmp);
 		}
 	}
 	else {
-
-		//cout << "Best avant modif:"<<endl; best.print_fct_lin();
-		//cout << endl;
-
 		Fct_lin fct = create_fct_lin(tournee, inst, best.min_a, best.max_b); compteur++;
 		best = Fct_lin::minimum_fct(best, fct);
-
-		/*int val_from_opt;
-		int val_from_tournee_opt;
-
-		for (int i = 50; i <= 150; i++) {
-		val_from_opt = best.eval_fct_lin(i);
-
-		Fct_lin& fct_tmp = Fct_lin::create_fct_lin(best.found_tournee(i), inst, 50, 150);
-		val_from_tournee_opt = fct_tmp.eval_fct_lin(i);
-
-		if(val_from_opt != val_from_tournee_opt)
-		{
-		cout << "Date " << i << ":\t" << val_from_opt << "\t" << val_from_tournee_opt << "\t" <<
-		(val_from_opt <= val_from_tournee_opt) << "\t" << (val_from_opt == val_from_tournee_opt) << "\t";
-		cout << "Tournee à probleme:"; best.found_tournee(i).print();
-		cout << endl << endl;
-
-
-
-		cout << "Fonction lin dont le merge pose probleme:"<<endl;
-		fct.print_fct_lin();
-		cout << endl;// << endl << endl;
-
-		cout << "New best \"beugué\"" << endl;
-		best.print_fct_lin();
-		cout << endl;
-
-		//tournee.print();
-		//cout << endl;
-
-		}
-
-		for each(auto var in fct_tmp.tab_link) { var.tournee.suppr(); }
-		}
-
-		//*/
-
-		//if (compteur % 1000 == 0)cout << compteur/1000 << endl;
 	}
 
 	return best;
@@ -1166,21 +1034,6 @@ Fct_lin Fct_lin::generate_fct_with_total_enumeration(Instance & inst, vector<int
 	Tournee tournee = Tournee::create_tournee_vide(batch_old.size());
 
 	best = Fct_lin::rec_generate_fct_with_total_enumeration(inst, best, tournee, bat, batch_old.size());
-
-	/*int val_from_opt;
-	int val_from_tournee_opt;
-
-	for (int i = min_a; i <= max_b; i++) {
-	val_from_opt = best.eval_fct_lin(i);
-
-	Fct_lin& fct_tmp = Fct_lin::create_fct_lin(best.found_tournee(i), inst, min_a, max_b);
-	val_from_tournee_opt = fct_tmp.eval_fct_lin(i);
-
-	cout << "Date " << i << ":\t" << val_from_opt << "\t" << val_from_tournee_opt << "\t" <<
-	(val_from_opt <= val_from_tournee_opt) << "\t" << (val_from_opt == val_from_tournee_opt) << "\t";
-	//best.found_tournee(i).print();
-	cout << endl;
-	}cout << endl;//*/
 
 	return best;
 }
@@ -1224,7 +1077,7 @@ int Fct_lin::search_optima_with_big_neiborhood(Instance& inst, Tournee& tournee_
 					{
 						for (int j2 = 0; j2 < nJ; j2++)
 						{
-							//if (i2 != j1) { //pour éviter de redéplacer le premier job
+							//if (i2 != j1) { //pour ï¿½viter de redï¿½placer le premier job
 							for (int i3 = i2 + 1; i3 < nJ; i3++)
 							{
 								for (int j3 = 0; j3 < nJ; j3++)
@@ -1233,7 +1086,7 @@ int Fct_lin::search_optima_with_big_neiborhood(Instance& inst, Tournee& tournee_
 									{
 									for (int j4 = 0; j4 < nJ; j4++)
 									{*/
-									//le deuxième job peut faire du sur place
+									//le deuxiï¿½me job peut faire du sur place
 									tournee_c.ebfsr(i1, j1);
 									tournee_c.ebfsr(i2, j2);
 									tournee_c.ebfsr(i3, j3);
@@ -1241,7 +1094,7 @@ int Fct_lin::search_optima_with_big_neiborhood(Instance& inst, Tournee& tournee_
 
 									fct = Fct_lin::create_fct_lin(tournee_c, inst, depart, depart); compteur++;
 
-									//evaluation de la qualité du voisin
+									//evaluation de la qualitï¿½ du voisin
 									min_tmp = fct.eval_fct_lin(depart);
 									if (min_tmp < min_ref) {
 										is_local_optima = false;

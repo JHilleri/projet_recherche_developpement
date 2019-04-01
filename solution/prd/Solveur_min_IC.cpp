@@ -1262,7 +1262,7 @@ void Solveur_min_IC::add_fct_lin_ctr(const Fct_lin& fct, int num_fct, const IloI
 	}PPC_M += x_bi[num_fct][nb_link] * fct.eval_max_b;
 	//*********
 
-}//*/
+}
 
 vector<int>  Solveur_min_IC::solve_routing_1_batch(const vector<int>& bat, int depart_au_plus_tot)
 {
