@@ -27,9 +27,9 @@ namespace solver
 		const job_list & get_jobs() const;
 		const_job_ptr get_job_by_index(index job_index) const;
 
+
+
 	private:
-		/*time_unit m_first_possible_departure_date;
-		time_unit m_last_possible_departure_date;*/
 		job_list m_jobs;
 	};
 }

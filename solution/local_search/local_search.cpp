@@ -46,51 +46,56 @@ namespace solver
 
 	void local_search::solve_batch(const_instance_ptr instance_to_solve, index batch_index, solution & output, time earlyer_possible_departure, std::vector<time> const & earliest_production_start)
 	{
+
 		local_search_instance instance(output, batch_index, earlyer_possible_departure, earliest_production_start);
 		index job_count = instance_to_solve->get_batchs()[batch_index].get_jobs().size();
+		std::chrono::milliseconds minimum_batch_resolution_duration = minimum_duration / instance_to_solve->get_batchs().size();
 
 		using scored_permutation = std::pair<std::pair<index, index>, cost>;
 		auto const scored_permutation_comparator = [](auto const & permutation_1, auto const & permutation_2) -> bool{ return std::get<1>(permutation_1) < std::get<1>(permutation_2); };
 		auto const scored_permutation_generator = [&instance](auto const & permutation_proposal) -> scored_permutation {return { permutation_proposal, instance.evaluate_permutation(permutation_proposal) }; };
 
-		bool has_changed;
+		std::chrono::time_point batch_resulution_begining = std::chrono::system_clock::now();
+		batch_solution best_found_solution = instance.get_current_batch_solution();
 		do
 		{
-			has_changed = false;
-			cost current_score = instance.get_current_score();
-			std::cerr << "local_search batch : " << batch_index << ", current_score : " << current_score << std::endl;
-			auto permutations = instance.get_current_permutations();
-			//std::vector<scored_permutation> permutations_scores(job_count);
-			//std::transform(permutations.begin(), permutations.end(), permutations_scores.begin(), scored_permutation_generator);
-			//auto best_permutation = *std::min_element(permutations_scores.begin(), permutations_scores.end(), scored_permutation_comparator);
-			auto best_permutation = std::find_if(permutations.begin(), permutations.end(), [&instance, current_score](auto const & permutation)->bool{
-				auto score = instance.evaluate_permutation(permutation);
-				return score < current_score;
-			});
-			if (best_permutation != permutations.end())
-			{ 
-				instance.permutate(*best_permutation); 
-				has_changed = true;
-			}
-			/*if (best_permutation.second < current_score)
+			instance.shuffle();
+			bool has_changed;
+			do
 			{
-				instance.permutate(best_permutation.first);
-				has_changed = true;
-			}*/
-
-		} while (has_changed);
+				has_changed = false;
+				cost current_score = instance.get_current_score();
+				//std::cerr << "lot " << batch_index << ", score : " << current_score << std::endl;
+				auto permutations = instance.get_current_permutations();
+				auto best_permutation = std::find_if(permutations.begin(), permutations.end(), [&instance, current_score](auto const & permutation) -> bool {
+					auto score = instance.evaluate_permutation(permutation);
+					return score < current_score;
+				});
+				if (best_permutation != permutations.end())
+				{ 
+					instance.permutate(*best_permutation); 
+					has_changed = true;
+				}
+			} while (has_changed);
+			//std::cerr << "minimum local, lot " << batch_index << ", score : "  << instance.get_current_score() << std::endl;
+			if (best_found_solution.get_score() > instance.get_current_score())
+			{
+				best_found_solution = instance.get_current_batch_solution();
+			}
+		} while (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now()  - batch_resulution_begining) < minimum_batch_resolution_duration);
+		
 
 		std::vector<planned_job> planned_jobs(job_count);
 
-		auto proposed_batch = instance.get_current_batch_solution();
-		for (index index_job = 0; index_job < proposed_batch.get_jobs().size(); ++index_job)
+		//auto proposed_batch = instance.get_current_batch_solution();
+		for (index index_job = 0; index_job < best_found_solution.get_jobs().size(); ++index_job)
 		{
-			auto job_ptr = instance_to_solve->get_job_by_index(proposed_batch.get_jobs()[index_job].get_index());
+			auto job_ptr = instance_to_solve->get_job_by_index(best_found_solution.get_jobs()[index_job]->get_index());
 
 			std::vector<time> prodution_dates(instance_to_solve->get_machine_count());
 			std::transform(
-				proposed_batch.get_task_begin().begin(), 
-				proposed_batch.get_task_begin().end(), 
+				best_found_solution.get_task_begin().begin(),
+				best_found_solution.get_task_begin().end(),
 				prodution_dates.begin(), 
 				[index_job](std::vector<time> const & machine_tasks_begining_dates) -> time
 				{
@@ -104,8 +109,8 @@ namespace solver
 
 		planned_batch batch_result;
 		batch_result.set_jobs(planned_jobs);
-		batch_result.set_delivery_cost(proposed_batch.get_delivery_cost());
-		batch_result.set_inventory_cost(proposed_batch.get_inventory_cost());
+		batch_result.set_delivery_cost(best_found_solution.get_delivery_cost());
+		batch_result.set_inventory_cost(best_found_solution.get_inventory_cost());
 		output.get_planned_batchs()[batch_index] = batch_result;
 	}
 }

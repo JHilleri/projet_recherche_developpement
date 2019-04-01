@@ -1,5 +1,7 @@
 #include "local_search_instance.h"
 
+#include <random>
+
 namespace solver
 {
 	namespace
@@ -22,6 +24,11 @@ namespace solver
 			//auto[min, max] = std::minmax(batch.get_jobs().size(), static_cast<size_t>(machine_count));
 			return first_depature_date + ((batch.get_jobs().size() + static_cast<size_t>(machine_count) + 1) * longest_task_duration * 3) + 99999;
 		}
+	}
+
+	void local_search_instance::shuffle()
+	{
+		current_solution.shuffle();
 	}
 
 	local_search_instance::local_search_instance(solution & solution_to_work, index batch_to_solve, time departure_window_begining, std::vector<time> const & earliest_production_start) :
@@ -95,7 +102,7 @@ namespace solver
 		return get_total_in_progress_inventory_cost() + get_total_ended_inventory_cost();
 	}
 
-	batch_solution::batch_solution(std::vector<job> const & jobs, std::vector<std::vector<time>> const & delays, local_search_instance & local_search_instance, std::vector<time> const & earliest_production_start) :
+	batch_solution::batch_solution(std::vector<std::shared_ptr<job>> const & jobs, std::vector<std::vector<time>> const & delays, local_search_instance & local_search_instance, std::vector<time> const & earliest_production_start) :
 		jobs(jobs),
 		delays(delays),
 		current_local_search_instance(local_search_instance),
@@ -111,13 +118,13 @@ namespace solver
 		earliest_production_start(base.earliest_production_start)
 	{
 		//std::swap(jobs[permutation_to_perform.first], jobs[permutation_to_perform.second]);
-		job tmp(std::move(jobs[permutation_to_perform.first]));
+		std::shared_ptr<job> tmp(std::move(jobs[permutation_to_perform.first]));
 		jobs[permutation_to_perform.first] = std::move(jobs[permutation_to_perform.second]);
 		jobs[permutation_to_perform.second] = std::move(tmp);
 		update_tasks_dates();
 	}
 
-	std::vector<job> const & batch_solution::get_jobs() const
+	std::vector<std::shared_ptr<job>> const & batch_solution::get_jobs() const
 	{
 		return jobs;
 	}
@@ -137,15 +144,22 @@ namespace solver
 		return tasks_begining;
 	}
 
+	void batch_solution::shuffle()
+	{
+		static auto random = std::default_random_engine();
+		std::shuffle(jobs.begin(), jobs.end(), random);
+		update_tasks_dates();
+	}
+
 	cost batch_solution::get_total_in_progress_inventory_cost() const
 	{
 		cost total_in_progress_inventory_cost = 0;
-		for (index index_machine = 0; index_machine < current_local_search_instance.get().machine_count - 1; ++index_machine)
+		for (index index_machine = 1; index_machine < current_local_search_instance.get().machine_count - 1; ++index_machine)
 		{
 			for (index index_job = 0; index_job <jobs.size(); ++index_job)
 			{
-				time task_in_progress_inventory_time = tasks_begining[index_machine + 1][index_job] - tasks_end[index_machine][index_job];
-				cost task_in_progress_inventory_cost = task_in_progress_inventory_time * jobs[index_job].get_in_progress_inventory_cost()[index_machine];
+				time task_in_progress_inventory_time = tasks_begining[index_machine][index_job] - tasks_end[index_machine-1][index_job];
+				cost task_in_progress_inventory_cost = task_in_progress_inventory_time * jobs[index_job]->get_in_progress_inventory_cost()[index_machine-1];
 				total_in_progress_inventory_cost += task_in_progress_inventory_cost;
 			}
 		}
@@ -158,7 +172,7 @@ namespace solver
 		for (index index_job = 0; index_job <jobs.size(); ++index_job)
 		{
 			time inventory_time = tasks_end[current_local_search_instance.get().machine_count - 1][jobs.size() - 1] - tasks_end[current_local_search_instance.get().machine_count - 1][index_job];
-			total_ended_inventory_cost += inventory_time * jobs[index_job].get_ended_inventory_cost();
+			total_ended_inventory_cost += inventory_time * jobs[index_job]->get_ended_inventory_cost();
 		}
 		return total_ended_inventory_cost;
 	}
@@ -176,7 +190,7 @@ namespace solver
 			for (index index_job = 0; index_job < jobs.size(); ++index_job)
 			{
 				task_begining[0][index_job] = end_of_previous_task + delays[0][index_job];
-				task_ending[0][index_job] = task_begining[0][index_job] + jobs[index_job].get_duration_on_machine(0);
+				task_ending[0][index_job] = task_begining[0][index_job] + jobs[index_job]->get_duration_on_machine(0);
 				end_of_previous_task = task_ending[0][index_job];
 			}
 		}
@@ -187,7 +201,7 @@ namespace solver
 			for (index index_machine = 0; index_machine < current_local_search_instance.get().machine_count; ++index_machine)
 			{
 				task_begining[index_machine][0] = std::max(earliest_production_start.at(index_machine), end_of_previous_task) + delays[index_machine][0];
-				task_ending[index_machine][0] = task_begining[index_machine][0] + jobs[0].get_duration_on_machine(index_machine);
+				task_ending[index_machine][0] = task_begining[index_machine][0] + jobs[0]->get_duration_on_machine(index_machine);
 				end_of_previous_task = task_ending[index_machine][0];
 			}
 		}
@@ -200,7 +214,7 @@ namespace solver
 				time end_of_machine_previous_task = task_ending[index_machine][index_job - 1];
 
 				task_begining[index_machine][index_job] = std::max(end_of_job_previous_task, end_of_machine_previous_task) + delays[index_machine][index_job];
-				task_ending[index_machine][index_job] = task_begining[index_machine][index_job] + jobs[index_job].get_duration_on_machine(index_machine);
+				task_ending[index_machine][index_job] = task_begining[index_machine][index_job] + jobs[index_job]->get_duration_on_machine(index_machine);
 			}
 		}
 

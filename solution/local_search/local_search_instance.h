@@ -7,6 +7,7 @@
 #include "branch_and_bound.h"
 #include "local_search.h"
 
+#include <random>
 
 namespace solver
 {
@@ -23,17 +24,20 @@ namespace solver
 		cost get_inventory_cost() const;
 
 		std::reference_wrapper<local_search_instance> current_local_search_instance;
-		batch_solution(std::vector<job> const & jobs, std::vector<std::vector<time>> const & delays, local_search_instance & local_search_instance, std::vector<time> const & earliest_production_start);
+		batch_solution(std::vector<std::shared_ptr<job>> const & jobs, std::vector<std::vector<time>> const & delays, local_search_instance & local_search_instance, std::vector<time> const & earliest_production_start);
 		batch_solution(batch_solution const & base, permutation permutation_to_perform);
-		std::vector<job> const & get_jobs() const;
+		std::vector<std::shared_ptr<job>> const & get_jobs() const;
 		std::vector<std::vector<time>> const & get_delays() const;
 
 		std::vector<std::vector<time>> const & get_task_end() const;
 		std::vector<std::vector<time>> const & get_task_begin() const;
+
+		/// shuffle the jobs order and update task ends
+		void shuffle();
 	private:
 
 		// list of the batch's jobs, the order in the list is the production order
-		std::vector<job> jobs;
+		std::vector<std::shared_ptr<job>> jobs;
 
 		// [machine][job_position], the delay befor job at job_position on jobs array 
 		std::vector<std::vector<time>> delays;
@@ -65,6 +69,7 @@ namespace solver
 
 		std::vector<time> earliest_production_start;
 
+
 	public:
 		local_search_instance(solution & solution_to_work, index batch_to_solve, time departure_window_begining, std::vector<time> const & earliest_production_start);
 		cost get_current_score() const;
@@ -73,6 +78,7 @@ namespace solver
 		cost evaluate_permutation(permutation permutation_to_evaluate);
 		batch_solution const & get_current_batch_solution();
 
+		void shuffle();
 	private:
 		friend batch_solution;
 	};

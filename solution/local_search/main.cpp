@@ -12,13 +12,14 @@
 
 int main(int argc, char** argv)
 {
-	if (argc != 4)
+	if (argc != 5)
 	{
 		std::cerr <<
 R"(need the folowing arguments :
 - instance file
 - job_count_per_batch
 - output_file
+-  minimum resolution duration in milliseconds
 example : instance.txt 10 result.json)" << std::endl;
 	}
 	try
@@ -38,18 +39,20 @@ example : instance.txt 10 result.json)" << std::endl;
 			throw std::exception(_strdup((std::string("can't open the input file ") + path).c_str()));
 		}
 
+		std::chrono::milliseconds minimun_duration(std::stoi(argv[4]));
+
 		solver::instance_reader instance_reader;
 		auto instance_to_solve = std::make_shared<solver::instance>(instance_reader.read(instance_input, job_per_batch));
 
 		solver::solver instance_solver;
-		solver::local_search resolution_method;
+		solver::local_search resolution_method(minimun_duration);
 
 		auto solution = instance_solver(instance_to_solve, resolution_method);
 
 		solver::solution_validator validator;
 		if (!validator.check_solition(solution))
 		{
-			//throw std::exception("invalid found solution");
+			std::cerr << "invalid found solution" << std::endl;
 		}
 
 		solver::solution_writer writer;
