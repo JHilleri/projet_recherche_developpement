@@ -26,15 +26,24 @@ namespace solver
 		std::reference_wrapper<local_search_instance> current_local_search_instance;
 		batch_solution(std::vector<std::shared_ptr<job>> const & jobs, std::vector<std::vector<time>> const & delays, local_search_instance & local_search_instance, std::vector<time> const & earliest_production_start);
 		batch_solution(batch_solution const & base, permutation permutation_to_perform);
-		std::vector<std::shared_ptr<job>> const & get_jobs() const;
-		std::vector<std::vector<time>> const & get_delays() const;
+
+
+		std::vector<std::shared_ptr<job>> & get_jobs() { return jobs; }
+		std::vector<std::vector<time>> & get_delays() { return delays; }
+
+		std::vector<std::shared_ptr<job>> const & get_jobs() const { return jobs; }
+		std::vector<std::vector<time>> const & get_delays() const { return delays; }
 
 		std::vector<std::vector<time>> const & get_task_end() const;
 		std::vector<std::vector<time>> const & get_task_begin() const;
 
-		/// shuffle the jobs order and update task ends
+		/// shuffle the jobs order to make a random job order
 		void shuffle();
+
+		cost evaluate_score();
+		cost get_score() { return score; }
 	private:
+		cost score;
 
 		// list of the batch's jobs, the order in the list is the production order
 		std::vector<std::shared_ptr<job>> jobs;
@@ -68,6 +77,7 @@ namespace solver
 		batch_solution current_solution;
 
 		std::vector<time> earliest_production_start;
+
 
 
 	public:

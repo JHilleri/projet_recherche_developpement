@@ -4,8 +4,8 @@
 namespace solver
 {
 
-	planned_batch::planned_batch(cost inventory_cost, cost delivery_cost, const std::vector<planned_job>& jobs)
-		:m_inventory_cost{ inventory_cost }, m_delivery_cost{ delivery_cost }, m_jobs{ jobs }
+	planned_batch::planned_batch( cost delivery_cost, const std::vector<planned_job>& jobs)
+		: m_delivery_cost{ delivery_cost }, m_jobs{ jobs }
 	{
 	}
 
@@ -25,14 +25,14 @@ namespace solver
 				in_progress_invetory_cost += 
 					( 
 						m_jobs[index_job].get_production_date_on_machine(index_machine) 
-						+ m_jobs[index_job].get_job()->get_duration_on_machine(index_machine-1)
+						- m_jobs[index_job].get_job()->get_duration_on_machine(index_machine-1)
 						- m_jobs[index_job].get_production_date_on_machine(index_machine - 1) 
 					) * m_jobs[index_job].get_job()->get_in_progress_inventory_cost()[index_machine-1];
 			}
-			ended_inventory_cost += 
+			ended_inventory_cost +=
 				(
-					m_jobs.back().get_production_date_on_machine(machine_count - 1) 
-					- m_jobs[index_job].get_production_date_on_machine(machine_count - 1)
+					m_jobs.back().get_production_date_on_machine(machine_count - 1) + m_jobs.back().get_job()->get_duration_on_machine(machine_count - 1)
+					- m_jobs[index_job].get_production_date_on_machine(machine_count - 1) - m_jobs[index_job].get_job()->get_duration_on_machine(machine_count - 1)
 				) * m_jobs[index_job].get_job()->get_ended_inventory_cost();
 		}
 

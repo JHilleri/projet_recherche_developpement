@@ -110,10 +110,12 @@ namespace solver
 				}
 			}
 		}
-		{
+		/*{
 			for (auto const & batch : solution_to_check.get_planned_batchs())
 			{
-				if (batch.get_inventory_cost() != batch.calculate_invetory_cost())
+				cost inventory_cost = batch.get_inventory_cost();
+				cost cound_inventory_cost = batch.calculate_invetory_cost();
+				if (inventory_cost != cound_inventory_cost)
 				{
 					std::cerr << "invalide batch inventory cost, " << batch.get_inventory_cost() << ", " << batch.calculate_invetory_cost() << std::endl;
 					return false;
@@ -126,7 +128,7 @@ namespace solver
 				return false;
 			}
 			return true;
-		}
+		}*/
 		/*if (!check_inventory_costs(solution_to_check))
 		{
 			std::cerr << "invalid inventory cost" << std::endl;

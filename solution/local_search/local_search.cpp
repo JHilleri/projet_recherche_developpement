@@ -44,6 +44,37 @@ namespace solver
 	}
 
 
+	namespace
+	{
+		std::vector<batch_solution> get_neighbourhood(batch_solution const & current_solution)
+		{
+			auto jobs_count = current_solution.get_jobs().size();
+			std::vector<batch_solution> neighbourhood(jobs_count * jobs_count - 1, current_solution);
+			for (index index_1 = 0; index_1 < jobs_count; ++index_1)
+			{
+				for (index index_2 = 0; index_2 < jobs_count; ++index_2)
+				{
+					if (index_1 != index_2)
+					{
+						auto & neighbor = neighbourhood[index_1 * jobs_count + index_2];
+						std::swap(neighbor.get_jobs()[index_1], neighbor.get_jobs()[index_2]);
+					}
+				}
+			}
+
+			return neighbourhood;
+		}
+
+		auto get_best_neighbor(batch_solution const & current_solution, std::vector<batch_solution> & neighbourhood)
+		{
+			return std::find_if(neighbourhood.begin(), neighbourhood.end(), [&](batch_solution & neighbor) {
+				cost score = neighbor.evaluate_score();
+				return (score < current_solution.get_score());
+			});
+		}
+	}
+
+
 	void local_search::solve_batch(const_instance_ptr instance_to_solve, index batch_index, solution & output, time earlyer_possible_departure, std::vector<time> const & earliest_production_start)
 	{
 
@@ -66,6 +97,7 @@ namespace solver
 				has_changed = false;
 				cost current_score = instance.get_current_score();
 				//std::cerr << "lot " << batch_index << ", score : " << current_score << std::endl;
+				std::vector<batch_solution> neighbourhood;
 				auto permutations = instance.get_current_permutations();
 				auto best_permutation = std::find_if(permutations.begin(), permutations.end(), [&instance, current_score](auto const & permutation) -> bool {
 					auto score = instance.evaluate_permutation(permutation);
@@ -110,7 +142,7 @@ namespace solver
 		planned_batch batch_result;
 		batch_result.set_jobs(planned_jobs);
 		batch_result.set_delivery_cost(best_found_solution.get_delivery_cost());
-		batch_result.set_inventory_cost(best_found_solution.get_inventory_cost());
+		// batch_result.set_inventory_cost(best_found_solution.get_inventory_cost());
 		output.get_planned_batchs()[batch_index] = batch_result;
 	}
 }

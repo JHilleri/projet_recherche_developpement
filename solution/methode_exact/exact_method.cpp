@@ -219,7 +219,7 @@ namespace solver
 			planned_batch batch_result;
 			batch_result.set_jobs(planned_jobs);
 			batch_result.set_delivery_cost(cost_per_departure_date.eval_fct_lin(production_end));
-			batch_result.set_inventory_cost(cplex_solver.getValue(IC_FIN) + cplex_solver.getValue(IC_WIP));
+			//batch_result.set_inventory_cost(cplex_solver.getValue(IC_FIN) + cplex_solver.getValue(IC_WIP));
 			result.get_planned_batchs()[batch_to_solve_index] = batch_result;
 		}
 	}

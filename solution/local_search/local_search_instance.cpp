@@ -124,16 +124,6 @@ namespace solver
 		update_tasks_dates();
 	}
 
-	std::vector<std::shared_ptr<job>> const & batch_solution::get_jobs() const
-	{
-		return jobs;
-	}
-
-	std::vector<std::vector<time>> const & batch_solution::get_delays() const
-	{
-		return delays;
-	}
-
 	std::vector<std::vector<time>> const & batch_solution::get_task_end() const
 	{
 		return tasks_end;
@@ -148,7 +138,13 @@ namespace solver
 	{
 		static auto random = std::default_random_engine();
 		std::shuffle(jobs.begin(), jobs.end(), random);
+	}
+
+	cost batch_solution::evaluate_score()
+	{
 		update_tasks_dates();
+		score = get_inventory_cost() + get_delivery_cost();
+		return score;
 	}
 
 	cost batch_solution::get_total_in_progress_inventory_cost() const
