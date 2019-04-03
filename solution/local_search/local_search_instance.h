@@ -12,7 +12,7 @@
 namespace solver
 {
 	class batch_solution;
-	class local_search_instance;
+	class local_search_instance_data;
 	using permutation = std::pair<index, index>;
 
 	/// \brief hold the datas of a batch solution proposal
@@ -23,8 +23,8 @@ namespace solver
 		cost get_delivery_cost() const;
 		cost get_inventory_cost() const;
 
-		std::reference_wrapper<local_search_instance> current_local_search_instance;
-		batch_solution(std::vector<std::shared_ptr<job>> const & jobs, std::vector<std::vector<time>> const & delays, local_search_instance & local_search_instance, std::vector<time> const & earliest_production_start);
+		std::reference_wrapper<local_search_instance_data> current_local_search_instance;
+		batch_solution(std::vector<std::shared_ptr<job>> const & jobs, std::vector<std::vector<time>> const & delays, local_search_instance_data & local_search_instance, std::vector<time> const & earliest_production_start);
 		batch_solution(batch_solution const & base, permutation permutation_to_perform);
 
 
@@ -63,7 +63,7 @@ namespace solver
 
 	/// \brief This class hold datas during the local search resolution.
 	/// do not use an instance of this class on multiple thread.
-	class local_search_instance
+	class local_search_instance_data
 	{
 	private:
 		solution & result;
@@ -81,7 +81,7 @@ namespace solver
 
 
 	public:
-		local_search_instance(solution & solution_to_work, index batch_to_solve, time departure_window_begining, std::vector<time> const & earliest_production_start);
+		local_search_instance_data(solution & solution_to_work, index batch_to_solve, time departure_window_begining, std::vector<time> const & earliest_production_start);
 		cost get_current_score() const;
 		std::vector<permutation> get_current_permutations() const;
 		void permutate(permutation permutation_to_perform);

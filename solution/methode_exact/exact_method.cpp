@@ -235,7 +235,7 @@ namespace solver
 		cost inventory_cost = std::accumulate(result.get_planned_batchs().begin(), result.get_planned_batchs().end(), 0, planned_batch_inventory_cost_accumulator);
 
 		result.set_delivery_cost(delivery_cost);
-		result.set_inventory_cost(inventory_cost);
+		//result.set_inventory_cost(inventory_cost);
 		result.set_score(delivery_cost + inventory_cost);
 		return result;
 		/*

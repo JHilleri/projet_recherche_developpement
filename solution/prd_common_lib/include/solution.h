@@ -17,7 +17,7 @@ namespace solver
 		solution(const_instance_ptr instance_ptr) : m_instance{ instance_ptr }, m_planned_batchs(instance_ptr->get_batchs().size()) {}
 
 		double get_score() const { return m_score; };
-		inline cost get_inventory_cost() const;
+		cost get_inventory_cost() const;
 		inline cost get_delivery_cost() const { return m_delivery_cost; }
 		inline cost get_total_cost() const { return get_inventory_cost() + get_delivery_cost(); }
 		std::vector<planned_batch> const & get_planned_batchs() const { return m_planned_batchs; }

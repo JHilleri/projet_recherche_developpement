@@ -26,12 +26,12 @@ namespace solver
 		}
 	}
 
-	void local_search_instance::shuffle()
+	void local_search_instance_data::shuffle()
 	{
 		current_solution.shuffle();
 	}
 
-	local_search_instance::local_search_instance(solution & solution_to_work, index batch_to_solve, time departure_window_begining, std::vector<time> const & earliest_production_start) :
+	local_search_instance_data::local_search_instance_data(solution & solution_to_work, index batch_to_solve, time departure_window_begining, std::vector<time> const & earliest_production_start) :
 		earliest_production_start(earliest_production_start),
 		result( solution_to_work ), 
 		batch( result.get_instance()->get_batchs()[batch_to_solve] ), 
@@ -50,12 +50,12 @@ namespace solver
 		delivery_cost_per_departure = Branch_and_bound{ *result.get_instance() }.generate_fct_with_branch_and_bound(jobs_order, departure_window_begining, departure_window_ending);
 	}
 
-	cost local_search_instance::get_current_score() const
+	cost local_search_instance_data::get_current_score() const
 	{
 		return current_solution.get_score();
 	}
 
-	std::vector<permutation> local_search_instance::get_current_permutations() const
+	std::vector<permutation> local_search_instance_data::get_current_permutations() const
 	{
 		std::vector<permutation> permutations;
 		permutations.reserve(current_solution.get_jobs().size()*2-1);
@@ -69,16 +69,16 @@ namespace solver
 		return permutations;
 	}
 
-	void local_search_instance::permutate(permutation permutation_to_perform) {
+	void local_search_instance_data::permutate(permutation permutation_to_perform) {
 		current_solution = batch_solution(current_solution, permutation_to_perform);
 	}
 
-	cost local_search_instance::evaluate_permutation(permutation permutation_to_evaluate)
+	cost local_search_instance_data::evaluate_permutation(permutation permutation_to_evaluate)
 	{
 		return batch_solution(current_solution, permutation_to_evaluate).get_score();
 	}
 
-	batch_solution const & local_search_instance::get_current_batch_solution()
+	batch_solution const & local_search_instance_data::get_current_batch_solution()
 	{
 		return current_solution;
 	}
@@ -102,7 +102,7 @@ namespace solver
 		return get_total_in_progress_inventory_cost() + get_total_ended_inventory_cost();
 	}
 
-	batch_solution::batch_solution(std::vector<std::shared_ptr<job>> const & jobs, std::vector<std::vector<time>> const & delays, local_search_instance & local_search_instance, std::vector<time> const & earliest_production_start) :
+	batch_solution::batch_solution(std::vector<std::shared_ptr<job>> const & jobs, std::vector<std::vector<time>> const & delays, local_search_instance_data & local_search_instance, std::vector<time> const & earliest_production_start) :
 		jobs(jobs),
 		delays(delays),
 		current_local_search_instance(local_search_instance),

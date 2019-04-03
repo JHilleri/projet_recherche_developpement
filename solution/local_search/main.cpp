@@ -3,6 +3,7 @@
 #include "instance_reader.h"
 #include "solution_writer.h"
 #include "solution_validator.h"
+#include "local_search_operators.h"
 
 #include <sstream>
 #include <string>
@@ -45,7 +46,7 @@ example : instance.txt 10 result.json)" << std::endl;
 		auto instance_to_solve = std::make_shared<solver::instance>(instance_reader.read(instance_input, job_per_batch));
 
 		solver::solver instance_solver;
-		solver::local_search resolution_method(minimun_duration);
+		solver::local_search resolution_method(minimun_duration, solver::transposition_neighbourhood_operator, solver::first_beter_neighbor_selector);
 
 		auto solution = instance_solver(instance_to_solve, resolution_method);
 

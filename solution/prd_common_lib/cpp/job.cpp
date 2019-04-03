@@ -3,7 +3,16 @@
 
 namespace solver
 {
-
+	job::job(index index_value, std::vector<time> duration_per_machine,
+		time due_date, cost penalty_per_delivery_delay, std::vector<cost> in_progress_inventory_cost, cost ended_inventory_cost) :
+		m_index{ index_value },
+		m_duration_per_machine{ std::move(duration_per_machine) },
+		m_due_date{ due_date },
+		m_penalty_per_delivery{ penalty_per_delivery_delay },
+		m_in_progress_inventory_cost{ std::move(in_progress_inventory_cost) },
+		m_ended_inventory_cost{ ended_inventory_cost }
+	{
+	}
 
 	index job::get_index() const
 	{
