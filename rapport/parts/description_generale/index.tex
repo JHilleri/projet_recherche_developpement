@@ -10,14 +10,18 @@ Le projet existant utilise des fonctionnalités de Visual c++ et n'est pas compa
 Il s'agit d'un projet de recherche, les utilisateurs seront des chercheurs souhaitant tester les algorithmes développés dans ce projet.
  
 \section{Fonctionnalités du système}
-L'application développée dans ce projet a pour objectif de trouver la meilleure solution pour le problème défini précédemment.
-Elle est utilisée pour comparer les résultats des différents algorithmes.
-Deux méthodes sont explorées, une méthode exacte utilisant un solveur et une recherche locale.
+Les applications développées dans ce projet ont pour objectif de comparer plusieurs méthodes de résolution du problème défini précédemment.
+Pour cela, deux méthodes de résolutions sont testé,  une méthode exacte utilisant un solveur et une recherche locale.
+Pour permettre de comparer les méthodes, elles utilises la même structure de données pour les instances et les solution.
+
 
 \includegraphics[width=\textwidth]{parts/description_generale/use_cases}
 
-Le programme est un exécutable en console, il prend en paramètre le chemin vers l'instance à résoudre et l'algorithme utilisé.
-Une fois le programme terminé, il affiche les résultats dans la console.
+Les implémentations des méthodes donnent deux applications distinctes, utilisant une même bibliothèque qui définit les structures de données du problème.
+Les exécutables s'exécutes en console et prennent en paramètre le chemin vers le fichier d'instance et
+le chemin vers le fichier où écrire les résultats.
+Les résultats sont écrit en JSON et inclue des données tel que la durée de la résolution.
+L'utilisation du format JSON permet d'exploiter facilement les résultats avec de nombreux outils.
 
 
 \section{Structure générale du système}

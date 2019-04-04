@@ -55,3 +55,31 @@ Pour sortir de ces minimums locaux, on repart d'une nouvelle solution aléatoire
 Une fois dans un minimum local, l'algorithme repart sur une solution aléatoire, il n'y à donc pas de fin.
 Pour l'arrêter, il faut limiter le temps qui lui est accordé.
 Pour cela, on utilise la durée donnée en paramètre par l'utilisateur.
+
+\section{Modélisation logicielle}
+
+D'un point de vue logiciel, le projet est séparé en plusieurs parties, 
+chaque méthode de résolution est implémenté dans un projet Visual Studio distinct et
+le code en commun est placé dans une bibliothèque.
+
+\subsection{Bibliothèque}
+
+La bibliothèque définit les structures de données des instances et solutions.
+Elle contient également des classes pour lire les instances, valider les solutions et écrire les solutions.
+
+\subsubsection{Structures de données}
+
+\includegraphics[width=\textwidth]{parts/analyse_et_conception/diagramme_data}
+
+Les classes \detokenize{planned_batch} et \detokenize{planned_job} représentent les lots et jobs qui ont été planifié.
+La durée de la résolution ne fait pas partie de la solution,  cette donnée ne concerne que la méthode qui génère la solution.
+
+La classe \detokenize{solution_with_statistiques} étend la classe solution, 
+elle ajoute la durée de la résolution.
+
+\subsubsection{Services}
+
+\includegraphics[width=\textwidth]{parts/analyse_et_conception/services}
+
+
+

@@ -1,0 +1,55 @@
+\chapter{mise en oeuvre}
+\label{appendix:mise_en_oeuvre}
+
+\section{Outils}
+
+% Préciser ici Les outils et librairies utilisées (rapidement : les détails sur les versions exactes chose à savoir étant en annexe)
+
+Le cœur du projet est écrit en C++ et un outils de visualisation des solution à été réalisé en javascript.
+Les outils suivant ont été utilisé :
+\subsection{Git}
+J'ai utiliser git pour versionner le code du projet.
+Git est un outils de gestion de version populaire, il permet de conserver un historiques des modifications apporté au projet.
+\subsection{Github}
+GitHub est une plateforme d'hébergement de dépôt git qui propose également des outils pour gérer et suivre les taches à réaliser et les demandes des utilisateurs.
+\subsection{Visual studio}
+Visual studio est un environnement de développement qui intègre les outils nécessaire au développement d'application en C++ et C\#.
+\subsection{Tex Live}
+Tex Live est une distribution latex qui est utilisé dans ce projet pour générer les rapports.
+\subsection{Visual studio code}
+Visual Studio Code est un éditeur de code modulaire qui à été utilisé dans ce projet pour la rédaction des document en Latex, pour le développement de l'outils de visualisation de solution et pour lire les données brutes des fichiers solutions.
+\subsection{Doxygen}
+Doxygen est l'outil qui à été utilisé pour générer la documentation du code du projet à partir de commentaires présents dans le code.
+\section{Implémentations}
+
+Le projet à été séparé en 4 sous-parties :
+- implémentation de la recherche locale
+- implémentation de la méthode exacte avec CPLEX
+- bibliothèque de fonctionnalités communes
+- tests avec le Framework GTest
+
+Avec le projet, un petit outils pour visualiser les données des solutions sous forme de diagramme de Gantt à été créé en HTML/javascript.
+
+\subsection{limites}
+
+Pour respecter les demandes du client, le projet prend la forme d'une solution Visual Studio,
+cela facilite sont utilisation sous Windows mais rend impossible l'utilisation du projet sous d'autres systèmes d'exploitations.
+La partie de la méthode exacte nécessite la bibliothèque CPLEX lors de la compilation.
+
+\subsection{risques}
+
+\subsection{choix techniques}
+Les solutions sont exporté en suivant le forma JSON, 
+ce qui permet de les lire facilement, 
+aussi bien pour des utilisateur que pour des programmes.
+
+\subsection{devation}
+La méthode exacte donne des solutions invalides.
+
+\section{Qualité/performance}
+
+\subsection{analyse des résultats}
+
+des éléments sur l'implémentation (limites, risques, choix techniques, déviation/analyse…) 
+des éléments sur la qualité/l'évaluation des performance (stratégie et analyse des résultats)
+
