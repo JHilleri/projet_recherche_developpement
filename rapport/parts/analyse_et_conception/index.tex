@@ -8,7 +8,7 @@ La qualité d'une méthode exacte est estimée à partir de plusieurs critères 
 	\item L'efficacité de la parallélisation de la méthode.
 \end{itemize}
 Pour des résultats plus rapides, il faut passer par des méthodes heuristiques.
-Ces méthodes permettent de trouver plus rapidement une solution correcte mais pas forcément la meilleure.
+Ces méthodes permettent de trouver plus rapidement une solution correcte, mais pas forcément la meilleure.
 Pour évaluer une méthode heuristique, il faut prendre en compte les critères suivants :
 \begin{itemize}
 	\item La qualité de la solution en fonction du temps et de la taille de l'instance.
@@ -33,29 +33,32 @@ Je me base sur sa modélisation pour ajouter la liberté sur les ordres des jobs
 Pour la méthode heuristique, j'ai décidé avec mon encadrant d'utiliser un algorithme de recherche locale.
 Cet algorithme est présenté dans la partie \autoref{section:recherche_locale}.
 	
-Les solutions sont représentées par une liste de jobs classé dans l'ordre de leurs réalisation.
+Les solutions sont représentées par une liste de jobs classés dans l'ordre de leurs réalisation.
 
 \subsection{Operateur de voisinage}
 
 L'opérateur à pour rôle de définir les solutions voisines de la solution principale.
 
-Pour ce projet, deux opérateurs ont été envisagé :
+Pour ce projet, deux opérateurs ont été envisagés :
 
 \begin{itemize}
-	\item Un operateur qui donne des solutions où les emplacement de deux jobs dans l'ordre de production ont été échangé.
+	\item Un opérateur qui donne des solutions où les emplacements de deux jobs dans l'ordre de production ont été échangé.
 	\item Un opérateur qui donne des solutions où l'emplacement d'un job dans l'ordre de réalisation a été changé.
 	Cet opérateur permet de conserver des séquences de jobs qui peuvent être bon.
 \end{itemize}
 
 \subsection{Exploration du voisinage}
 
-Il existe plusieurs façons d'explorer le voisinage fournit par un operateur, dans ce projet, deux stratégie ont été testé :
+Il existe plusieurs façons d'explorer le voisinage fourni par un opérateur, dans ce projet, deux stratégies ont été testé :
 \begin{itemize}
-	\item Meilleur amélioration.
-	Cette stratégie consiste à évaluer touts les voisins de la solution actuel et de prendre le meilleur.
-	Le défaut avec cette méthode est qu'il y a un grand nombre de solution évalué, ce qui fait que chaque itération de la recherche prend du temps.
-	\item Première amélioration. Cette stratégie consiste à sélectionner le premier voisin qui est meilleur que la solution actuel.
-	Cette stratégie permet de ne pas évaluer touts les voisins et d'itérer plus rapidement, ce qui permet d'explorer plus de minimum locaux dans le temps impartie.
+	\item Meilleur amélioration :
+	
+	Cette stratégie consiste à évaluer tout les voisins de la solution actuelle et de prendre le meilleur.
+	Le défaut avec cette méthode est qu'il y a un grand nombre de solutions évalué, ce qui fait que chaque itération de la recherche prend du temps.
+	\item Première amélioration : 
+	
+	Cette stratégie consiste à sélectionner le premier voisin qui est meilleur que la solution actuel.
+	Cette stratégie permet de ne pas évaluer tout les voisins et d'itérer plus rapidement, ce qui permet d'explorer plus de minimum locaux dans le temps impartie.
 \end{itemize}
 
 \subsection{Stratégie de sortie des minimum locaux}
@@ -66,17 +69,17 @@ Il existe plusieurs façon de sortir des minimum locaux, dans ce projet, on à c
 \subsection{Condition d'arrêt}
 Une fois dans un minimum local, l'algorithme repart sur une solution aléatoire, il n'y à donc pas de fin.
 Pour arrêter la recherche, il faut une définir une condition arrêt.
-Pour ce projet, on à choisi de limiter le temps accordé à la recherche local.
+Pour ce projet, on a choisi de limiter le temps accordé à la recherche local.
 
-Lorsque la recherche local atteint un minimum local, si le temps n'est pas écoulé, la stratégie de sortie des minimum locaux est utilisé.
+Lorsque la recherche locale atteint un minimum local, si le temps n'est pas écoulé, la stratégie de sortie des minimums locaux est utilisé.
 Lorsque le temps est écoulé, la recherche local termine la recherche du minimum local en cours.
 
 Cette durée minimum pour la recherche local est définit à l'exécution par l'utilisateur de l'application.
 
 \section{Modélisation logicielle}
 
-D'un point de vue logiciel, le projet est séparé en plusieurs parties, 
-chaque méthode de résolution est implémenté dans un projet Visual Studio distinct et
+D'un point de vu logiciel, le projet est séparé en plusieurs parties, 
+chaque méthode de résolution est implémentée dans un projet Visual Studio distinct et
 le code en commun est placé dans une bibliothèque.
 
 \subsection{Bibliothèque}
@@ -88,7 +91,7 @@ Elle contient également des classes pour lire les instances, valider les soluti
 
 \includegraphics[width=\textwidth]{parts/analyse_et_conception/diagramme_data}
 
-Les classes \detokenize{planned_batch} et \detokenize{planned_job} représentent les lots et jobs qui ont été planifié.
+Les classes \detokenize{planned_batch} et \detokenize{planned_job} représentent les lots et jobs qui ont été planifiés.
 La durée de la résolution ne fait pas partie de la solution,  cette donnée ne concerne que la méthode qui génère la solution.
 
 La classe \detokenize{solution_with_statistiques} étend la classe solution, 
@@ -100,3 +103,4 @@ elle ajoute la durée de la résolution.
 
 
 
+%  todo : décrire les services

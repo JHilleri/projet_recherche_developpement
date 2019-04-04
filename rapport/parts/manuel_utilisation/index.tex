@@ -1,7 +1,15 @@
 \chapter{Manuel d'utilisation}
 
-\section{methode exacte}
 \section{recherche locale}
+La recherche locale s'exécute en invite de commande et nécessite les paramètres suivants :
+\begin{itemize}
+    \item Chemin vers le fichier d'instance.
+    \item Taille maximum des lots.
+    \item Chemin vers le fichier de solution.
+    \item Durée minimum de la recherche locale.
+\end{itemize}
+Si le fichier de la solution existe déjà, son contenu seras écrasé.
+
 \section{bibliothèque}
 Pour l'utiliser dans un projet, il faut :
 - ajouter le répertoire include de la bibliothèque.
@@ -10,7 +18,15 @@ Pour l'utiliser dans un projet, il faut :
 % // todo :  ajouter une capture d'écran
 \section{visionneuse de solution}
 
-\section{format des fichiers d'instance}
+Pour visionner une solution, il faut ouvrir le fichier view.html, celui-ci doit être dans le même fichier que la solution.
+Le nom du ficher de solution peut être donné à la page web avec le paramètre filename.
+Par exemple, si le fichier de la solution est solution.json et se trouve à la racine de l'ordinateur, il faut entrer l'URL suivante dans le navigateur.
 
-\section{format des fichier de solution}
+
+\detokenize{file:///C:/view.html?filename=res_first.json}
+
+
+
+Pour visionner une solution, il faut un accès à internet pour charger aux bibliothèques utilisées.
+
 

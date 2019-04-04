@@ -49,8 +49,8 @@ example : instance.txt 10 result.json)" << std::endl;
 
 		//solver::local_search resolution_method(minimun_duration, solver::transposition_neighbourhood_operator, solver::first_beter_neighbor_selector);
 		//solver::local_search resolution_method(minimun_duration, solver::transposition_neighbourhood_operator, solver::best_neighbor_selector);
-		solver::local_search resolution_method(minimun_duration, solver::change_job_position_neighbourhood_operator, solver::first_beter_neighbor_selector);
-		//solver::local_search resolution_method(minimun_duration, solver::change_job_position_neighbourhood_operator, solver::best_neighbor_selector);
+		//solver::local_search resolution_method(minimun_duration, solver::change_job_position_neighbourhood_operator, solver::first_beter_neighbor_selector);
+		solver::local_search resolution_method(minimun_duration, solver::change_job_position_neighbourhood_operator, solver::best_neighbor_selector);
 
 		auto solution = instance_solver(instance_to_solve, resolution_method);
 
