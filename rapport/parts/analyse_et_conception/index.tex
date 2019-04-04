@@ -38,23 +38,40 @@ Les solutions sont représentées par une liste de jobs classé dans l'ordre de 
 \subsection{Operateur de voisinage}
 
 L'opérateur à pour rôle de définir les solutions voisines de la solution principale.
-L'opérateur donne des solutions où l'emplacement d'un job dans l'ordre de réalisation a été changé.
-Cet opérateur permet de conserver des séquences de jobs qui peuvent être bon.
+
+Pour ce projet, deux opérateurs ont été envisagé :
+
+\begin{itemize}
+	\item Un operateur qui donne des solutions où les emplacement de deux jobs dans l'ordre de production ont été échangé.
+	\item Un opérateur qui donne des solutions où l'emplacement d'un job dans l'ordre de réalisation a été changé.
+	Cet opérateur permet de conserver des séquences de jobs qui peuvent être bon.
+\end{itemize}
 
 \subsection{Exploration du voisinage}
 
-Tester toute les solutions voisines prend du temps.
-Pour accélérer l'algorithme, l'exploration du voisinage s'arrête a la première solution qui est meilleur que la solution initiale.
-De cette façon, la solution vas aller plus rapidement vers le minimum local.
+Il existe plusieurs façons d'explorer le voisinage fournit par un operateur, dans ce projet, deux stratégie ont été testé :
+\begin{itemize}
+	\item Meilleur amélioration.
+	Cette stratégie consiste à évaluer touts les voisins de la solution actuel et de prendre le meilleur.
+	Le défaut avec cette méthode est qu'il y a un grand nombre de solution évalué, ce qui fait que chaque itération de la recherche prend du temps.
+	\item Première amélioration. Cette stratégie consiste à sélectionner le premier voisin qui est meilleur que la solution actuel.
+	Cette stratégie permet de ne pas évaluer touts les voisins et d'itérer plus rapidement, ce qui permet d'explorer plus de minimum locaux dans le temps impartie.
+\end{itemize}
 
 \subsection{Stratégie de sortie des minimum locaux}
 Lorsque la solution étudiée n'a pas de meilleur voisin, on est dans un minimum local.
-Pour sortir de ces minimums locaux, on repart d'une nouvelle solution aléatoire.
+Il existe plusieurs façon de sortir des minimum locaux, dans ce projet, on à choisi de relancer une recherche locale à partir d'une nouvelle solution aléatoire.
+
 
 \subsection{Condition d'arrêt}
 Une fois dans un minimum local, l'algorithme repart sur une solution aléatoire, il n'y à donc pas de fin.
-Pour l'arrêter, il faut limiter le temps qui lui est accordé.
-Pour cela, on utilise la durée donnée en paramètre par l'utilisateur.
+Pour arrêter la recherche, il faut une définir une condition arrêt.
+Pour ce projet, on à choisi de limiter le temps accordé à la recherche local.
+
+Lorsque la recherche local atteint un minimum local, si le temps n'est pas écoulé, la stratégie de sortie des minimum locaux est utilisé.
+Lorsque le temps est écoulé, la recherche local termine la recherche du minimum local en cours.
+
+Cette durée minimum pour la recherche local est définit à l'exécution par l'utilisateur de l'application.
 
 \section{Modélisation logicielle}
 

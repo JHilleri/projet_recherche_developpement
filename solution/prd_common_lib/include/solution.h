@@ -29,12 +29,15 @@ namespace solver
 		inline void set_planned_batchs(const std::vector<planned_batch> &batchs) { m_planned_batchs = batchs; }
 		inline void set_score(double score) { m_score = score; }
 
+		inline bool is_valide() const { return m_is_valide; }
+		inline void set_is_valid(bool is_valide) { m_is_valide = is_valide; }
 	private:
 		//cost m_inventory_cost;
 		cost m_delivery_cost;
 		double m_score;
 		std::vector<planned_batch> m_planned_batchs;
 		const_instance_ptr m_instance;
+		bool m_is_valide = false;
 	};
 }
 

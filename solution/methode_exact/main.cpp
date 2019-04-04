@@ -47,7 +47,7 @@ example : instance.txt 10 result.json)" << std::endl;
 		auto solution = instance_solver(instance_to_solve, resolution_method);
 
 		solver::solution_validator validator;
-		validator.check_solition(solution);
+		solution.set_is_valid(validator.check_solition(solution));
 
 		solver::solution_writer writer;
 		writer.write(output, solution);
