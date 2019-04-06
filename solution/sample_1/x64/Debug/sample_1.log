@@ -1,3 +1,0 @@
-﻿  main.cpp
-c:\program files\ibm\ilog\cplex_studio1271\concert\include\ilconcert\ilosys.h(705): error C2382: 'longjmp' : redéfinition ; spécifications des exceptions différentes
-  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\setjmp.h(162): note: voir la déclaration de 'longjmp'
