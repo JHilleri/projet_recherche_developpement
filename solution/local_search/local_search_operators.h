@@ -1,6 +1,6 @@
 #pragma once
 #include "local_search.h"
-#include "local_search_instance.h"
+#include "batch_solution.h"
 
 namespace solver
 {
@@ -12,7 +12,7 @@ namespace solver
 		{
 			for (index index_2 = index_1 + 1; index_2 < jobs_count; ++index_2, ++neighbor_index)
 			{
-				auto & neighbor = neighbourhood.emplace_back(current_solution);
+				auto & neighbor = neighbourhood.emplace_back(current_solution); // create a copy of the current solution at the end of the array
 				std::swap(neighbor.get_jobs()[index_1], neighbor.get_jobs()[index_2]);
 			}
 		}
@@ -29,10 +29,9 @@ namespace solver
 			{
 				if (index_1 != index_2)
 				{
-					auto & neighbor = neighbourhood.emplace_back(current_solution);
-					auto & jobs = neighbor.get_jobs();
-					auto job_position = jobs.begin() + index_1;
-					auto job_destination = jobs.begin() + index_2;
+					batch_solution & neighbor = neighbourhood.emplace_back(current_solution); // create a copy of the current solution at the end of the array
+					auto job_position = neighbor.get_jobs().begin() + index_1;
+					auto job_destination = neighbor.get_jobs().begin() + index_2;
 					std::iter_swap(job_position, job_destination);
 
 					if (index_1 < index_2)
@@ -49,7 +48,6 @@ namespace solver
 							std::iter_swap(job_position, job_position_next);
 						}
 					}
-					//std::swap(neighbor.get_jobs()[index_1],jobs.begin() + index_1; neighbor.get_jobs()[index_2]);
 				}
 			}
 		}
@@ -74,7 +72,6 @@ namespace solver
 		}
 		auto best = std::min_element(neighbourhood.begin(), neighbourhood.end(), [&](batch_solution const & neighbor_1, batch_solution const & neighbor_2) {
 			return  neighbor_1.get_score() < neighbor_2.get_score();
-			//return (score < current_solution.get_score());
 		});
 		if (best->get_score() < current_solution.get_score())
 		{

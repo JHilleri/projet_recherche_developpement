@@ -21,8 +21,6 @@ namespace solver
 		{
 			for (index index_machine = 1; index_machine < machine_count; ++index_machine)
 			{
-				//std::cerr << m_jobs[index_job].get_production_date_on_machine(index_machine) << m_jobs[index_job].get_job()->get_duration_on_machine(index_machine-1) << m_jobs[index_job].get_production_date_on_machine(index_machine - 1) << std::endl;
-				in_progress_invetory_cost += 
 					( 
 						m_jobs[index_job].get_production_date_on_machine(index_machine) 
 						- m_jobs[index_job].get_job()->get_duration_on_machine(index_machine-1)

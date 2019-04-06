@@ -22,8 +22,6 @@ namespace solver
 		batch(std::initializer_list<job> jobs);
 		batch & operator=(const batch &) = default;
 
-		/*time_unit first_possible_departure_date() const;
-		time_unit last_possible_departure_date() const;*/
 		const job_list & get_jobs() const;
 		const_job_ptr get_job_by_index(index job_index) const;
 

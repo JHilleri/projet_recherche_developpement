@@ -102,4 +102,22 @@ namespace solver
 			&& (get_total_duration() == job2.get_total_duration());
 	}
 
+	job::job(job && job_to_move) :
+		m_index(job_to_move.m_index),
+		m_duration_per_machine(std::move(job_to_move.m_duration_per_machine)),
+		m_due_date(job_to_move.m_due_date),
+		m_penalty_per_delivery(job_to_move.m_penalty_per_delivery),
+		m_in_progress_inventory_cost(std::move(job_to_move.m_in_progress_inventory_cost)),
+		m_ended_inventory_cost(job_to_move.m_ended_inventory_cost)
+	{}
+
+	job::job(job const & job_to_copy) :
+		m_index(job_to_copy.m_index),
+		m_duration_per_machine(job_to_copy.m_duration_per_machine),
+		m_due_date(job_to_copy.m_due_date),
+		m_penalty_per_delivery(job_to_copy.m_penalty_per_delivery),
+		m_in_progress_inventory_cost(job_to_copy.m_in_progress_inventory_cost),
+		m_ended_inventory_cost(job_to_copy.m_ended_inventory_cost)
+	{}
+
 	}
