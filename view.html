@@ -6,9 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>solution viewer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script type="text/javascript" src="jquery-3.3.1.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript" src="viaw.js"></script>
     <script>
         google.charts.load('current', { 'packages': ['timeline'] });
         google.charts.setOnLoadCallback(() => {
@@ -23,7 +22,7 @@
                 let file = url.searchParams.get("filename");
                 console.log(file);
             }
-            let file_name = url.searchParams.get("filename") || "result.json";
+            let file_name = url.searchParams.get("filename") || "result_local_search.json";
             $.getJSON(file_name).done(function (data) {
                 dataTable.addColumn({ type: 'string', id: 'machine' });
                 dataTable.addColumn({ type: 'string', id: 'index' });
@@ -31,7 +30,10 @@
                 dataTable.addColumn({ type: 'date', id: 'End' });
                 let tasks = new Array();
                 let batchs = data.solution.batchs;
-                let machine_count = data.solution.nmachine_count;
+                let machine_count = data.solution.machine_count;
+                let last_batch = batchs[batchs.length-1];
+                let last_job = last_batch.jobs[last_batch.jobs.length-1];
+                let last_task = last_job.tasks[machine_count-1];
                 for (let batch in batchs) {
                     for (let job of batchs[batch].jobs) {
                         for (let i = 0; i < machine_count; i++) {
@@ -46,7 +48,7 @@
                     }
                 };
                 dataTable.addRows(tasks);
-                container.style = `height: ${50 * machine_count}px; width: 100%`;
+                container.style = `height: ${70 * machine_count}px; min-width: ${last_task.end * 20}px; width: 100%`;
                 chart.draw(dataTable, options);
                 let stats = document.getElementById("solution_numbers");
                 stats.innerHTML = `
