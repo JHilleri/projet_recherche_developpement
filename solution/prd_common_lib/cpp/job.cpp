@@ -3,7 +3,16 @@
 
 namespace solver
 {
-
+	job::job(index index_value, std::vector<time> duration_per_machine,
+		time due_date, cost penalty_per_delivery_delay, std::vector<cost> in_progress_inventory_cost, cost ended_inventory_cost) :
+		m_index{ index_value },
+		m_duration_per_machine{ std::move(duration_per_machine) },
+		m_due_date{ due_date },
+		m_penalty_per_delivery{ penalty_per_delivery_delay },
+		m_in_progress_inventory_cost{ std::move(in_progress_inventory_cost) },
+		m_ended_inventory_cost{ ended_inventory_cost }
+	{
+	}
 
 	index job::get_index() const
 	{
@@ -92,5 +101,23 @@ namespace solver
 			&& (std::equal(m_in_progress_inventory_cost.begin(), m_in_progress_inventory_cost.end(), job2.m_in_progress_inventory_cost.begin()))
 			&& (get_total_duration() == job2.get_total_duration());
 	}
+
+	job::job(job && job_to_move) :
+		m_index(job_to_move.m_index),
+		m_duration_per_machine(std::move(job_to_move.m_duration_per_machine)),
+		m_due_date(job_to_move.m_due_date),
+		m_penalty_per_delivery(job_to_move.m_penalty_per_delivery),
+		m_in_progress_inventory_cost(std::move(job_to_move.m_in_progress_inventory_cost)),
+		m_ended_inventory_cost(job_to_move.m_ended_inventory_cost)
+	{}
+
+	job::job(job const & job_to_copy) :
+		m_index(job_to_copy.m_index),
+		m_duration_per_machine(job_to_copy.m_duration_per_machine),
+		m_due_date(job_to_copy.m_due_date),
+		m_penalty_per_delivery(job_to_copy.m_penalty_per_delivery),
+		m_in_progress_inventory_cost(job_to_copy.m_in_progress_inventory_cost),
+		m_ended_inventory_cost(job_to_copy.m_ended_inventory_cost)
+	{}
 
 	}

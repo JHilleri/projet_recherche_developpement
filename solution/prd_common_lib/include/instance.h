@@ -11,7 +11,7 @@ namespace solver
 	{
 	public:
 		instance();
-		/*
+		/**
 			return the distance to travel from job_1 delivery location to job_2 delivery location
 			[[ expects: job_number() > job_1.index() && job_number() > job_2.index() && job_1.index() >= 0 && job_2.index() >= 0]]
 		*/

@@ -94,7 +94,6 @@ namespace solver
 	{
 		index lower_index = std::min(index_job_1, index_job_2) + 1;
 		index greater_index = std::max(index_job_1, index_job_2) + 1;
-		//auto[lower_index, greater_index] = std::minmax(index_job_1, index_job_2);
 		index result = greater_index * (greater_index + 1) / 2 - (greater_index - lower_index ) - 1;
 		return result;
 	}

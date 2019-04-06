@@ -128,13 +128,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="batch_solution.cpp" />
     <ClCompile Include="local_search.cpp" />
-    <ClCompile Include="local_search_instance.cpp" />
+    <ClCompile Include="local_search_resolution_data.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="batch_solution.h" />
     <ClInclude Include="local_search.h" />
-    <ClInclude Include="local_search_instance.h" />
+    <ClInclude Include="local_search_operators.h" />
+    <ClInclude Include="local_search_resolution_data.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

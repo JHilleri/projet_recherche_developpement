@@ -44,25 +44,6 @@ namespace solver
 			}
 			return true;
 		}
-
-		bool check_inventory_costs(solution const & solution_to_check)
-		{
-			for (auto const & batch : solution_to_check.get_planned_batchs())
-			{
-				if (batch.get_inventory_cost() != batch.calculate_invetory_cost())
-				{
-					std::cerr << "invalide batch inventory cost" << std::endl;
-					return false;
-				}
-			}
-			cost total_inventory_cost = std::accumulate(solution_to_check.get_planned_batchs().begin(), solution_to_check.get_planned_batchs().end(), 0, [](cost value, planned_batch const & batch) {return value + batch.get_inventory_cost(); });
-			if (total_inventory_cost != solution_to_check.get_inventory_cost())
-			{
-				std::cerr << "invalide inventory cost sum" << std::endl;
-				return false;
-			}
-			return true;
-		}
 	}
 
 	bool solution_validator::check_solition(solution const & solution_to_check)
@@ -110,28 +91,6 @@ namespace solver
 				}
 			}
 		}
-		{
-			for (auto const & batch : solution_to_check.get_planned_batchs())
-			{
-				if (batch.get_inventory_cost() != batch.calculate_invetory_cost())
-				{
-					std::cerr << "invalide batch inventory cost, " << batch.get_inventory_cost() << ", " << batch.calculate_invetory_cost() << std::endl;
-					return false;
-				}
-			}
-			cost total_inventory_cost = std::accumulate(solution_to_check.get_planned_batchs().begin(), solution_to_check.get_planned_batchs().end(), 0, [](cost value, planned_batch const & batch) {return value + batch.get_inventory_cost(); });
-			if (total_inventory_cost != solution_to_check.get_inventory_cost())
-			{
-				std::cerr << "invalide inventory cost sum" << std::endl;
-				return false;
-			}
-			return true;
-		}
-		/*if (!check_inventory_costs(solution_to_check))
-		{
-			std::cerr << "invalid inventory cost" << std::endl;
-			return false;
-		}*/
 		return true;
 	}
 }

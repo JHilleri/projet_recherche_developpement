@@ -30,7 +30,7 @@ namespace solver
 		{
 			std::vector<batch> batchs(batch_count);
 			std::generate(batchs.begin(), --batchs.end(), [&]() {return read_batch(input, job_per_batch, machine_count); });
-			const index last_batch_job_count{ job_count - (batch_count - 1) * job_per_batch };
+			const index last_batch_job_count{ job_count - ((batch_count - 1) * job_per_batch) };
 			batchs.back() = read_batch(input, last_batch_job_count, machine_count);
 			return batchs;
 		}
@@ -60,11 +60,10 @@ namespace solver
 		index batch_count;
 		input >> job_count >> machine_count >> vehicule_cost;
 
-		//result.set_job_count(job_count);
 		result.set_machine_number(machine_count);
 
-		index partial_batch = (job_count % job_per_batch) ? 1 : 0;
-		batch_count = (job_count / job_per_batch + partial_batch);
+		index has_partial_batch = (job_count % job_per_batch) ? 1 : 0;
+		batch_count = (job_count / job_per_batch + has_partial_batch);
 
 		go_to_next_line(input); // end of the second line
 
